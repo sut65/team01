@@ -38,5 +38,6 @@ type DiagnosisRecord struct {
 	Examination			string
 	MedicalCertificate 	bool	
 	Date				time.Time
+	//
 
 }
