@@ -18,7 +18,7 @@ type HistorySheet struct {
 	RespiratoryRate        uint8
 	OxygenSaturation       uint8
 	DrugAllergySymtom      string
-	Symtom                 string
+	PatientSymtom          string
 
 	PatientRegisterID *uint
 	PatientRegister   PatientRegister `gorm:"references:ID"`
