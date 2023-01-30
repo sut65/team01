@@ -11,7 +11,7 @@ type Payment struct {
 
 	PatientRightID *uint
 
-	PatientOfRight PatientOfRight `gorm:"references:id" valid:"-"`
+	PatientRight PatientRight `gorm:"references:id" valid:"-"`
 
 	PaymentTypeID *uint
 

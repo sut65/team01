@@ -2,7 +2,6 @@ package controller
 
 import (
 	"net/http"
-
 	"github.com/asaskevich/govalidator"
 	"github.com/gin-gonic/gin"
 	"github.com/sut65/team01/entity"
