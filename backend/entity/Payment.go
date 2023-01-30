@@ -34,5 +34,5 @@ type PaymentType struct {
 
 	Type string
 
-	Payments []Payment `gorm:"foreignKey:PayTypeID"`
+	Payments []Payment `gorm:"foreignKey:PaymentTypeID"`
 }
