@@ -7,7 +7,7 @@ import (
 
 type Admin struct {
 	gorm.Model
-	FirstName string
+	FirstName string 
 	LastName  string
 	Email     string
 	Password  string
@@ -41,17 +41,18 @@ type Employee struct {
 	//TitleID ทำหน้าที่ FK
 	TitleID *uint
 	Title   Title
-	Name    string
+	FirstName    string	
+	LastName	string
 	//RoleID ทำหน้าที่ FK
 	RoleID  *uint
 	Role    Role
 	Phonenumber string `gorm:"uniqueIndex"`
 	Email       string `gorm:"uniqueIndex"`
-	Password    string `json:"-"`
+	Password    string 
 	//GenderID ทำหน้าที่ FK
 	GenderID *uint
 	Gender   Gender
-	//BloodTypeID ทำหน้าที่ FK
-	Salary 	uint8
-	BirthDay    time.Time
+	Salary 	uint32
+	Birthday    time.Time
 }
+
