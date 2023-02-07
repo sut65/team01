@@ -41,18 +41,18 @@ type Employee struct {
 	//TitleID ทำหน้าที่ FK
 	TitleID *uint
 	Title   Title
-	FirstName    string	
-	LastName	string
+	FirstName    string	`valid:"required~First Name cannot be blank"`
+	LastName	string	`valid:"required~Last Name cannot be blank"`
 	//RoleID ทำหน้าที่ FK
 	RoleID  *uint
 	Role    Role
-	Phonenumber string `gorm:"uniqueIndex"`
-	Email       string `gorm:"uniqueIndex"`
-	Password    string 
+	PhoneNumber string `gorm:"uniqueIndex"`
+	Email       string `gorm:"uniqueIndex" valid:"required~Email cannot be blank, email~Email does not validate as email"`
+	Password    string `valid:"required~Password cannot be blank"`
 	//GenderID ทำหน้าที่ FK
 	GenderID *uint
 	Gender   Gender
-	Salary 	uint32
+	Salary 	uint32	
 	Birthday    time.Time
 }
 
