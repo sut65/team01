@@ -51,7 +51,7 @@ func CreateEmployee(c *gin.Context) {
 		FirstName:  	employee.FirstName,   // ตั้งค่าฟิลด์ Name
 		LastName:   	employee.LastName,
 		Role:   		role,    // โยงความสัมพันธ์กับ Entity Position
-		Phonenumber:    employee.Phonenumber,   // ตั้งค่าฟิลด์ Phonenumber
+		PhoneNumber:    employee.PhoneNumber,   // ตั้งค่าฟิลด์ PhoneNumber
 		Email: 			employee.Email,  /// ตั้งค่าฟิลด์ Email
 		Password: 		employee.Password,  // ตั้งค่าฟิลด์ Password
 		Gender:     	gender,      // โยงความสัมพันธ์กับ Entity Gender
@@ -93,6 +93,19 @@ func GetEmployee(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"data": employee})
+}
+
+// GET /Employeerole/:roleid
+// Get Employeerole by roleid
+func GetEmployeerole(c *gin.Context) {
+	var Employee []entity.Employee
+	roleid := c.Param("roleid")
+	if err := entity.DB().Preload("Role").Raw("SELECT * FROM employees WHERE role_id = ?", roleid).Find(&Employee).Error; err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"data": Employee})
 }
 
 // DELETE /employees/:id
