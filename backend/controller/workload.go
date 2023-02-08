@@ -50,8 +50,8 @@ func CreateWorkload(c *gin.Context) {
 		Room:   		room,    // โยงความสัมพันธ์กับ Entity Room
 		Status:     	status,      // โยงความสัมพันธ์กับ Entity Status
 		Date:			workload.Date, // ตั้งค่าฟิลด์ Date
-		TimeStart: 		workload.TimeStart, // ตั้งค่าฟิลด์ TimeStart
-		TimeEnd: 		workload.TimeEnd,	// ตั้งค่าฟิลด์ TimeEnd
+		StartTime: 		workload.StartTime, // ตั้งค่าฟิลด์ StartTime
+		EndTime: 		workload.EndTime,	// ตั้งค่าฟิลด์ EndTime
 	}
 
 	//ขั้นตอนการ validate ที่นำมาจาก  unit test
