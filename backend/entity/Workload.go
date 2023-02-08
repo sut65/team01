@@ -31,7 +31,7 @@ type Workload struct {
 	StatusID  	*uint
 	Status    	Status
 	Date    	time.Time
-	TimeStart	time.Time
-	TimeEnd		time.Time
+	StartTime	time.Time
+	EndTime		time.Time
 }
 
