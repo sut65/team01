@@ -7,124 +7,142 @@ import (
 	"gorm.io/gorm"
 )
 
-type Gender struct {
+type PatientRegister struct {
 	gorm.Model
-	Identity string
-	Patient  []Patient `gorm:"foreignKey:GenderID"`
-}
-
-type PatientType struct {
-	gorm.Model
-	Typename string
-	Patient  []Patient `gorm:"foreignKey:PatientTypeID"`
-}
-
-type Patient struct {
-	gorm.Model
-	HN        string    `valid:"matches(^HN\\d{6}$),required~HN cannot be blank"`
-	Pid       string    `valid:"matches(^[1-9]\\d{12}$),required~Identification Number cannot be blank"`
-	FirstName string    `valid:"required~FirstName cannot be blank"`
-	LastName  string    `valid:"required~LastName cannot be blank"`
-	Birthdate time.Time `valid:"past~Birthdate must be in the past"`
-	Age       uint      `valid:"range(0|120)"`
-	DateAdmit time.Time
-	Symptom   string
-
-	//GenderID ทำหน้าที่เป็น ForeignKey
-	GenderID *uint
-	Gender   Gender `gorm:"references:id" valid:"-"`
-
-	//PatientTypeID ทำหน้าที่เป็น ForeignKey
-	PatientTypeID *uint
-	PatientType   PatientType `gorm:"references:id" valid:"-"`
-
-	//PatientRightID ทำหน้าที่เป็น ForeignKey
-	PatientRightID *uint
-	PatientRight   PatientRight `gorm:"references:id" valid:"-"`
-
-
-}
-type PatientRight struct {
-	gorm.Model
-
-	Name string
-
-	Discount uint
-
-	Patient []Patient `gorm:"foreignKey:PatientRightID"`
-	//Bills		[]Bill		`gorm:"foreignKey:PatientRightID"`
-}
-
-
-type Bill struct {
-	gorm.Model
-
-	PatientRightID *uint
-
-	PatientRight PatientRight `gorm:"references:id" valid:"-"`
-
-	BillTime time.Time `valid:"past~BillTime must be past"`
-
-	Total uint `valid:"required~Total cannot be zero"`
-
-	Telephone string `valid:"required~Telephone cannot be blank, matches(^[0]{1}[0-9]{9})~Telephone must be 10 digits"`
+	FirstName            string
+	LastName             string
+	IdentificationNumber string    `valid:"required"`
+	Age                  int       `valid:"int, range(0|100)~Age Invalids"`
+	BirthDay             time.Time `valid:"past~Birth Day Invalids"`
+	Mobile               string
+	// Email                                  string // `gorm:"uniqueIndex"`
+	Occupation                             string
+	Address                                string
+	EmergencyPersonFirstName               string
+	EmergencyPersonLastName                string
+	EmergencyPersonMobile                  string
+	EmergencyPersonOccupation              string
+	EmergencyPersonRelationshipWithPatient string
 
 	EmployeeID *uint
-	Employee   Employee `gorm:"references:id" valid:"-"`
+	Employee   Employee `gorm:"references:ID"`
 
-}
+	GenderID *uint
+	Gender   Gender `gorm:"references:ID"`
 
-type Role struct {
-	gorm.Model
-	Position string
-	Employee []Employee `gorm:"foreignKey:RoleID"`
+	PrefixID *uint
+	Prefix   Prefix `gorm:"references:ID"`
+
+	NationalityID *uint
+	Nationality   Nationality `gorm:"references:ID"`
+
+	ReligionID *uint
+	Religion   Religion `gorm:"references:ID"`
+
+	BloodTypeID *uint
+	BloodType   BloodType `gorm:"references:ID"`
+
+	MaritalStatusID *uint
+	MaritalStatus   MaritalStatus `gorm:"references:ID"`
+
+	SubDistrictID *uint
+	SubDistrict   SubDistrict `gorm:"references:ID"`
+
+	DistrictID *uint
+	District   District `gorm:"references:ID"`
+
+	ProvinceID *uint
+	Province   Province `gorm:"references:ID"`
+
+	// HistorySheets []HistorySheet `gorm:"foreignKey:NurseID"`
 }
 
 type Employee struct {
 	gorm.Model
-	Name     string
-	Email    string
-	Password string
-
-	//RoleID ทำหน้าที่เป็น ForeignKey
-	RoleID *uint
-	Role   Role `gorm:"references:id"`
-
-
-	//1 Employee มีได้หลาย Bill
-	Bills []Bill `gorm:"foreignKey:EmployeeID"`
+	FirstName            string
+	LastName             string
+	IdentificationNumber string
+	BirthDay             time.Time
+	Mobile               string
+	Email                string
+	Password             string
+	Salary               uint16
+	PatientRegisters     []PatientRegister `gorm:"foreignKey:EmployeeID"`
 }
 
+type Gender struct {
+	gorm.Model
+	Name             string
+	PatientRegisters []PatientRegister `gorm:"foreignKey:GenderID"`
+}
 
+type Prefix struct {
+	gorm.Model
+	Name             string
+	PatientRegisters []PatientRegister `gorm:"foreignKey:PrefixID"`
+}
 
+type Nationality struct {
+	gorm.Model
+	Name             string
+	PatientRegisters []PatientRegister `gorm:"foreignKey:NationalityID"`
+}
+
+type Religion struct {
+	gorm.Model
+	Name             string
+	PatientRegisters []PatientRegister `gorm:"foreignKey:ReligionID"`
+}
+
+type BloodType struct {
+	gorm.Model
+	Name             string
+	PatientRegisters []PatientRegister `gorm:"foreignKey:BloodTypeID"`
+}
+
+type MaritalStatus struct {
+	gorm.Model
+	Name             string
+	PatientRegisters []PatientRegister `gorm:"foreignKey:MaritalStatusID"`
+}
+
+type SubDistrict struct {
+	gorm.Model
+	Name string
+
+	DistrictID uint
+	District   District // `gorm:"references:ID"`
+
+	PostCode uint
+
+	PatientRegisters []PatientRegister `gorm:"foreignKey:SubDistrictID"`
+}
+
+type District struct {
+	gorm.Model
+	Name string
+
+	ProvinceID uint
+	Province   Province `gorm:"references:ID"`
+
+	PatientRegisters []PatientRegister `gorm:"foreignKey:DistrictID"`
+	SubDistricts     []SubDistrict     `gorm:"foreignKey:DistrictID"`
+}
+
+type Province struct {
+	gorm.Model
+	Name             string
+	PatientRegisters []PatientRegister `gorm:"foreignKey:ProvinceID"`
+	Districts        []District        `gorm:"foreignKey:ProvinceID"`
+}
 
 func init() {
 	govalidator.CustomTypeTagMap.Set("past", func(i interface{}, context interface{}) bool {
 		t := i.(time.Time)
 		return t.Before(time.Now())
 	})
-
 	govalidator.CustomTypeTagMap.Set("future", func(i interface{}, context interface{}) bool {
 		t := i.(time.Time)
 		return t.After(time.Now())
-	})
-
-	govalidator.CustomTypeTagMap.Set("Now", func(i interface{}, context interface{}) bool {
-		t := i.(time.Time)
-		return t.Equal(time.Now())
-	})
-
-	govalidator.CustomTypeTagMap.Set("DelayNow3Min", func(i interface{}, context interface{}) bool {
-		t := i.(time.Time)
-		return t.After(time.Now().Add(3 - time.Minute))
-	})
-
-	govalidator.CustomTypeTagMap.Set("positive", func(i interface{}, context interface{}) bool {
-		num := i
-		return num.(int) >= 0
-	})
-	govalidator.CustomTypeTagMap.Set("positivenum", func(i interface{}, context interface{}) bool {
-		num := i
-		return num.(int) > 0
 	})
 }
