@@ -28,6 +28,9 @@ func SetupDatabase() {
 	&Employee{},
 	&Hospital{}, 
 	&PatientRight{}, 
+	&PatientRegister{},
+	&DrugAllergy{},
+	&HistorySheet{},
 
 	)
 
@@ -50,6 +53,17 @@ func SetupDatabase() {
 		Password:    string(PasswordAdmin2),
 	}
   db.Model(&Admin{}).Create(&Admin2)
+
+  // DrugAllergy -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	drugallergy1 := DrugAllergy{
+		Name: "แพ้ยา/Drug Allergy",
+	}
+	db.Model(&DrugAllergy{}).Create(&drugallergy1)
+
+	drugallergy2 := DrugAllergy{
+		Name: "ไม่แพ้ยา/Not Allergic",
+	}
+	db.Model(&DrugAllergy{}).Create(&drugallergy2)
 
   //ตำแหน่ง
   Doctor := Role{
