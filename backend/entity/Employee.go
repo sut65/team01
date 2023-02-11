@@ -37,7 +37,7 @@ type Employee struct {
 	//AdminID ทำหน้าที่ FK
 	AdminID *uint
 	Admin   Admin
-	IDCard  string `gorm:"uniqueIndex"`
+	IDCard  string `gorm:"uniqueIndex" valid:"required~Identification Number cannot be blank, matches(^[1-9]\\d{12}$)~IDCard does not validate"`
 	//TitleID ทำหน้าที่ FK
 	TitleID *uint
 	Title   Title
