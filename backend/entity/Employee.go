@@ -52,7 +52,7 @@ type Employee struct {
 	//GenderID ทำหน้าที่ FK
 	GenderID *uint
 	Gender   Gender
-	Salary 	uint32	
+	Salary 	uint32	`valid:"required~Salary must not be zero,salary~Salary must not be negative"`
 	Birthday    time.Time `valid:"past~Birthday: The following validator is invalid or can't be applied to the field: \"past\""`
 }
 
