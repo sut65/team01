@@ -30,7 +30,7 @@ type Workload struct {
 	//StatusID ทำหน้าที่ FK
 	StatusID  	*uint
 	Status    	Status	`gorm:"references:id" valid:"-"`
-	Date    	time.Time
+	Date    	time.Time	`valid:"present~Date must be present"`
 	StartTime	time.Time
 	EndTime		time.Time
 }
