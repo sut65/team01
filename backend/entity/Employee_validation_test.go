@@ -199,3 +199,54 @@ func TestPhoneNumberNotBlank(t *testing.T) {
 	// err.Error ต้องมี error message แสดงออกมา
 	g.Expect(err.Error()).To(Equal("Phone Number cannot be blank"))
 }
+func TestEmailNotBlank(t *testing.T) {
+	g := NewGomegaWithT(t)
+
+	employee := Employee{
+		IDCard:      "1410087223152",
+		FirstName:   "มะลิ",
+		LastName:    "แสนสุข",
+		PhoneNumber: "0999999909",
+		Email:       "", //ผิด
+		Password:    "11111111",
+		Salary:      21000,
+		Birthday:    time.Date(2000, 1, 1, 0, 0, 0, 0, time.UTC),
+	}
+
+	// ตรวจสอบด้วย govalidator
+	ok, err := govalidator.ValidateStruct(employee)
+
+	// ok ต้องไม่เป็นค่า true แปลว่าต้องจับ error ได้
+	g.Expect(ok).ToNot(BeTrue())
+
+	// err ต้องไม่เป็นค่า nil แปลว่าต้องจับ error ได้
+	g.Expect(err).ToNot(BeNil())
+
+	// err.Error ต้องมี error message แสดงออกมา
+	g.Expect(err.Error()).To(Equal("Email cannot be blank"))
+}
+func TestEmailMustBeValid(t *testing.T) {
+	g := NewGomegaWithT(t)
+
+	employee := Employee{
+		IDCard:      "1410087223152",
+		FirstName:   "มะลิ",
+		LastName:    "แสนสุข",
+		PhoneNumber: "0999999909",
+		Email:       "malcnui#ckdmui",
+		Password:    "11111111",
+		Salary:      21000,
+		Birthday:    time.Date(2000, 1, 1, 0, 0, 0, 0, time.UTC),
+	}
+
+	ok, err := govalidator.ValidateStruct(employee)
+
+	// ok ต้องไม่เป็นค่า true แปลว่าต้องจับ error ได้
+	g.Expect(ok).ToNot(BeTrue())
+
+	// err ต้องไม่เป็นค่า nil แปลว่าต้องจับ error ได้
+	g.Expect(err).ToNot(BeNil())
+
+	// err.Error ต้องมี error message แสดงออกมา
+	g.Expect(err.Error()).To(Equal("Email does not validate as email"))
+}
