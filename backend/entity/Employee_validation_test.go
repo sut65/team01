@@ -137,3 +137,65 @@ func TestSalaryNotbeZero(t *testing.T) {
         }
 	}
 }
+func TestTelephoneMustBeValid(t *testing.T) {
+	g := NewGomegaWithT(t)
+
+	fixtures := []string{
+		"1000000000", // 1 ตามด้วย 0-9 9 ตัว
+		"200000000",  // 0 ตามด้วย 0-9 8 ตัว
+		"01234567",   // 0 ตามด้วย 0-9 10 ตัว
+		"012345678",  // 0 ตามด้วย 0-9 8 ตัว และ A
+		"01234567A9", // A ตามด้วย 0-9 9 ตัว
+		"A1234567A9",
+	}
+
+	for _, fixture := range fixtures {
+		employee := Employee{
+			IDCard:      "1410087223152",
+			FirstName:   "มะลิ",
+			LastName:    "แสนสุข",
+			PhoneNumber: fixture,
+			Email:       "mali@gmail.com",
+			Password:    "11111111",
+			Salary:      21000,
+			Birthday:    time.Date(2000, 5, 1, 0, 0, 0, 0, time.UTC),
+		}
+
+		ok, err := govalidator.ValidateStruct(employee)
+
+		// ok ต้องไม่เป็นค่า true แปลว่าต้องจับ error ได้
+		g.Expect(ok).ToNot(BeTrue())
+
+		// err ต้องไม่เป็นค่า nil แปลว่าต้องจับ error ได้
+		g.Expect(err).ToNot(BeNil())
+
+		// err.Error ต้องมี error message แสดงออกมา
+		g.Expect(err.Error()).To(Equal("Phone Number must be invalid"))
+	}
+}
+func TestPhoneNumberNotBlank(t *testing.T) {
+	g := NewGomegaWithT(t)
+
+	employee := Employee{
+		IDCard:      "1410087223152",
+		FirstName:   "มะลิ",
+		LastName:    "แสนสุข",
+		PhoneNumber: "", //ผิด
+		Email:       "mali@gmail.com",
+		Password:    "11111111",
+		Salary:      21000,
+		Birthday:    time.Date(2000, 1, 1, 0, 0, 0, 0, time.UTC),
+	}
+
+	// ตรวจสอบด้วย govalidator
+	ok, err := govalidator.ValidateStruct(employee)
+
+	// ok ต้องไม่เป็นค่า true แปลว่าต้องจับ error ได้
+	g.Expect(ok).ToNot(BeTrue())
+
+	// err ต้องไม่เป็นค่า nil แปลว่าต้องจับ error ได้
+	g.Expect(err).ToNot(BeNil())
+
+	// err.Error ต้องมี error message แสดงออกมา
+	g.Expect(err.Error()).To(Equal("Phone Number cannot be blank"))
+}

@@ -46,7 +46,7 @@ type Employee struct {
 	//RoleID ทำหน้าที่ FK
 	RoleID  *uint
 	Role    Role
-	PhoneNumber string `gorm:"uniqueIndex"`
+	PhoneNumber string `valid:"required~Phone Number cannot be blank, matches(^[0]{1}[689]{1}[0-9]{8})~Phone Number must be invalid"`
 	Email       string `gorm:"uniqueIndex" valid:"required~Email cannot be blank, email~Email does not validate as email"`
 	Password    string `valid:"required~Password cannot be blank"`
 	//GenderID ทำหน้าที่ FK
