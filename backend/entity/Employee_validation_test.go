@@ -8,6 +8,31 @@ import (
 	. "github.com/onsi/gomega"
 )
 
+func TestEmployeePass(t *testing.T) {
+	g := NewGomegaWithT(t)
+
+	// ข้อมูลถูกต้องหมดทุก field
+	employee := Employee{
+		IDCard:      "1410087223152",
+		FirstName:   "มะลิ",
+		LastName:    "แสนสุข",
+		PhoneNumber: "0999999909",
+		Email:       "mali@gmail.com",
+		Password:    "11111111",
+		Salary:      21000,
+		Birthday:    time.Date(2000, 5, 1, 0, 0, 0, 0, time.UTC),
+	}
+
+	// ตรวจสอบด้วย govalidator
+	ok, err := govalidator.ValidateStruct(employee)
+
+	// ok ต้องเป็น true แปลว่าไม่มี error
+	g.Expect(ok).To(BeTrue())
+
+	// err เป็นค่า nil แปลว่าไม่มี error
+	g.Expect(err).To(BeNil())
+}
+
 func TestBirthdateMustBePast(t *testing.T) {
 	g := NewGomegaWithT(t)
 	employee := Employee{
