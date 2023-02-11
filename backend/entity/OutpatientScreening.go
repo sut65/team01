@@ -2,7 +2,7 @@ package entity
 
 import (
 	"time"
-
+	//"github.com/asaskevich/govalidator"
 	"gorm.io/gorm"
 )
 
@@ -10,12 +10,16 @@ type Nurse struct {
 	gorm.Model
 	FirstName            string
 	LastName             string
+	Email                string `gorm:"uniqueIndex"`
+	Password             string
 	IdentificationNumber string
 	BirthDay             time.Time
 	Mobile               string
 	Address              string
 	Salary               uint16
-	HistorySheets        []HistorySheet `gorm:"foreignKey:NurseID"`
+
+	// 1 Nurse สามารถลงบันทึกได้หลาย HistorySheet
+	HistorySheets []HistorySheet `gorm:"foreignKey:NurseID"`
 }
 
 type HistorySheet struct {
@@ -32,11 +36,23 @@ type HistorySheet struct {
 	DrugAllergySymtom      string
 	PatientSymtom          string
 
-	OutpatientScreeningID *uint
-	OutpatientScreening   OutpatientScreening `gorm:"references:ID"`
+	// 1 HistorySheet สามารถมีการประเมินได้หลายครั้ง (OutpatientScreening)
+	OutpatientScreenings []OutpatientScreening `gorm:"foreignKey:HistorySheetID"`
 
+	// NurseID คือ Foreign Key ที่อ้างอิงไปยัง Nurse
 	NurseID *uint
 	Nurse   Nurse `gorm:"references:ID"`
+}
+
+// EmergencyLevel
+type EmergencyLevel struct {
+	gorm.Model
+
+	Level           string
+	AssessmentForms string
+	procedure       string
+
+	OutpatientScreenings []OutpatientScreening `gorm:"foreignKey:EmergencyLevelID"`
 }
 
 type HighBloodPressureLevel struct {
@@ -50,29 +66,39 @@ type HighBloodPressureLevel struct {
 type DiabetesLevel struct {
 	gorm.Model
 
-	Level           string
-	AssessmentForms string
+	Level             string
+	AssessmentForms   string
+	HistoryTakingForm string
 
 	OutpatientScreenings []OutpatientScreening `gorm:"foreignKey:DiabetesLevelID"`
 }
 type ObesityLevel struct {
 	gorm.Model
 
-	Level           string
-	AssessmentForms string
+	Level             string
+	AssessmentForms   string
+	HistoryTakingForm string
 
 	OutpatientScreenings []OutpatientScreening `gorm:"foreignKey:ObesityLevelID"`
 }
 
 type OutpatientScreening struct {
 	gorm.Model
+	Note string				`valid:"required~Note cannot be blank"`
+	Time time.Time
+
+	HistorySheetID *uint
+	HistorySheet   HistorySheet `gorm:"references:ID"`
+
+	EmergencyLevelID *uint
+	EmergencyLevel   EmergencyLevel `gorm:"references:ID"`
 
 	HighBloodPressureLevelID *uint
-	HighBloodPressureLevel   HighBloodPressureLevel `references:"ID"`
+	HighBloodPressureLevel   HighBloodPressureLevel `gorm:"references:ID"`
 
 	DiabetesLevelID *uint
-	DiabetesLevel   DiabetesLevel `references:"ID"`
+	DiabetesLevel   DiabetesLevel `gorm:"references:ID"`
 
 	ObesityLevelID *uint
-	ObesityLevel   ObesityLevel `references:"ID"`
+	ObesityLevel   ObesityLevel `gorm:"references:ID"`
 }
