@@ -41,8 +41,8 @@ type Employee struct {
 	//TitleID ทำหน้าที่ FK
 	TitleID *uint
 	Title   Title
-	FirstName    string	`valid:"required~First Name cannot be blank"`
-	LastName	string	`valid:"required~Last Name cannot be blank"`
+	FirstName string `valid:"required~First Name cannot be blank"`
+	LastName  string `valid:"required~Last Name cannot be blank"`
 	//RoleID ทำหน้าที่ FK
 	RoleID  *uint
 	Role    Role
@@ -52,7 +52,7 @@ type Employee struct {
 	//GenderID ทำหน้าที่ FK
 	GenderID *uint
 	Gender   Gender
-	Salary 	uint32	`valid:"required~Salary must not be zero,salary~Salary must not be negative"`
+	Salary 	float64	`valid:"required~Salary must not be zero,salary~Salary must not be negative"`
 	Birthday    time.Time `valid:"past~Birthday: The following validator is invalid or can't be applied to the field: \"past\""`
 }
 
