@@ -98,3 +98,42 @@ func TestIDCardMustBeInValidPattern(t *testing.T) {
 		g.Expect(err.Error()).To(Equal("IDCard does not validate"))
 	}
 }
+
+func TestSalaryNotbeZero(t *testing.T) {
+	g := NewGomegaWithT(t)
+
+	fixtures := []float64{
+		-5,
+		-4,
+		-2,
+		0,
+	}
+	for _, fixture := range fixtures {
+		employee := Employee{
+			IDCard:      "1410087223152",
+			FirstName:   "มะลิ",
+			LastName:    "แสนสุข",
+			PhoneNumber: "0999999909",
+			Email:       "mali@gmail.com",
+			Password:    "11111111",
+			Salary:      fixture, //ผิด
+			Birthday:    time.Date(2000, 1, 1, 0, 0, 0, 0, time.UTC),
+		}
+
+		// ตรวจสอบด้วย govalidator
+		ok, err := govalidator.ValidateStruct(employee)
+
+		// ok ต้องไม่เป็นค่า true แปลว่าต้องจับ error ได้
+		g.Expect(ok).ToNot(BeTrue())
+
+		// err ต้องไม่เป็นค่า nil แปลว่าต้องจับ error ได้
+		g.Expect(err).ToNot(BeNil())
+
+		// err.Error ต้องมี error message แสดงออกมา
+		if err.Error() == "Salary must not be zero" {
+            g.Expect(err.Error()).To(Equal("Salary must not be zero"))
+        } else if err.Error() == "Salary must not be negative" {
+            g.Expect(err.Error()).To(Equal("Salary must not be negative"))
+        }
+	}
+}
