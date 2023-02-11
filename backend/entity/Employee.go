@@ -53,6 +53,6 @@ type Employee struct {
 	GenderID *uint
 	Gender   Gender
 	Salary 	uint32	
-	Birthday    time.Time
+	Birthday    time.Time `valid:"past~Birthday: The following validator is invalid or can't be applied to the field: \"past\""`
 }
 
