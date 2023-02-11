@@ -12,8 +12,9 @@ import (
 // POST /medicinerecord
 func CreateMedicineRecord(c *gin.Context) {
 
-	var employee entity.Employee
+	var pharmacist entity.Employee
 	var treatmentrecord entity.TreatmentRecord
+	var statusmed entity.StatusMed
 	var medicinerecord entity.MedicineRecord
 
 	// ผลลัพธ์ที่ได้จากขั้นตอนที่ จะถูก bind เข้าตัวแปร medicinerecord
@@ -28,21 +29,33 @@ func CreateMedicineRecord(c *gin.Context) {
 		return
 	}
 
+	// : ค้นหา StatusMed ด้วย id
+	if tx := entity.DB().Where("id = ?", medicinerecord.StatusMedID).First(&statusmed); tx.RowsAffected == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "StatusMed not found"})
+		return
+	}
 	// : ค้นหา employee ด้วย id
-	if tx := entity.DB().Where("id = ?", medicinerecord.EmployeeID).First(&employee); tx.RowsAffected == 0 {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "employee not found"})
+	if tx := entity.DB().Where("id = ?", medicinerecord.PharmacistID).First(&pharmacist); tx.RowsAffected == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "pharmacist not found"})
+		return
+	}
+	entity.DB().Joins("Role").Find(&pharmacist)
+
+	if pharmacist.Role.Name != "Pharmacist" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "The data recorder should be a Pharmacist"})
 		return
 	}
 
 	// : สร้าง medicinerecord
 	mr := entity.MedicineRecord{
 		TreatmentRecord: treatmentrecord,           // โยงความสัมพันธ์กับ Entity TreatmentRecord
-		Employee:        employee,                  // โยงความสัมพันธ์กับ Entity Employee
+		Pharmacist:      pharmacist,                // โยงความสัมพันธ์กับ Entity Employee
+		StatusMed:       statusmed,                 // โยงความสัมพันธ์กับ Entity StatusMed
 		Advicetext:      medicinerecord.Advicetext, // ตั้งค่าฟิลด์ Advicetext
 		MedTime:         medicinerecord.MedTime,    // ตั้งค่าฟิลด์ MedicineRecord
 	}
 
-	// : ขั้นตอนการ validate ข้อมูล
+	// // : ขั้นตอนการ validate ข้อมูล
 	if _, err := govalidator.ValidateStruct(mr); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -57,10 +70,10 @@ func CreateMedicineRecord(c *gin.Context) {
 }
 
 // GET /medicinerecord/:id
-func Getmedicinerecord(c *gin.Context) {
+func GetMedicineRecord(c *gin.Context) {
 	var medicinerecord entity.MedicineRecord
 	id := c.Param("id")
-	if err := entity.DB().Preload("TreatmentRecord").Preload("Employee").Raw("SELECT * FROM medicine_record WHERE id = ?", id).Find(&medicinerecord).Error; err != nil {
+	if err := entity.DB().Preload("TreatmentRecord").Preload("Pharmacist").Raw("SELECT * FROM medicine_records WHERE id = ?", id).Find(&medicinerecord).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
@@ -68,9 +81,17 @@ func Getmedicinerecord(c *gin.Context) {
 }
 
 // GET /medicinerecords
-func Listmedicinerecords(c *gin.Context) {
+func ListMedicineRecords(c *gin.Context) {
 	var medicinerecords []entity.MedicineRecord
-	if err := entity.DB().Preload("TreatmentRecord").Preload("Employee").Raw("SELECT * FROM medicine_record").Find(&medicinerecords).Error; err != nil {
+	if err := entity.DB().Preload("TreatmentRecord").
+		Preload("TreatmentRecord.Medicine").
+		Preload("TreatmentRecord.DiagnosisRecord").
+		Preload("TreatmentRecord.DiagnosisRecord.HistorySheet").
+		Preload("TreatmentRecord.DiagnosisRecord.HistorySheet.PatientRegister").
+		Preload("Pharmacist").
+		Preload("StatusMed").
+		Raw("SELECT * FROM medicine_records").
+		Find(&medicinerecords).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
@@ -79,9 +100,9 @@ func Listmedicinerecords(c *gin.Context) {
 }
 
 // DELETE /medicinerecords/:id
-func Deletemedicinerecord(c *gin.Context) {
+func DeleteMedicineRecord(c *gin.Context) {
 	id := c.Param("id")
-	if tx := entity.DB().Exec("DELETE FROM medicine_record WHERE id = ?", id); tx.RowsAffected == 0 {
+	if tx := entity.DB().Exec("DELETE FROM medicine_records WHERE id = ?", id); tx.RowsAffected == 0 {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "medicinerecord not found"})
 		return
 	}
@@ -90,7 +111,7 @@ func Deletemedicinerecord(c *gin.Context) {
 }
 
 // PATCH /medicinerecords
-func Updatemedicinerecord(c *gin.Context) {
+func UpdateMedicineRecord(c *gin.Context) {
 	var medicinerecord entity.MedicineRecord
 	if err := c.ShouldBindJSON(&medicinerecord); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
