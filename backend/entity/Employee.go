@@ -55,4 +55,15 @@ type Employee struct {
 	Salary 	float64	`valid:"required~Salary must not be zero,salary~Salary must not be negative"`
 	Birthday    time.Time `valid:"past~Birthday: The following validator is invalid or can't be applied to the field: \"past\""`
 }
-
+func init() {
+	govalidator.CustomTypeTagMap.Set("past", func(i interface{}, context interface{}) bool {
+		t := i.(time.Time)
+		return t.Before(time.Now())
+	})
+	
+	govalidator.CustomTypeTagMap.Set("salary", func(i interface{}, context interface{}) bool {
+		t := i.(float64)
+		return t >= 1
+	})
+	
+}
