@@ -9,24 +9,21 @@ import (
 type Payment struct {
 	gorm.Model
 
-	PatientRightID *uint
+	PaymentTime time.Time `valid:"present~PaymentTime must be in the present"`
+	Total       uint      `valid:"Total~Total cannot be zero"`
 
-	PatientRight PatientRight `gorm:"references:id" valid:"-"`
+	PatientRightID *uint
+	PatientRight   PatientRight `gorm:"references:ID"`
 
 	PaymentTypeID *uint
+	PaymentType   PaymentType `gorm:"references:ID"`
 
-	PaymentType PaymentType `gorm:"references:id" valid:"-"`
-
-	PaymentTime time.Time
-
-	Total uint `valid:"required~Total cannot be zero"`
-
-	EmployeeID *uint
-	Employee   Employee `gorm:"references:id" valid:"-"`
+	CashierID *uint
+	Cashier   Employee `gorm:"references:ID"`
 
 	//MedicineRecordID ทำหน้าที่เป็น ForeignKey
 	MedicineRecordID *uint
-	MedicineRecord   MedicineRecord `gorm:"references:id" valid:"-"`
+	MedicineRecord   MedicineRecord `gorm:"foreignKey: ID"`
 }
 
 type PaymentType struct {
