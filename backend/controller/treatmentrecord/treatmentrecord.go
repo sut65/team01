@@ -60,12 +60,14 @@ func CreateTreatmentRecord(c *gin.Context) {
 		Date:            treatmentrecord.Date,
 	}
 
-	// if _, err := entity.BooleanNotNull(tr.Appointment); err != nil {
-	// 	c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-	// 	return
-	// }
-
+	// แทรกการ validate ไว้ช่วงนี้ของ controller
 	if _, err := govalidator.ValidateStruct(tr); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	// validate boolean
+	if _, err := entity.BooleanNotNull(tr.Appointment); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
