@@ -3,9 +3,9 @@ package controller
 import (
 	"net/http"
 
+	"github.com/Siriwan38/se-65/entity"
 	"github.com/asaskevich/govalidator"
 	"github.com/gin-gonic/gin"
-	"github.com/sut65/team01/entity"
 )
 
 // POST /payments
@@ -16,7 +16,7 @@ func CreatePayment(c *gin.Context) {
 	var cashier entity.Employee
 	var medicinerecord entity.MedicineRecord
 	var payment entity.Payment
-	var total uint
+	var total int
 
 	// ผลลัพธ์ที่ได้จากขั้นตอนที่ 8 จะถูก bind เข้าตัวแปร payment
 	if err := c.ShouldBindJSON(&payment); err != nil {
@@ -104,49 +104,9 @@ func CreatePayment(c *gin.Context) {
 		return
 	}
 
-	// var items []entity.PaymentItem
-
-	// for _, item := range payment.PaymentItems {
-
-	// 	var exams entity.Examination
-
-	// 	if tx := entity.DB().Where("id = ?", item.ExaminationID).First(&exams); tx.RowsAffected == 0 {
-	// 		c.JSON(http.StatusBadRequest, gin.H{"error": "examination not found"})
-	// 		return
-	// 	}
-
-	// 	i := entity.PaymentItem{
-
-	// 		Payment: pm,
-
-	// 		Examination: exams,
-	// 	}
-
-	// 	items = append(items, i)
-	// }
-
-	//บันทึก paymentitem
-	// if err := entity.DB().Create(&items).Error; err != nil {
-	// 	c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-	// 	return
-	// }
-
-	// entity.DB().Preload("PaymentItems").Preload("PaymentItems.Examination").Raw("SELECT * FROM payments WHERE id = ?", pm.ID).Find(&pm)
-
 	c.JSON(http.StatusOK, gin.H{"data": pm})
 
 }
-
-// // GET /examination/patient/:id
-// func GetExaminationByPatient(c *gin.Context) {
-// 	var examination []entity.Examination
-// 	id := c.Param("id")
-// 	if err := entity.DB().Preload("Patient").Preload("Employee").Preload("Clinic").Preload("Disease").Preload("Medicine").Raw("SELECT * FROM examinations WHERE patient_id = ? and id NOT IN (SELECT DISTINCT examination_id FROM bill_items)", id).Find(&examination).Error; err != nil {
-// 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-// 		return
-// 	}
-// 	c.JSON(http.StatusOK, gin.H{"data": examination})
-// }
 
 // GET /GetMedbyPatient
 func GetMedbyPatient(c *gin.Context) {
