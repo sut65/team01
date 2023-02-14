@@ -1,7 +1,7 @@
 package entity
 
 import (
-	//"fmt"
+	"fmt"
 	"time"
 
 	"github.com/asaskevich/govalidator"
@@ -35,28 +35,33 @@ type TreatmentRecord struct {
 
 	Treatment   string `valid:"required~Treatment cannot be blank"`
 	Note        string `valid:"-"`
-	Appointment *bool	`valid:"-"`
+	Appointment *bool  
 
 	//MedicineID เป็น FK
 	MedicineID       *uint
 	Medicine         Medicine `gorm:"references:id" valid:"-"`
 	MedicineQuantity int      `valid:"int, range(0|100)~MedicineQuantity must not be negative"`
 
-	Date time.Time `valid:"-"`//`valid:"present~Recording time must be current"`
+	Date time.Time `valid:"present~Date must not be past"`
 }
 
 func init() {
+	
 	govalidator.CustomTypeTagMap.Set("present", func(i interface{}, context interface{}) bool {
 		t := i.(time.Time)
-        // ปัจจุบัน บวกลบไม่เกิน 12 ชั่วโมง
-        return t.After(time.Now().Add(time.Hour-12)) && t.Before(time.Now().Add(time.Hour+12))
+		// ปัจจุบัน บวกลบไม่เกิน 3 นาที		
+		if t.Before(time.Now().Add(-3*time.Minute)) || t.After(time.Now().Add(3*time.Minute)) {
+			return false
+		} else {
+			return true
+		}
 	})
 }
 
-// func BooleanNotNull(t *bool) (bool, error) {
-// 	if t == nil {
-// 		return false, fmt.Errorf("Appointment cannot be Null")
-// 	} else {
-// 		return true, nil
-// 	}
-// }
+func BooleanNotNull(t *bool) (bool, error) {
+	if t == nil {
+		return false, fmt.Errorf("Appointment cannot be Null")
+	} else {
+		return true, nil
+	}
+}
