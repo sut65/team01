@@ -10,7 +10,7 @@ type Payment struct {
 	gorm.Model
 
 	PaymentTime time.Time `valid:"present~PaymentTime must be in the present"`
-	Total       uint      `valid:"Total~Total cannot be zero"`
+	Total       int       `valid:"Total~The value must be in range 1-9999, range(1|9999)~The value must be in range 1-9999"`
 
 	PatientRightID *uint
 	PatientRight   PatientRight `gorm:"references:ID"`
