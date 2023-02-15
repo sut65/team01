@@ -7,6 +7,7 @@ import (
 	//"github.com/ChatreeDev/sa-65-example/entity"
 	"github.com/gin-gonic/gin"
 )
+//commit again
 
 // POST /outpatientScreenings
 func CreateOutpatientScreenings(c *gin.Context) {
