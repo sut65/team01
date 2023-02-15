@@ -54,6 +54,7 @@ function WorkloadCreate() {
         }
         setAddedTime2(date);
     }
+    
     const [workload, setWorkload] = React.useState<Partial<WorkloadsInterface>>({});
     const [doctor, setDoctor] = React.useState<EmployeesInterface[]>([]);
     const [admin, setAdmin] = React.useState<AdminsInterface>();
@@ -81,16 +82,6 @@ function WorkloadCreate() {
         const id = event.target.id as keyof typeof workload;
         const { value } = event.target;
         setWorkload({ ...workload, [id]: value });
-    };
-
-    const handleChange = (
-        event: React.ChangeEvent<{ name?: string; value: unknown }>
-    ) => {
-        const name = event.target.name as keyof typeof workload;
-        setWorkload({
-            ...workload,
-            [name]: event.target.value,
-        });
     };
 
     const handleDateChange = (date: Date | null) => {
@@ -200,15 +191,6 @@ function WorkloadCreate() {
 
     function submit() {
 
-        // if (!AddedTime2 || !AddedTime1) {
-        //     setError(true);
-        //     return
-        // }
-        // if (AddedTime2 < AddedTime1) {
-        //     setError(true);
-        //     return
-        // }
-
         let data = {
             AdminID: convertType(admin?.ID),
             EmployeeID: convertType(workload.EmployeeID),
@@ -218,6 +200,7 @@ function WorkloadCreate() {
             StartTime: AddedTime1,
             EndTime: AddedTime2
         };
+
         console.log("data", data)
 
         const apiUrl = "http://localhost:8080/createworkload";
@@ -251,12 +234,12 @@ function WorkloadCreate() {
                         setErrorMessage("กรุณาเลือกห้องตรวจ")
                     } else if (res.error.includes("Status not found")) {
                         setErrorMessage("กรุณาเลือกสถานะแพทย์")
-                    } else if (res.error.includes("Date must be future")) {
+                    } else if (res.error.includes("Date must be present")) {
                         setErrorMessage("กรุณาเลือกวันที่ที่เป็นปัจจุบันหรืออนาคต")
-                    // } else if (res.error.includes("Start Time must be future")) {
-                    //     setErrorMessage("เวลาเริ่มต้นต้องเป็นอนาคต")
-                    // } else if (res.error.includes("End Time must be future")) {
-                    //     setErrorMessage("เวลาสิ้นสุดต้องเป็นอนาคต")
+                    } else if (res.error.includes("Start Time must be future")) {
+                        setErrorMessage("เวลาเริ่มต้นต้องเป็นอนาคต")
+                    } else if (res.error.includes("End Time must be future")) {
+                        setErrorMessage("เวลาสิ้นสุดต้องเป็นอนาคต")
                     }else {
                         setErrorMessage(res.error);
                       }
@@ -439,8 +422,8 @@ function WorkloadCreate() {
                     </ThemeProvider>
 
                     <Grid item xs={12}>
-                        <Button style={{ float: "left", background: '#4db6ac' }} component={RouterLink} to="/" variant="contained">
-                            Back
+                        <Button style={{ float: "left", background: '#4db6ac' }} component={RouterLink} to="/workloads" variant="contained">
+                            กลับ
                         </Button>
 
                         <Button
@@ -449,7 +432,7 @@ function WorkloadCreate() {
                             variant="contained"
                             color="primary"
                         >
-                            Submit
+                            บันทึก
                         </Button>
                     </Grid>
                 </Grid>
