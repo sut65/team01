@@ -49,7 +49,7 @@ func TestAdvicetext(t *testing.T) {
 
 }
 
-// Not now===
+// Not now
 func TestMedTimeMustBeNotNow(t *testing.T) {
 	g := NewGomegaWithT(t)
 

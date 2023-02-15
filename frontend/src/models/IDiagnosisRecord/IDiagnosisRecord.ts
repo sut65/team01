@@ -1,35 +1,28 @@
-import { EmployeeInterface } from "./IEmployee";
-import { HistorySheetInterface } from "./IHistorySheet";
-import { PatientRegisterInterface } from "./IPatientRegister";
+import {EmployeesInterface} from "../IEmployee/IEmployee"
+import { HistorySheetsInterface } from "../HistorySheet/IHistorySheet";
+//import { PatientRegistersInterface } from "../IPatientRegister/IPatientRegister";
 
-export interface DiagnosisRecordInterface {
+export interface DiagnosisRecordsInterface {
 	ID?: number;
 
 	// PatientRegisterID?: number;
 	// PatientRegister?: PatientRegisterInterface;
 
 	DoctorID?: number;
-	Doctor?: EmployeeInterface;
+	Doctor?: EmployeesInterface;
 
 	HistorySheetID?: number;
-	HistorySheet?: HistorySheetInterface;
+	HistorySheet?: HistorySheetsInterface;
 
 	DiseaseID?: number;
-	Disease?: DiseaseInterface;
+	Disease?: DiseasesInterface;
 
 	Examination?: string;
-	// MedicalCertificateID?: number;
-	// MedicalCertificate?: MedicalCertificateInterface;
 	MedicalCertificate?: boolean | null;
 	Date?: Date | null;
 }
 
-export interface DiseaseInterface {
+export interface DiseasesInterface {
 	ID: number;
 	Name: string;
-}
-
-export interface MedicalCertificateInterface {
-	ID: number;
-	Label: string;
 }

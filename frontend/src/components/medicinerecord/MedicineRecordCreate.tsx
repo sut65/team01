@@ -35,9 +35,9 @@ import {
 } from "../../services/HttpClientServiceMedicineRecord";
 import { GetTreatmentRecord } from "../../services/HttpClientServiceTreatmentRecord";
 import { MedicineRecordsInterface, StatusMedsInterface } from "../../models/IMedicineRecord";
-import { TreatmentRecordsInterface } from "../../models/ITreatmentRecord";
+import { TreatmentRecordsInterface } from "../../models/ITreatmentRecord/ITreatmentRecord";
 
-import { EmployeesInterface } from "../../models/IEmployee";
+import { EmployeesInterface } from "../../models/IEmployee/IEmployee";
 
 
 

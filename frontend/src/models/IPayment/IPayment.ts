@@ -1,6 +1,6 @@
-import { EmployeesInterface } from "./IEmployee";
-import { PatientRightsInterface } from "./IPatientRight";
-import { MedicineRecordsInterface } from "./IMedicineRecord";
+import { EmployeesInterface } from "../IEmployee/IEmployee";
+import { PatientRightsInterface } from "../IPatientRight/IPatientRight";
+import { MedicineRecordsInterface } from "../IMedicineRecord/IMedicineRecord";
 
 export interface PaymentsInterface {
     ID : number,
@@ -14,8 +14,6 @@ export interface PaymentsInterface {
     PaymentTime : Date | null | undefined,
 
     Total : number,
-
-    Telephone : string,
     
     CashierID : number,
     Cashier : EmployeesInterface
@@ -35,10 +33,3 @@ export interface PaymentTypesInterface {
     Payment : PaymentsInterface,
     
 }
-// export interface PatientRightsInterface {
-//     ID : number,
-    
-//     PaymentID : number,
-//     Payment : PaymentsInterface,
-    
-// }
