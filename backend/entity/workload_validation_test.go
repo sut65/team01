@@ -54,3 +54,34 @@ func TestDateNotbePastandFuture(t *testing.T) {
 		g.Expect(err.Error()).To(Equal("Date must be present"))
 	}
 }
+
+func TestStartTimeMustbeFuture(t *testing.T){
+	g := NewGomegaWithT(t)
+
+	workload:=Workload{
+		Date: time.Now(),
+		StartTime: time.Now().Add(-time.Hour),
+		EndTime: time.Now().Add(time.Hour),
+	}
+
+	ok, err:= govalidator.ValidateStruct(workload)
+	g.Expect(ok).ToNot(BeTrue())
+	g.Expect(err.Error).ToNot(BeNil())
+	g.Expect(err.Error()).To(Equal("Start Time must be future"))
+}
+
+func TestEndTimeMustbeFuture(t*testing.T){
+	
+	g:=NewGomegaWithT(t)
+
+	workload:=Workload{
+		Date: time.Now(),
+		StartTime: time.Now().Add(time.Hour),
+		EndTime: time.Now().Add(-time.Hour),
+	}
+
+	ok, err:=govalidator.ValidateStruct(workload)
+	g.Expect(ok).NotTo(BeTrue())
+	g.Expect(err.Error()).NotTo(BeNil())
+	g.Expect(err.Error()).To(Equal("End Time must be future"))
+}
