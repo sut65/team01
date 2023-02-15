@@ -1,19 +1,19 @@
 package controller
 
-// import (
-// 	"net/http"
+import (
+	"net/http"
 
-// 	"github.com/asaskevich/govalidator"
-// 	"github.com/gin-gonic/gin"
-// )
+	"github.com/asaskevich/govalidator"
+	"github.com/gin-gonic/gin"
+)
 
-// // POST /appointment
-// func CreateAppointmet(c *gin.Context) {
+// POST /appointment
+func CreateAppointmet(c *gin.Context) {
 
-// var appointment entity.Appointment
-// 	var patientregister entity.Patientegister
-// 	var room entity.Room
-// 	var employee entity.
+var appointment entity.Appointment
+	var patientregister entity.Patientegister
+	var room entity.Room
+	var employee entity.
 // 	var e
 
 // 	// ผลลัพธ์ที่ได้จากขั้นตอนที่ 8 จะถูก bind เข้าตัวแปร appointment
@@ -99,18 +99,18 @@ package controller
 // func UpdateAppointment(c *gin.Context) {
 // 	var appointment entity.Appointment
 // 	if err := c.ShouldBindJSON(&appointment); err != nil {
-// 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-// 	}
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	}
 
-// if tx := entity.DB().Where("id = ?", appointment.ID).First(&appointment); tx.RowsAffected == 0 {
-// 		c.JSON(http.StatusBadRequest, gin.H{"error": "appointment not found"})
-// 		return
-// 	}
+if tx := entity.DB().Where("id = ?", appointment.ID).First(&appointment); tx.RowsAffected == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "appointment not found"})
+		return
+	}
 
-// if err := entity.DB().Save(&appointment).Error; err != nil {
-// 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-// 		return
-// 	}
+if err := entity.DB().Save(&appointment).Error; err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
 
-// c.JSON(http.StatusOK, gin.H{"data": appointment})
-// }
+c.JSON(http.StatusOK, gin.H{"data": appointment})
+}
