@@ -1,4 +1,5 @@
-export interface HistorySheetInterface {
+import {EmployeesInterface} from "../IEmployee/IEmployee"
+export interface HistorySheetsInterface {
     ID: string;
     Weight: number;
     Height: number;
@@ -11,32 +12,19 @@ export interface HistorySheetInterface {
     OxygenSaturation: number;
     DrugAllergySymtom: string;
     PatientSymtom: string;
-
     PatientRegisterID: number;
-    PatientRegister: PatientRegisterInterface;
-
+    PatientRegister: PatientRegistersInterface;
     NurseID: number;
-    Nurse: NurseInterface;
-
+    Nurse: EmployeesInterface;
     DrugAllergyID: number;
-    DrugAllergy: DrugAllergyInterface;
+    DrugAllergy: DrugAllergysInterface;
 }
-export interface NurseInterface {
-    ID: string;
-    FirstName: string;
-    LastName: string;
-    IdentificationNumber: string;
-    BirthDay: Date | null;
-    Mobile: string;
-    Email: string;
-    Password: string;
-    Salary: number;
-}
-export interface DrugAllergyInterface{
+
+export interface DrugAllergysInterface{
     ID: string;
     Name: string;
 }
-export interface PatientRegisterInterface {
+export interface PatientRegistersInterface {
     ID: string,
     FirstName: string;
     LastName: string;

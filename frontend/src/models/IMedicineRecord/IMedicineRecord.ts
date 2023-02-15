@@ -1,5 +1,5 @@
-import { EmployeesInterface } from "./IEmployee";
-import { TreatmentRecordsInterface } from "./ITreatmentRecord";
+import {EmployeesInterface} from "../IEmployee/IEmployee"
+import { TreatmentRecordsInterface } from "../ITreatmentRecord/ITreatmentRecord";
 
 export interface MedicineRecordsInterface {
     ID: number,
