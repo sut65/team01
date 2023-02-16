@@ -9,10 +9,10 @@ import (
 	"github.com/sut65/team01/entity"
 )
 
-// Post /Patientright
+// Post /patientrights
 func CreatePatientrights(c *gin.Context) {
 
-	var	patientright entity.PatientRight
+	var patientright entity.PatientRight
 	var righttype entity.RightType
 	var hospital entity.Hospital
 	var employee entity.Employee
@@ -43,11 +43,11 @@ func CreatePatientrights(c *gin.Context) {
 
 	// : สร้าง patient
 	pt := entity.PatientRight{
-		RightType:      	righttype,        	// โยงความสัมพันธ์กับ Entity PatientType
-		Hospital:      		hospital,       	// โยงความสัมพันธ์กับ Entity PatientRight
-		Employee: 			employee,
-		DateRocrcord: 		patientright.DateRocrcord,	// ตั่งค่าของ HN ให้เท่ากับค่าที่รับมา
-		Note:				patientright.Note,	// ตั่งค่าของ Note ให้เท่ากับค่าที่รับมา
+		RightType:    righttype, // โยงความสัมพันธ์กับ Entity PatientType
+		Hospital:     hospital,  // โยงความสัมพันธ์กับ Entity PatientRight
+		Employee:     employee,
+		DateRocrcord: patientright.DateRocrcord, // ตั่งค่าของ HN ให้เท่ากับค่าที่รับมา
+		Note:         patientright.Note,         // ตั่งค่าของ Note ให้เท่ากับค่าที่รับมา
 	}
 
 	// : ขั้นตอนการ validate ข้อมูล
@@ -116,5 +116,5 @@ func UpdatePatientRights(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"data":patientright})
+	c.JSON(http.StatusOK, gin.H{"data": patientright})
 }

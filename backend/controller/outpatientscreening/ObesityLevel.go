@@ -1,54 +1,54 @@
 package controller
 
-import (
-	"net/http"
+// import (
+// 	"net/http"
 
-	"github.com/sut65/team01/entity"
-	//"github.com/ChatreeDev/sa-65-example/entity"
-	"github.com/gin-gonic/gin"
-)
+// 	"github.com/sut65/team01/entity"
+// 	//"github.com/ChatreeDev/sa-65-example/entity"
+// 	"github.com/gin-gonic/gin"
+// )
 
-// POST /ObesityLevels
-func CreateObesityLevel(c *gin.Context) {
-	var ObesityLevel entity.ObesityLevel
-	if err := c.ShouldBindJSON(&ObesityLevel); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
+// // POST /obesitylevels
+// func CreateObesityLevel(c *gin.Context) {
+// 	var ObesityLevel entity.ObesityLevel
+// 	if err := c.ShouldBindJSON(&ObesityLevel); err != nil {
+// 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+// 		return
+// 	}
 
-	if err := entity.DB().Create(&ObesityLevel).Error; err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-	c.JSON(http.StatusOK, gin.H{"data": ObesityLevel})
-}
+// 	if err := entity.DB().Create(&ObesityLevel).Error; err != nil {
+// 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+// 		return
+// 	}
+// 	c.JSON(http.StatusOK, gin.H{"data": ObesityLevel})
+// }
 
-// GET /ObesityLevel/:id
-func GetObesityLevel(c *gin.Context) {
-	var ObesityLevel entity.ObesityLevel
+// // GET /obesitylevel/:id
+// func GetObesityLevel(c *gin.Context) {
+// 	var ObesityLevel entity.ObesityLevel
 
-	id := c.Param("id")
-	if err := entity.DB().Raw("SELECT * FROM obesity_levels WHERE id = ?", id).Find(&ObesityLevel).Error; err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
+// 	id := c.Param("id")
+// 	if err := entity.DB().Raw("SELECT * FROM obesity_levels WHERE id = ?", id).Find(&ObesityLevel).Error; err != nil {
+// 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+// 		return
+// 	}
 
-	c.JSON(http.StatusOK, gin.H{"data": ObesityLevel})
-}
+// 	c.JSON(http.StatusOK, gin.H{"data": ObesityLevel})
+// }
 
-// GET /ObesityLevels
-func ListObesityLevels(c *gin.Context) {
-	var ObesityLevels []entity.ObesityLevel //[] ส่งเป็นแบบลิสต์
+// // GET /obesitylevels
+// func ListObesityLevels(c *gin.Context) {
+// 	var ObesityLevels []entity.ObesityLevel //[] ส่งเป็นแบบลิสต์
 
-	if err := entity.DB().Raw("SELECT * FROM obesity_levels").Scan(&ObesityLevels).Error; err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
+// 	if err := entity.DB().Raw("SELECT * FROM obesity_levels").Scan(&ObesityLevels).Error; err != nil {
+// 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+// 		return
+// 	}
 
-	c.JSON(http.StatusOK, gin.H{"data": ObesityLevels})
-}
+// 	c.JSON(http.StatusOK, gin.H{"data": ObesityLevels})
+// }
 
-// // DELETE /ObesityLevels/:id
+// // DELETE /obesitylevels/:id
 // func DeleteObesityLevel(c *gin.Context) {
 // 	id := c.Param("id")
 // 	if tx := entity.DB().Exec("DELETE FROM obesity_levels WHERE id = ?", id); tx.RowsAffected == 0 {
@@ -59,7 +59,7 @@ func ListObesityLevels(c *gin.Context) {
 // 	c.JSON(http.StatusOK, gin.H{"data": id})
 // }
 
-// // PATCH /ObesityLevels
+// // PATCH /obesitylevels
 // func UpdateObesityLevel(c *gin.Context) {
 // 	var ObesityLevel entity.ObesityLevel
 // 	if err := c.ShouldBindJSON(&ObesityLevel); err != nil {
@@ -80,7 +80,7 @@ func ListObesityLevels(c *gin.Context) {
 // 	c.JSON(http.StatusOK, gin.H{"data": ObesityLevel})
 // }
 
-/* Note.
-1. ObesityLevel เป็นตารางรอง ไม่จำเป็นต้องมี preload เพราะไม่ต้องไปดึงของใครมาใส่ของตัวเอง
-2.
-*/
+// /* Note.
+// 1. ObesityLevel เป็นตารางรอง ไม่จำเป็นต้องมี preload เพราะไม่ต้องไปดึงของใครมาใส่ของตัวเอง
+// 2.
+// */

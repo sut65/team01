@@ -2,11 +2,13 @@ package controller
 
 import (
 	"net/http"
-	"github.com/sut65/team01/entity"
-	"github.com/gin-gonic/gin"
+
 	"github.com/asaskevich/govalidator"
+	"github.com/gin-gonic/gin"
+	"github.com/sut65/team01/entity"
 )
 
+// POST /employees
 func CreateEmployee(c *gin.Context) {
 	var employee entity.Employee
 	var admin entity.Admin
@@ -45,18 +47,18 @@ func CreateEmployee(c *gin.Context) {
 
 	// 14: สร้าง Employee
 	WV := entity.Employee{
-		Admin: 			admin,
-		IDCard:     	employee.IDCard, // ตั้งค่าฟิลด์ IDCard 
-		Title:   		title,    // โยงความสัมพันธ์กับ Entity Title
-		FirstName:  	employee.FirstName,   // ตั้งค่าฟิลด์ Name
-		LastName:   	employee.LastName,
-		Role:   		role,    // โยงความสัมพันธ์กับ Entity Position
-		PhoneNumber:    employee.PhoneNumber,   // ตั้งค่าฟิลด์ PhoneNumber
-		Email: 			employee.Email,  /// ตั้งค่าฟิลด์ Email
-		Password: 		employee.Password,  // ตั้งค่าฟิลด์ Password
-		Gender:     	gender,      // โยงความสัมพันธ์กับ Entity Gender
-		Salary:			employee.Salary, // ตั้งค่าฟิลด์ Salary
-		Birthday: 		employee.Birthday, // ตั้งค่าฟิลด์ BirthDay
+		Admin:       admin,
+		IDCard:      employee.IDCard,    // ตั้งค่าฟิลด์ IDCard
+		Title:       title,              // โยงความสัมพันธ์กับ Entity Title
+		FirstName:   employee.FirstName, // ตั้งค่าฟิลด์ Name
+		LastName:    employee.LastName,
+		Role:        role,                 // โยงความสัมพันธ์กับ Entity Position
+		PhoneNumber: employee.PhoneNumber, // ตั้งค่าฟิลด์ PhoneNumber
+		Email:       employee.Email,       /// ตั้งค่าฟิลด์ Email
+		Password:    employee.Password,    // ตั้งค่าฟิลด์ Password
+		Gender:      gender,               // โยงความสัมพันธ์กับ Entity Gender
+		Salary:      employee.Salary,      // ตั้งค่าฟิลด์ Salary
+		Birthday:    employee.Birthday,    // ตั้งค่าฟิลด์ BirthDay
 	}
 
 	//ขั้นตอนการ validate ที่นำมาจาก  unit test
@@ -112,8 +114,8 @@ func GetEmployeerole(c *gin.Context) {
 func DeleteEmployee(c *gin.Context) {
 	id := c.Param("id")
 	if tx := entity.DB().Exec("DELETE FROM employees WHERE id = ?", id); tx.RowsAffected == 0 {
-		   c.JSON(http.StatusBadRequest, gin.H{"error": "employee not found"})
-		   return
+		c.JSON(http.StatusBadRequest, gin.H{"error": "employee not found"})
+		return
 	}
 	c.JSON(http.StatusOK, gin.H{"data": id})
 }
@@ -122,18 +124,18 @@ func DeleteEmployee(c *gin.Context) {
 func UpdateEmployee(c *gin.Context) {
 	var employee entity.Employee
 	if err := c.ShouldBindJSON(&employee); err != nil {
-		   c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		   return
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
 	}
 
 	if tx := entity.DB().Where("id = ?", employee.ID).First(&employee); tx.RowsAffected == 0 {
-		   c.JSON(http.StatusBadRequest, gin.H{"error": "employee not found"})
-		   return
+		c.JSON(http.StatusBadRequest, gin.H{"error": "employee not found"})
+		return
 	}
 
 	if err := entity.DB().Save(&employee).Error; err != nil {
-		   c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		   return
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
 	}
 	c.JSON(http.StatusOK, gin.H{"data": employee})
 }
