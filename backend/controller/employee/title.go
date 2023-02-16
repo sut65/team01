@@ -2,10 +2,27 @@ package controller
 
 import (
 	"net/http"
-	"github.com/sut65/team01/entity"
+
 	"github.com/gin-gonic/gin"
+	"github.com/sut65/team01/entity"
 )
 
+// POST	/titles
+func CreateTitle(c *gin.Context) {
+	var title entity.Title
+	if err := c.ShouldBindJSON(&title); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	if err := entity.DB().Create(&title).Error; err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"data": title})
+}
+
+// GET /title/:id
 func GetTitle(c *gin.Context) {
 	var title entity.Title
 	id := c.Param("id")
@@ -13,9 +30,10 @@ func GetTitle(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"data":title})
+	c.JSON(http.StatusOK, gin.H{"data": title})
 }
 
+// GET /titles
 func ListTitle(c *gin.Context) {
 	var title []entity.Title
 	if err := entity.DB().Raw("SELECT * FROM titles").Scan(&title).Error; err != nil {
@@ -26,3 +44,34 @@ func ListTitle(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"data": title})
 }
 
+// DELETE /title/:id
+func DeleteTitle(c *gin.Context) {
+	id := c.Param("id")
+	if tx := entity.DB().Exec("DELETE FROM titles WHERE id = ?", id); tx.RowsAffected == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "title not found"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"data": id})
+}
+
+// PATCH /titles
+func UpdateTitle(c *gin.Context) {
+	var title entity.Title
+	if err := c.ShouldBindJSON(&title); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	if tx := entity.DB().Where("id = ?", title.ID).First(&title); tx.RowsAffected == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "title not found"})
+		return
+	}
+
+	if err := entity.DB().Save(&title).Error; err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"data": title})
+}

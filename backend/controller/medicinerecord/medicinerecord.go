@@ -9,7 +9,7 @@ import (
 	"github.com/asaskevich/govalidator"
 )
 
-// POST /medicinerecord
+// POST /medicinerecords
 func CreateMedicineRecord(c *gin.Context) {
 
 	var pharmacist entity.Employee

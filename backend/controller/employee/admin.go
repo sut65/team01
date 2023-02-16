@@ -1,9 +1,10 @@
 package controller
 
 import (
-	"github.com/sut65/team01/entity"
-	"github.com/gin-gonic/gin"
 	"net/http"
+
+	"github.com/gin-gonic/gin"
+	"github.com/sut65/team01/entity"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -19,6 +20,7 @@ func GetAdmin(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"data": admin})
 }
 
+// GET /admins
 func ListAdmin(c *gin.Context) {
 	var admin []entity.Admin
 	if err := entity.DB().Raw("SELECT * FROM admins").Find(&admin).Error; err != nil {
@@ -29,6 +31,7 @@ func ListAdmin(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"data": admin})
 }
 
+// POST /admins
 func CreateAdmin(c *gin.Context) {
 	var admin entity.Admin
 	if err := c.ShouldBindJSON(&admin); err != nil {
@@ -45,6 +48,37 @@ func CreateAdmin(c *gin.Context) {
 	admin.Password = string(bytes)
 
 	if err := entity.DB().Create(&admin).Error; err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"data": admin})
+}
+
+// DELETE /admins/:id
+func DeleteAdmin(c *gin.Context) {
+	id := c.Param("id")
+	if tx := entity.DB().Exec("DELETE FROM admins WHERE id = ?", id); tx.RowsAffected == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "admin not found"})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"data": id})
+}
+
+// PATCH /admins
+func UpdateAdmin(c *gin.Context) {
+	var admin entity.Admin
+	if err := c.ShouldBindJSON(&admin); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	if tx := entity.DB().Where("id = ?", admin.ID).First(&admin); tx.RowsAffected == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "disease not found"})
+		return
+	}
+
+	if err := entity.DB().Save(&admin).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
