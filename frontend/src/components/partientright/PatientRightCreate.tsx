@@ -1,26 +1,29 @@
 import React from "react";
 import { Link as RouterLink } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { makeStyles, Theme, createStyles } from "@material-ui/core/styles";
-import TextField from "@material-ui/core/TextField";
-import Button from "@material-ui/core/Button";
-import Container from "@material-ui/core/Container";
-import Paper from "@material-ui/core/Paper";
-import Box from "@material-ui/core/Box";
-import Grid from "@material-ui/core/Grid";
-import Typography from "@material-ui/core/Typography";
-import MuiAlert, { AlertProps } from "@material-ui/lab/Alert";
-import Divider from "@material-ui/core/Divider";
-import Snackbar from '@material-ui/core/Snackbar';
-import Select from "@material-ui/core/Select";
-import { FormControl } from "@material-ui/core";
-import { AlertTitle } from "@material-ui/lab";
-import { EmployeeInterface } from "../models/IEmployee";
-import { HospitalInterface } from "../models/IHospital";
-import { PatientInterface } from "../models/IPatient";
-import { RightTypeInterface } from "../models/IRighttype";
-import { PatientRightInterface } from "../models/IPatientRight";
-import { MuiPickersUtilsProvider,KeyboardDateTimePicker,} from "@material-ui/pickers";
+import { makeStyles, Theme, createStyles } from "@mui/material/styles";
+import TextField from "@mui/material/TextField";
+import Button from "@mui/material/Button";
+import Container from "@mui/material/Container";
+import Paper from "@mui/material/Paper";
+import Box from "@mui/material/Box";
+import Grid from "@mui/material/Grid";
+import Typography from "@mui/material/Typography";
+import MuiAlert, { AlertProps } from "@mui/material/Alert";
+import Divider from "@mui/material/Divider";
+import Snackbar from '@mui/material/Snackbar';
+import Select from "@mui/material/Select";
+import { FormControl } from "@mui/material";
+import AlertTitle from "@mui/material";
+import { EmployeesInterface } from "../../models/IEmployee/IEmployee";
+import { HospitalInterface } from "../../models/IPatientRight/IHospital";
+import { PatientRegistersInterface } from "../../models/IHistorySheet/IHistorySheet";
+import { RightTypeInterface } from "../../models/IPatientRight/IRighttype";
+import { PatientRightInterface } from "../../models/IPatientRight/IPatientRight";
+import {
+  MuiPickersUtilsProvider,
+  KeyboardDatePicker
+} from "@material-ui/pickers";
 import DateFnsUtils from "@date-io/date-fns";
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -52,10 +55,10 @@ function CreatePatientRight() {
   const classes = useStyles();
   const [SendingTime, setSendingTime] = React.useState<Date | null>(new Date(),);
   const [hospital, setHospital] = useState<HospitalInterface[]>([]);
-  const [patients, setPatients] = useState<PatientInterface[]>([]); 
+  const [patients, setPatients] = useState<PatientRegistersInterface[]>([]); 
   const [righttype, setRightType] = useState<RightTypeInterface[]>([]);
   const [patientright, setPatientRight] = useState<Partial<PatientRightInterface>>({});
-  const [nurse, setNurse] = useState<EmployeeInterface>();
+  const [nurse, setNurse] = useState<EmployeesInterface>();
   const [errorMessage, setErrorMessage] = useState("");
 
   const [success, setSuccess] = useState(false);
@@ -174,7 +177,7 @@ function CreatePatientRight() {
   };
 
   function submit() {
-    if(patientright.PatientID == 0){
+    if(patientright.PatientRegisterID == 0){
       setError(true);
       setErrorMessage("กรุณาเลือกคนไข้")
     }
@@ -188,7 +191,7 @@ function CreatePatientRight() {
     }else{
       setError(false)
       let data = {
-      PatientID: convertType(patientright.PatientID),
+      PatientID: convertType(patientright.PatientRegisterID),
       EmployeeID : convertType(nurse?.ID),
       RightTypeID: convertType(patientright.RightTypeID),
       HospitalID: convertType(patientright.HospitalID),
@@ -236,7 +239,7 @@ function CreatePatientRight() {
     setPatientRight({
       Note: "",
       HospitalID: 0,
-      PatientID: 0,
+      PatientRegisterID: 0,
       RightTypeID: 0,
       EmployeeID: 0,
     });
@@ -282,7 +285,7 @@ function CreatePatientRight() {
               <p style={{color:"#006A7D",fontSize: "10"}}>คนไข้</p>
               <Select
                 native
-                value={patientright.PatientID}
+                value={patientright.PatientRegisterID}
                 onChange={handleChange}
                 inputProps={{
                   name: "PatientID",
@@ -291,7 +294,7 @@ function CreatePatientRight() {
                 <option aria-label="None" value="">
                   กรุณาเลือกคนไข้
                 </option>
-                {patients.map((item: PatientInterface) => (
+                {patients.map((item: PatientRegistersInterface) => (
                   <option value={item.ID} key={item.ID}>
                     {item.FirstName}
                   </option>
