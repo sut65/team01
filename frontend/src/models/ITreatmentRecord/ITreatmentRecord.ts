@@ -21,7 +21,7 @@ export interface TreatmentRecordsInterface {
     Treatment?: string;
     Note?: string;
     
-    Appointment?: boolean;//int;
+    Appointment?: boolean | null;
     Date?: Date | null;
 }
 
