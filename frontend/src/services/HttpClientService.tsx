@@ -1,7 +1,7 @@
 import React from "react";
-import { DiagnosisRecordInterface } from "../models/IDiagnosisRecord";
-import { SigninInterface } from "../models/ISignIn";
-import { TreatmentRecordInterface } from "../models/ITreatmentRecord";
+import { DiagnosisRecordsInterface } from "../models/IDiagnosisRecord/IDiagnosisRecord";
+import { SigninInterface } from "../models/ISignin/ISignin";
+import { TreatmentRecordsInterface } from "../models/ITreatmentRecord/ITreatmentRecord";
 
 const apiUrl = "http://localhost:8080";
 
@@ -195,7 +195,7 @@ async function GetHistorysheet() {
 //================================================================================================
 
 //Create Diagnosis
-async function CreateDiagnosisRecord(data: DiagnosisRecordInterface) {
+async function CreateDiagnosisRecord(data: DiagnosisRecordsInterface) {
   const requestOption = {
     method: "POST",
     headers: {
@@ -243,7 +243,7 @@ async function GetDiagnosisRecord() {
 }
 
 //Create Treatment
-async function CreateTreatmentRecord(data: TreatmentRecordInterface) {
+async function CreateTreatmentRecord(data: TreatmentRecordsInterface) {
   const requestOption = {
     method: "POST",
     headers: {
