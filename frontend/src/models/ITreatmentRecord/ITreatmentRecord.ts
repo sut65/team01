@@ -1,8 +1,7 @@
 import { DiagnosisRecordsInterface } from "../IDiagnosisRecord/IDiagnosisRecord";
 import {EmployeesInterface} from "../IEmployee/IEmployee"
-//import { PatientRegisterInterface } from "./IPatientRegister";
 
-export interface TreatmentRecordsInterface {
+export interface TreatmentRecordInterface {
     ID?: number;
 
     // PatientRegisterID?: number;
@@ -14,10 +13,8 @@ export interface TreatmentRecordsInterface {
     DiagnosisRecordID?: number;
     DiagnosisRecord?:   DiagnosisRecordsInterface;
 
-    MedicineID?: number;
-    Medicine?:   MedicinesInterface;
+    MedicineOrders?:   MedicineOrdersInterface[];
     
-    MedicineQuantity?: number;
     Treatment?: string;
     Note?: string;
     
@@ -25,10 +22,23 @@ export interface TreatmentRecordsInterface {
     Date?: Date | null;
 }
 
-export interface MedicinesInterface {
+export interface MedicineInterface {
     ID: number;
 
     Name: string;
     Description: string;
     Price: number;
+}
+
+export interface MedicineOrdersInterface {
+    ID: number;
+
+    TreatmentRecordID?: number;
+    TreatmentRecord?:   TreatmentRecordInterface;
+
+    MedicineID?:    number;
+    Medicine?:      MedicineInterface;
+
+    OrderAmount?:   number;
+
 }
