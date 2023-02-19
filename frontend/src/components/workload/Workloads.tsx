@@ -11,9 +11,9 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Container from '@mui/material/Container';
-import WorkloadCreate from "./WorkloadCreate";
 import moment from "moment";
-import { WorkloadsInterface } from "../models/IWorkload";
+import { WorkloadsInterface } from "../../models/IWorkload/IWorkload";
+import { Divider } from "@mui/material";
 
 function Workloads() {
     const [workloads, setWorkload] = React.useState<WorkloadsInterface[]>([]);
@@ -48,8 +48,9 @@ function Workloads() {
             <Container maxWidth="lg"
                 sx={{ marginTop: 2 }}
             >
+                <Paper>
                 <Box display="flex">
-                    <Box flexGrow={1}>
+                    <Box flexGrow={1} sx={{ paddingX: 2, paddingY: 1}}>
                         <Typography
                             component="h2"
                             variant="h6"
@@ -65,12 +66,16 @@ function Workloads() {
                             component={RouterLink}
                             to="/createworkload"
                             variant="contained"
+                            color="primary"
                             style={{background: '#4db6ac' }}
+                            sx={{marginTop:1,marginRight:1}}
                         >
                             บันทึกภาระงานแพทย์
                         </Button>
                     </Box>
                 </Box>
+                <Divider />
+                
                 <TableContainer component={Paper}>
                     <Table aria-label="simple table">
                         <TableHead>
@@ -98,6 +103,7 @@ function Workloads() {
                                 </TableCell>
                             </TableRow>
                         </TableHead>
+
                         <TableBody>
                             {workloads.map((item: WorkloadsInterface) => (
                                 <TableRow key={item.ID}>
@@ -113,6 +119,7 @@ function Workloads() {
                         </TableBody>
                     </Table>
                 </TableContainer>
+                </Paper>
             </Container>
         </div>
     )
