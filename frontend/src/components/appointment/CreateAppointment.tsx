@@ -1,52 +1,39 @@
 import React from "react";
 import { useEffect, useState } from "react";
 import { Link as RouterLink } from "react-router-dom";
-import { makeStyles, Theme, createStyles } from "@material-ui/core/styles";
-import TextField from "@material-ui/core/TextField";
-import Button from "@material-ui/core/Button";
-import Container from "@material-ui/core/Container";
-import Paper from "@material-ui/core/Paper";
-import Box from "@material-ui/core/Box";
-import Grid from "@material-ui/core/Grid";
-import Typography from "@material-ui/core/Typography";
-import MuiAlert, { AlertProps } from "@material-ui/lab/Alert";
-import Divider from "@material-ui/core/Divider";
-import Snackbar from '@material-ui/core/Snackbar';
-import Select from "@material-ui/core/Select";
-import { FormControl } from "@material-ui/core";
-
-import { EmployeeInterface } from "../models/IEmployee";
-import { ClinicInterface } from "../models/IClinic";
-import { PatientInterface } from "../models/IPatient";
-import { AppointmentInterface } from "../models/IAppointment";
-import {
-  MuiPickersUtilsProvider,
-  KeyboardDateTimePicker,
-} from "@material-ui/pickers";
-import DateFnsUtils from "@date-io/date-fns";
-import { AlertTitle } from '@material-ui/lab';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+import Button from "@mui/material/Button";
+import Container from "@mui/material/Container";
+import Paper from "@mui/material/Paper";
+import Box from "@mui/material/Box";
+import Grid from "@mui/material/Grid";
+import Typography from "@mui/material/Typography";
+import MuiAlert, { AlertProps } from "@mui/material/Alert";
+import Divider from "@mui/material/Divider";
+import Snackbar from "@mui/material/Snackbar";
+import Select,{SelectChangeEvent} from "@mui/material/Select";
+import FormControl from '@mui/material/FormControl';
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { EmployeesInterface } from "../../models/IEmployee/IEmployee";
+import { RoomsInterface } from "../../models/IWorkload/IWorkload";
+import { PatientRegistersInterface } from "../../models/IPatientRegister/IPatientRegister";
+import { AppointmentInterface } from "../../models/IAppointment/IAppointment";
+import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
+import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
+import TextField, { TextFieldProps } from "@mui/material/TextField";
 import { useForm } from "react-hook-form";
 
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    root: {
-      flexGrow: 1,
+const theme = createTheme({
+  palette: {
+    primary: {
+      light: '#80cbc4',
+      main: '#4db6ac',
+      dark: '#26a69a',
+      contrastText: '#fff',
     },
-    container: {
-      marginTop: theme.spacing(2),
-    },
-    paper: {
-      padding: theme.spacing(2),
-      color: theme.palette.text.secondary,
-    },
-    text: {
-      color: "#000000",
-      fontSize: "1rem",
-    }
-
-  })
-);
+  },
+});
 
 const Alert = (props: AlertProps) => {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
@@ -54,19 +41,18 @@ const Alert = (props: AlertProps) => {
 
 function AppointmentCreate() {
 
-  const classes = useStyles();
   const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
-  const [clinics, setClinics] = useState<ClinicInterface[]>([]);
-  const [patients, setPatients] = useState<PatientInterface[]>([]);
+  const [rooms, setRooms] = useState<RoomsInterface[]>([]);
+  const [patientRegisters, setPatientRegisters] = useState<PatientRegistersInterface[]>([]);
   const [appointment, setAppointment] = useState<Partial<AppointmentInterface>>({});
-  const [doctors, setDoctors] = useState<EmployeeInterface[]>([]);
+  const [doctors, setDoctors] = useState<EmployeesInterface[]>([]);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const { register, handleSubmit, watch, formState: { errors }, } = useForm<AppointmentInterface>();
 
 
-  const handleClose = (event?: React.SyntheticEvent, reason?: string) => {
+  const handleClose = (event?:Event| React.SyntheticEvent, reason?: string) => {
     if (reason === "clickaway") {
       return;
     }
@@ -75,7 +61,7 @@ function AppointmentCreate() {
   };
 
   const handleChange = (
-    event: React.ChangeEvent<{ name?: string; value: unknown }>
+    event: SelectChangeEvent<number>
   ) => {
     const name = event.target.name as keyof typeof appointment;
     setAppointment({
@@ -111,30 +97,30 @@ function AppointmentCreate() {
     headers: { Authorization: `Bearer ${localStorage.getItem("token")}`, "Content-Type": "application/json" },
   };
 
-  const getClinic = async () => {
-    fetch(`${apiUrl}/clinics`, requestOptions)
+  const getRoom = async () => {
+    fetch(`${apiUrl}/rooms`, requestOptions)
       .then((response) => response.json())
       .then((res) => {
         if (res.data) {
-          setClinics(res.data);
+          setRooms(res.data);
         } else {
           console.log("else");
         }
       });
   };
 
-  const getPatient = async () => {
-    fetch(`${apiUrl}/patients`, requestOptions)
+  const getPatientRegister = async () => {
+    fetch(`${apiUrl}/patient_registers`, requestOptions)
       .then((response) => response.json())
       .then((res) => {
         if (res.data) {
-          setPatients(res.data);
+          setPatientRegisters(res.data);
         } else {
           console.log("else");
         }
       });
   };
-  console.log("Patient", doctors);
+  console.log("PatientRegister", doctors);
 
   const getDoctor = async () => {
     fetch(`${apiUrl}/employeerole/1`, requestOptions)
@@ -150,8 +136,8 @@ function AppointmentCreate() {
   console.log("Doctor", doctors);
 
   useEffect(() => {
-    getClinic();
-    getPatient();
+    getRoom();
+    getPatientRegister();
     getDoctor();
   }, []);
 
@@ -162,9 +148,9 @@ function AppointmentCreate() {
 
   function submit() {
     let data = {
-      PatientID: convertType(appointment.PatientID),
+      PatientRegisterID: convertType(appointment.PatientRegisterID),
       EmployeeID: convertType(appointment.EmployeeID),
-      ClinicID: convertType(appointment.ClinicID),
+      RoomID: convertType(appointment.RoomID),
       RoomNumber: convertType(appointment.RoomNumber),
       AppointmentTime: selectedDate,
       Note: appointment.Note ?? "",
@@ -197,11 +183,11 @@ function AppointmentCreate() {
             setErrorMessage("กรุณากรอกหมายเลขห้องตรวจ")
           } else if (res.error.includes("AppointmentTime must be in the future")) {
             setErrorMessage("กรุณาเลือกวันเวลานัดหมายที่เป็นอนาคต")
-          } else if (res.error.includes("patient not found")) {
+          } else if (res.error.includes("patientRegister not found")) {
             setErrorMessage("กรุณาเลือกหมายเลขบัตรประชาชนผู้ป่วย")
           } else if (res.error.includes("doctor not found")) {
             setErrorMessage("กรุณาเลือกเเพทย์")
-          } else if (res.error.includes("clinic not found")) {
+          } else if (res.error.includes("Room not found")) {
             setErrorMessage("กรุณาเลือกคลินิก")
           } else if (res.error.includes("Note cannot be blank")) {
             setErrorMessage("กรุณากรอกหมายเหตุการนัด")
@@ -215,9 +201,9 @@ function AppointmentCreate() {
   // function clear form after submit success
   const ClearForm = () => {
     setAppointment({
-      PatientID: 0,
+      PatientRegisterID: 0,
       EmployeeID: 0,
-      ClinicID: 0,
+      RoomID: 0,
       RoomNumber: 0,
       Note: "",
     });
@@ -226,54 +212,60 @@ function AppointmentCreate() {
 
   return (
 
-    <Container className={classes.container} maxWidth="md" >
-      <Snackbar open={success} autoHideDuration={6000} onClose={handleClose}>
+     <Container maxWidth="md">
+      <Snackbar
+        open={success}
+        autoHideDuration={6000}
+        onClose={handleClose}
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+      >
         <Alert onClose={handleClose} severity="success">
-          <AlertTitle>Success</AlertTitle>
           บันทึกข้อมูลสำเร็จ
         </Alert>
       </Snackbar>
+
       <Snackbar open={error} autoHideDuration={6000} onClose={handleClose}>
         <Alert onClose={handleClose} severity="error">
-          <AlertTitle>Error</AlertTitle>
-          บันทึกข้อมูลไม่สำเร็จ: {errorMessage}
+          บันทึกข้อมูลไม่สำเร็จ  {errorMessage}
         </Alert>
       </Snackbar>
-      <form onSubmit={handleSubmit(submit)}>
-        <Paper className={classes.paper}>
-          <Box display="flex" >
-            <Box flexGrow={1}>
 
-              <Typography
-                component="h2"
-                variant="h6"
-                color="primary"
-                gutterBottom
-
-              >
-                บันทึกรายการนัดหมาย
-              </Typography>
-            </Box>
+      <Paper>
+        <Box
+          display="flex"
+          sx={{marginTop: 2}}
+        >
+          
+          <Box sx={{ paddingX: 2, paddingY: 1}}>
+            <Typography 
+              component="h2"
+              variant="h6"
+              color="#4db6ac"
+              gutterBottom
+            >
+              บันทึกข้อมูลบุคลากร
+            </Typography>
           </Box>
-          <Divider />
-          <Grid container spacing={3} className={classes.root}>
+        </Box>
+        <Divider />
+          <Grid container spacing={3}>
             <Grid item xs={12} sm={6}>
               <FormControl fullWidth variant="outlined">
                 <p style={{ color: "#006A7D", fontSize: "10" }}>หมายเลขบัตรประชาชน</p>
                 <Select
                   native
-                  value={appointment.PatientID}
+                  value={appointment.PatientRegisterID}
                   onChange={handleChange}
                   inputProps={{
-                    name: "PatientID",
+                    name: "PatientRegisterID",
                   }}
                 >
                   <option aria-label="None" value="">
                     กรุณาเลือกหมายเลขบัตรประชาชน
                   </option>
-                  {patients.map((item: PatientInterface) => (
+                  {patientRegisters.map((item: PatientRegistersInterface) => (
                     <option value={item.ID} key={item.ID}>
-                      {item.Pid}
+                      {item.ID}
                     </option>
                   ))}
                 </Select>
@@ -296,9 +288,10 @@ function AppointmentCreate() {
                   <option aria-label="None" value="">
                     กรุณาเลือกแพทย์
                   </option>
-                  {doctors.map((item: EmployeeInterface) => (
+                  {doctors.map((item: EmployeesInterface) => (
                     <option value={item.ID} key={item.ID}>
-                      {item.Name}
+                      {item.FirstName}
+                      {item.LastName}
                     </option>
                   ))}
                 </Select>
@@ -309,18 +302,18 @@ function AppointmentCreate() {
                 <p style={{ color: "#006A7D", fontSize: "10" }}>คลินิก</p>
                 <Select
                   native
-                  value={appointment.ClinicID}
+                  value={appointment.RoomID}
                   onChange={handleChange}
                   inputProps={{
-                    name: "ClinicID",
+                    name: "RoomID",
                   }}
                 >
                   <option aria-label="None" value="">
                     กรุณาเลือกคลินิก
                   </option>
-                  {clinics.map((item: ClinicInterface) => (
+                  {rooms.map((item: RoomsInterface) => (
                     <option value={item.ID} key={item.ID}>
-                      {item.ClinicName}
+                      {item.Name}
                     </option>
                   ))}
                 </Select>
@@ -340,21 +333,25 @@ function AppointmentCreate() {
                 />
               </FormControl>
             </Grid>
-            <Grid item xs={12} sm={6}>
-              <FormControl fullWidth variant="outlined">
-                <p style={{ color: "#006A7D", fontSize: "10" }}>วันที่และเวลานัดหมาย</p>
-                <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                  <KeyboardDateTimePicker
-                    name="AppointmentTime"
-                    value={selectedDate}
-                    onChange={handleDateChange}
-                    label="กรุณาเลือกวันที่และเวลา"
-                    minDate={new Date("2018-01-01T00:00")}
-                    format="yyyy/MM/dd hh:mm a"
-                  />
-                </MuiPickersUtilsProvider>
-              </FormControl>
-            </Grid>
+            <ThemeProvider theme={theme}>
+          <Grid item xs={12}>
+            <FormControl fullWidth variant="outlined">
+              <p style={{ color: "#006A7D", fontSize: "10" }}>วันที่และเวลานัดหมาย</p>
+              <LocalizationProvider dateAdapter={AdapterDateFns}>
+                <DesktopDatePicker
+                  label="Appointment time"
+                  inputFormat="dd/MM/yyyy"
+                  value={selectedDate || new Date()}
+                  onChange={handleDateChange}
+                  renderInput={(params: TextFieldProps) => {
+                    return <TextField{...params}
+                    />;
+                  }}
+                />
+              </LocalizationProvider>
+            </FormControl>
+          </Grid>
+          </ThemeProvider>
             <Grid item xs={12} sm={6}>
               <FormControl fullWidth variant="outlined">
                 <p style={{ color: "#006A7D", fontSize: "10" }}>หมายเหตุ :</p>
@@ -390,7 +387,6 @@ function AppointmentCreate() {
             </Grid>
           </Grid>
         </Paper>
-      </form>
     </Container>
   );
 }
