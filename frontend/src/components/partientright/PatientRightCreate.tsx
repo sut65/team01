@@ -1,7 +1,6 @@
 import React from "react";
-import { Link as RouterLink } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { makeStyles, Theme, createStyles } from "@mui/material/styles";
+import { createTheme } from '@mui/material/styles';
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import Container from "@mui/material/Container";
@@ -12,39 +11,28 @@ import Typography from "@mui/material/Typography";
 import MuiAlert, { AlertProps } from "@mui/material/Alert";
 import Divider from "@mui/material/Divider";
 import Snackbar from '@mui/material/Snackbar';
-import Select from "@mui/material/Select";
+import Select,{SelectChangeEvent}from "@mui/material/Select";
 import { FormControl } from "@mui/material";
-import AlertTitle from "@mui/material";
 import { EmployeesInterface } from "../../models/IEmployee/IEmployee";
 import { HospitalInterface } from "../../models/IPatientRight/IHospital";
-import { PatientRegistersInterface } from "../../models/IHistorySheet/IHistorySheet";
+import { PatientRegistersInterface } from "../../models/IPatientRegister/IPatientRegister";
 import { RightTypeInterface } from "../../models/IPatientRight/IRighttype";
 import { PatientRightInterface } from "../../models/IPatientRight/IPatientRight";
-import {
-  MuiPickersUtilsProvider,
-  KeyboardDatePicker
-} from "@material-ui/pickers";
-import DateFnsUtils from "@date-io/date-fns";
+import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
+import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
+import { TextFieldProps } from "@mui/material/TextField";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 
-const useStyles = makeStyles((theme: Theme) =>
-    createStyles({
-        root: {
-            flexGrow: 1,
-        },
-        container: {
-            marginTop: theme.spacing(2),
-        },
-        paper: {
-            padding: theme.spacing(2),
-            color: theme.palette.text.secondary,
-        },
-        text: {
-            color: "#000000",
-            fontSize: "1rem",
-        }
-
-    })
-);
+const theme = createTheme({
+  palette: {
+    primary: {
+      light: '#80cbc4',
+      main: '#4db6ac',
+      dark: '#26a69a',
+      contrastText: '#fff',
+    },
+  },
+});
 
 const Alert = (props: AlertProps) => {
     return <MuiAlert elevation={6} variant="filled" {...props} />;
@@ -52,7 +40,7 @@ const Alert = (props: AlertProps) => {
 
 function CreatePatientRight() {
 
-  const classes = useStyles();
+  const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
   const [SendingTime, setSendingTime] = React.useState<Date | null>(new Date(),);
   const [hospital, setHospital] = useState<HospitalInterface[]>([]);
   const [patients, setPatients] = useState<PatientRegistersInterface[]>([]); 
@@ -65,7 +53,7 @@ function CreatePatientRight() {
   const [error, setError] = useState(false);
 
 
-  const handleClose = (event?: React.SyntheticEvent, reason?: string) => {
+  const handleClose = (event?:Event| React.SyntheticEvent, reason?: string) => {
     if (reason === "clickaway") {
       return;
     }
@@ -74,7 +62,7 @@ function CreatePatientRight() {
   };
 
   const handleChange = (
-    event: React.ChangeEvent<{ name?: string; value: unknown }>
+    event: SelectChangeEvent<number>
   ) => {
     const name = event.target.name as keyof typeof patientright;
     setPatientRight({
@@ -248,7 +236,7 @@ function CreatePatientRight() {
 
   return (
 
-    <Container className={classes.container} maxWidth="md" >
+    <Container maxWidth="md" >
       <Snackbar open={success} autoHideDuration={6000} onClose={handleClose}>
         <Alert onClose={handleClose} severity="success">
           บันทึกข้อมูลสำเร็จ
@@ -257,12 +245,11 @@ function CreatePatientRight() {
 
       <Snackbar open={error} autoHideDuration={6000} onClose={handleClose}>
         <Alert onClose={handleClose} severity="error">
-          <AlertTitle>Error</AlertTitle>
           ลงทะเบียนไม่สำเร็จ : {errorMessage}
         </Alert>
       </Snackbar>
 
-      <Paper className={classes.paper}>
+      <Paper>
         <Box display="flex" >
           <Box flexGrow={1}>
 
@@ -278,7 +265,7 @@ function CreatePatientRight() {
           </Box>
         </Box>
         <Divider />
-        <Grid container spacing={3} className={classes.root}>
+        <Grid container spacing={3}>
           
           <Grid item xs={12} sm={6}>
             <FormControl fullWidth variant="outlined">
@@ -347,18 +334,20 @@ function CreatePatientRight() {
             </FormControl>
           </Grid>
           <Grid item xs={12} sm={6}>
-            <FormControl fullWidth variant="outlined">
-              <p style={{color:"#006A7D",fontSize: "10"}}>วันที่และเวลานัดหมาย</p>
-              <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                <KeyboardDateTimePicker
-                  name="SendingTime"
-                  value={SendingTime}
+          <FormControl fullWidth variant="outlined">
+              <p style={{ color: "#006A7D", fontSize: "10" }}>วันที่และเวลาบันทึก</p>
+              <LocalizationProvider dateAdapter={AdapterDateFns}>
+                <DesktopDatePicker
+                  label="PatientRight time"
+                  inputFormat="dd/MM/yyyy"
+                  value={selectedDate || new Date()}
                   onChange={handleDateChange}
-                  label="กรุณาเลือกวันที่และเวลา"
-                  minDate={new Date("2018-01-01T00:00")}
-                  format="dd/MM/yyyy"
+                  renderInput={(params: TextFieldProps) => {
+                    return <TextField{...params}
+                    />;
+                  }}
                 />
-              </MuiPickersUtilsProvider>
+              </LocalizationProvider>
             </FormControl>
           </Grid>
           <Grid item xs={12} sm={6}>
@@ -387,7 +376,7 @@ function CreatePatientRight() {
                 }}
               >
                 <option value={nurse?.ID} key={nurse?.ID}>
-                  {nurse?.Name}
+                  {nurse?.FirstName}{nurse?.LastName}
                 </option>
               </Select>
             </FormControl>
