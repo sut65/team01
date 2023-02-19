@@ -1,4 +1,5 @@
 import {EmployeesInterface} from "../IEmployee/IEmployee"
+import { PatientRegistersInterface } from "../IPatientRegister/IPatientRegister";
 export interface HistorySheetsInterface {
     ID: string;
     Weight: number;
@@ -23,31 +24,4 @@ export interface HistorySheetsInterface {
 export interface DrugAllergysInterface{
     ID: string;
     Name: string;
-}
-export interface PatientRegistersInterface {
-    ID: string,
-    FirstName: string;
-    LastName: string;
-    IdentificationNumber:   string;
-    Age:    number;
-    BirthDay: Date | null;
-    Mobile: string;
-    Email: string;
-    Occupation: string;
-    Address:    string;
-    EmergencyPersonFirstName:           string;
-	EmergencyPersonLastName :           string;
-	EmergencyPersonMobile :             string;
-	EmergencyPersonOccupation :         string;
-	EmergencyPersonRelationWithPatient: string;
-
-    Gender: string;
-    Prefix: string;
-    Nationality: string;
-    Religion: string;
-    BloodType: string;
-    MaritalStatus: string;
-    SubDistrict: string;
-    District: string;
-    Province: string;
 }
