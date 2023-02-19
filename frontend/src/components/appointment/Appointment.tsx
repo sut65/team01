@@ -1,48 +1,36 @@
 import React, { useEffect, useState } from "react";
 import { Link as RouterLink } from "react-router-dom";
-import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
-import Typography from "@material-ui/core/Typography";
-import Button from "@material-ui/core/Button";
-import Container from "@material-ui/core/Container";
-import Paper from "@material-ui/core/Paper";
-import Box from "@material-ui/core/Box";
-import Table from "@material-ui/core/Table";
-import TableBody from "@material-ui/core/TableBody";
-import TableCell from "@material-ui/core/TableCell";
-import TableContainer from "@material-ui/core/TableContainer";
-import TableHead from "@material-ui/core/TableHead";
-import TableRow from "@material-ui/core/TableRow";
-import { AppointmentInterface } from "../models/IAppointment";
-import SignIn from "./SignIn";
+import {createTheme} from '@mui/material/styles';
+import Typography from "@mui/material/Typography";
+import Button from "@mui/material/Button";
+import Container from "@mui/material/Container";
+import Paper from "@mui/material/Paper";
+import Box from "@mui/material/Box";
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableCell from "@mui/material/TableCell";
+import TableContainer from "@mui/material/TableContainer";
+import TableHead from "@mui/material/TableHead";
+import TableRow from "@mui/material/TableRow";
+import { AppointmentInterface } from "../../models/IAppointment/IAppointment";
+import LogIn from "../Login";
 import moment from "moment";
-import Chip from '@material-ui/core/Chip';
+import Chip from '@mui/material/Chip';
 import AllInboxIcon from '@mui/icons-material/AllInbox';
 
-
-const useStyles = makeStyles((theme: Theme) =>
-    createStyles({
-        container: {
-            marginTop: theme.spacing(2),
-        },
-        table: {
-            minWidth: 650,
-        },
-        tableSpace: {
-            marginTop: 20,
-        },
-        paper: {
-            padding: theme.spacing(2),
-            color: theme.palette.text.secondary,
-        },
-    })
-);
-
-
-
-
+const theme = createTheme({
+    palette: {
+      primary: {
+        light: '#80cbc4',
+        main: '#4db6ac',
+        dark: '#26a69a',
+        contrastText: '#fff',
+      },
+    },
+  });
+  
 function Appointments() {
     const [token, setToken] = React.useState<String>("");
-    const classes = useStyles();
     const [appointments, setAppointments] = React.useState<AppointmentInterface[]>([]);
 
 
@@ -77,7 +65,7 @@ function Appointments() {
     }, []);
 
     if (!token) {
-        return <SignIn />;
+        return <LogIn/>;
     }
 
 
@@ -85,7 +73,7 @@ function Appointments() {
 
         <div>
 
-            <Container className={classes.container} maxWidth="md">
+            <Container maxWidth="md">
                 <Box display="flex">
                     <Box flexGrow={1}>
                     <Chip
@@ -108,7 +96,7 @@ function Appointments() {
                     </Box>
                 </Box>
                 <p></p>
-                <Paper className={classes.paper}>
+                <Paper>
                     <Box display="flex">
                         <Box flexGrow={1}>
                             <Typography
@@ -121,8 +109,8 @@ function Appointments() {
                             </Typography>
                         </Box>
                     </Box>
-                    <TableContainer component={Paper} className={classes.tableSpace} >
-                        <Table className={classes.table} aria-label="simple table">
+                    <TableContainer component={Paper}>
+                        <Table caria-label="simple table">
                             <TableHead>
                                 <TableRow>
                                     <TableCell align="center" width="15%" >
@@ -148,9 +136,9 @@ function Appointments() {
                             <TableBody>
                                 {appointments.map((item: AppointmentInterface) => (
                                     <TableRow key={item.ID}>
-                                        <TableCell align="center">{item.Patient.FirstName}{"  "}{item.Patient.LastName}</TableCell>
-                                        <TableCell align="center">{item.Employee.Name}</TableCell>
-                                        <TableCell align="center">{item.Clinic.ClinicName}</TableCell>
+                                        <TableCell align="center">{item.PatientRegister.FirstName}{"  "}{item.PatientRegister.LastName}</TableCell>
+                                        <TableCell align="center">{item.Employee.FirstName}{"  "}{item.Employee.LastName}</TableCell>
+                                        <TableCell align="center">{item.Room.Name}</TableCell>
                                         <TableCell align="center">{item.RoomNumber}</TableCell>
                                         <TableCell align="center">{moment(item.AppointmentTime).format('D MMMM YYYY,HH:mm:ss')}</TableCell>
                                         <TableCell align="center">{item.Note}</TableCell>
