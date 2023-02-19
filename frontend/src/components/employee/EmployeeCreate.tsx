@@ -73,7 +73,6 @@ function EmployeeCreate() {
     setSelectedDate(date);
   };
 
-
   const getAdmin = async () => {
     const apiUrl = `http://localhost:8080/admin/${localStorage.getItem("id")}`; //localStorage เก็บไอดีของพนักงานที่ล็อกอินเข้ามา
     const requestOptions = {
@@ -540,5 +539,4 @@ function EmployeeCreate() {
     </Container>
   );
 }
-
 export default EmployeeCreate;
