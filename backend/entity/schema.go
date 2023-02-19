@@ -444,14 +444,11 @@ type TreatmentRecord struct {
 
 	Treatment   string `valid:"required~Treatment cannot be blank"`
 	Note        string `valid:"-"`
-	Appointment *bool
+	Appointment *bool  
 
-	//MedicineID เป็น FK
-	MedicineID       *uint
-	Medicine         Medicine `gorm:"references:id" valid:"-"`
-	MedicineQuantity int      `valid:"int, range(0|100)~MedicineQuantity must not be negative"`
+	MedicineOrders    []MedicineOrder `gorm:"foreignKey:TreatmentRecordID;  constraint:OnDelete:CASCADE"`
 
-	Date time.Time `valid:"present~Date must not be past"`
+	Date time.Time `valid:"present~Date must be present"`
 }
 
 type Medicine struct {
@@ -461,7 +458,19 @@ type Medicine struct {
 	Description string
 	Price       float32
 
-	TreatmentRecord []TreatmentRecord `gorm:"foreignKey:MedicineID"`
+	MedicineOrder []MedicineOrder `gorm:"foreignKey:MedicineID"`
+}
+
+type MedicineOrder struct {
+	gorm.Model
+
+	OrderAmount int	`valid:"int, range(0|100)~Order Amount must not be negative"`
+
+	MedicineID	*uint	
+	Medicine	Medicine	`gorm:"refernces:ID" valid:"-"`
+
+	TreatmentRecordID	*uint
+	TreatmentRecord		TreatmentRecord `gorm:"references:ID" valid:"-"`
 }
 
 // ========================= diagnosis record ======================
