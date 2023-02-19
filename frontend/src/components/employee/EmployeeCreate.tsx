@@ -11,14 +11,13 @@ import Typography from "@mui/material/Typography";
 import Divider from "@mui/material/Divider";
 import Snackbar from "@mui/material/Snackbar";
 import MuiAlert, { AlertProps } from "@mui/material/Alert";
-import { AdminsInterface, EmployeesInterface, TitlesInterface, RolesInterface, GendersInterface } from "../models/IEmployee";
+import { AdminsInterface, EmployeesInterface, TitlesInterface, RolesInterface, GendersInterface } from "../../models/IEmployee/IEmployee";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { Select } from '@mui/material';
 import { SelectChangeEvent } from '@mui/material';
-
 
 const theme = createTheme({
   palette: {
@@ -37,7 +36,6 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
 ) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
 });
-
 
 function EmployeeCreate() {
   
@@ -63,16 +61,6 @@ function EmployeeCreate() {
     const id = event.target.id as keyof typeof employee;
     const { value } = event.target;
     setEmployee({ ...employee, [id]: value });
-  };
-
-  const handleChange = (
-    event: React.ChangeEvent<{ name?: string; value: unknown }>
-  ) => {
-    const name = event.target.name as keyof typeof employee;
-    setEmployee({
-      ...employee,
-      [name]: event.target.value,
-    });
   };
 
   const handleSelectChange = (event: SelectChangeEvent<number>) => {
@@ -258,6 +246,12 @@ function EmployeeCreate() {
             setErrorMessage("กรุณากรอกเบอร์โทรศัพท์ให้ถูกต้อง")
           } else if (res.error.includes("IDCard does not validate")) {
             setErrorMessage("กรุณากรอกเลขประจำตัวประชาชนให้ถูกต้อง")
+          } else if (res.error.includes("UNIQUE constraint failed: employees.email")) {
+            setErrorMessage("อีเมลนี้ถูกบันทึกแล้ว")
+          } else if (res.error.includes("UNIQUE constraint failed: employees.id_card")) {
+            setErrorMessage("เลขประจำตัวประชาชนนี้ถูกบันทึกแล้ว")
+          } else if (res.error.includes("UNIQUE constraint failed: employees.phone_number")) {
+            setErrorMessage("เบอร์โทรศัพท์นี้ถูกบันทึกแล้ว")
           }else {
             setErrorMessage(res.error);
           }
@@ -287,9 +281,7 @@ function EmployeeCreate() {
       <Paper>
         <Box
           display="flex"
-          sx={{
-            marginTop: 2,
-          }}
+          sx={{marginTop: 2}}
         >
           
           <Box sx={{ paddingX: 2, paddingY: 1}}>
@@ -530,8 +522,8 @@ function EmployeeCreate() {
           </ThemeProvider>
 
           <Grid item xs={12}>
-            <Button style={{ float: "left", background: '#4db6ac' }} component={RouterLink} to="/" variant="contained" >
-              Back
+            <Button style={{ float: "left", background: '#4db6ac' }} component={RouterLink} to="/employees" variant="contained" >
+              กลับ
             </Button>
 
             <Button
@@ -540,7 +532,7 @@ function EmployeeCreate() {
               variant="contained"
               // color="primary"
             >
-              Submit
+              บันทึก
             </Button>
           </Grid>
         </Grid>

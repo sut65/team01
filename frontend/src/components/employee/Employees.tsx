@@ -11,8 +11,9 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Container from '@mui/material/Container';
-import { EmployeesInterface } from "../models/IEmployee";
+import { EmployeesInterface } from "../../models/IEmployee/IEmployee";
 import moment from "moment";
+import { Divider } from "@mui/material";
 
 function Employees() {
   const [employees, setEmployee] = React.useState<EmployeesInterface[]>([]);
@@ -48,8 +49,9 @@ function Employees() {
       <Container maxWidth="lg"
         sx={{ marginTop: 2 }}
       >
+        <Paper>
         <Box display="flex">
-          <Box flexGrow={1}>
+          <Box flexGrow={1} sx={{ paddingX: 2, paddingY: 1}}>
             <Typography 
               component="h2"
               variant="h6"
@@ -61,17 +63,21 @@ function Employees() {
           </Box>
 
           <Box>
-            <Button style={{background: '#4db6ac' }}
+            <Button 
+              style={{background: '#4db6ac'}}
               component={RouterLink}
               to="/createemployee"
               variant="contained"
               color="primary"
+              sx={{marginTop:1,marginRight:1}}
             >
               บันทึกข้อมูลบุคลากร
             </Button>
           </Box>
         </Box>
-        <TableContainer component={Paper}>
+        <Divider />
+
+        <TableContainer>
           <Table aria-label="simple table">
             <TableHead>
               <TableRow>
@@ -110,6 +116,7 @@ function Employees() {
                 </TableCell>
               </TableRow>
             </TableHead>
+
             <TableBody>
               {employees.map((item: EmployeesInterface) => (
                 <TableRow key={item.ID}>
@@ -129,8 +136,10 @@ function Employees() {
             </TableBody>
           </Table>
         </TableContainer>
+        </Paper>
       </Container>
     </div>
   )
 }
+
 export default Employees; 
