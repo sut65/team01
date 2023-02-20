@@ -1,83 +1,83 @@
-import { EmployeesInterface } from "../IEmployee/IEmployee";
+// import { EmployeesInterface } from "../IEmployee/IEmployee";
 
-export interface PatientRegistersInterface {
-    ID: string,
-    FirstName: string;
-    LastName: string;
-    IdentificationNumber:   string;
-    Age:    number;
-    BirthDay: Date | null;
-    Mobile: string;
-    Email: string;
-    Occupation: string;
-    Address:    string;
+// export interface PatientRegistersInterface {
+//     ID: string,
+//     FirstName: string;
+//     LastName: string;
+//     IdentificationNumber:   string;
+//     Age:    number;
+//     BirthDay: Date | null;
+//     Mobile: string;
+//     Email: string;
+//     Occupation: string;
+//     Address:    string;
 
-    EmployeeID: number;
-    Employee: EmployeesInterface;
+//     EmployeeID: number;
+//     Employee: EmployeesInterface;
 
-    GenderID: number;
-    Gender: GenderInterface;
+//     GenderID: number;
+//     Gender: GendersInterface;
 
-    PrefixID: number;
-    Prefix: PrefixInterface;
+//     PrefixID: number;
+//     Prefix: PrefixesInterface;
 
-    NationalityID: number;
-    Nationality: NationalityInterface;
+//     NationalityID: number;
+//     Nationality: NationalitiesInterface;
 
-    ReligionID: number;
-    Religion: ReligionInterface;
+//     ReligionID: number;
+//     Religion: ReligionsInterface;
 
-    BloodTypeID: number;
-    BloodType: BloodTypeInterface;
+//     BloodTypeID: number;
+//     BloodType: BloodTypesInterface;
 
-    MaritalStatusID: number;
-    MaritalStatus: MaritalStatusInterface;
+//     MaritalStatusID: number;
+//     MaritalStatus: MaritalStatusesInterface;
 
-    SubDistrictID: number;
-    SubDistrict: SubDistrictInterface;
+//     SubDistrictID: number;
+//     SubDistrict: SubDistrictsInterface;
 
-    DistrictID: number;
-    District: DistrictInterface;
+//     DistrictID: number;
+//     District: DistrictsInterface;
 
-    ProvinceID: number;
-    Province: ProvinceInterface;
-}
-export interface GenderInterface {
-    ID: string;
-    Name: string;
-}
-export interface PrefixInterface {
-    ID: string;
-    Name: string;
-}
-export interface NationalityInterface {
-    ID: string;
-    Name: string;
-}
-export interface ReligionInterface {
-    ID: string;
-    Name: string;
-}
-export interface BloodTypeInterface {
-    ID: string;
-    Name: string;
-}
-export interface MaritalStatusInterface {
-    ID: string;
-    Name: string;
-}
-export interface SubDistrictInterface {
-    ID: string;
-    Name: string;
-    PostCode: string;
-    District: string;
-}
-export interface DistrictInterface {
-    ID: string;
-    Name: string;
-    Province: string;
-}
-export interface ProvinceInterface {
-    ID: string;
-    Name: string;
-}
+//     ProvinceID: number;
+//     Province: ProvincesInterface;
+// }
+// export interface GendersInterface {
+//     ID: string;
+//     Name: string;
+// }
+// export interface PrefixesInterface {
+//     ID: string;
+//     Name: string;
+// }
+// export interface NationalitiesInterface {
+//     ID: string;
+//     Name: string;
+// }
+// export interface ReligionsInterface {
+//     ID: string;
+//     Name: string;
+// }
+// export interface BloodTypesInterface {
+//     ID: string;
+//     Name: string;
+// }
+// export interface MaritalStatusesInterface {
+//     ID: string;
+//     Name: string;
+// }
+// export interface SubDistrictsInterface {
+//     ID: string;
+//     Name: string;
+//     PostCode: string;
+//     District: string;
+// }
+// export interface DistrictsInterface {
+//     ID: string;
+//     Name: string;
+//     Province: string;
+// }
+// export interface ProvincesInterface {
+//     ID: string;
+//     Name: string;
+// }
