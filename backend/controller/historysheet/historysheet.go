@@ -47,9 +47,8 @@ func CreateHistorySheet(c *gin.Context) {
 		return
 	}
 	h := entity.HistorySheet{
-		Weight: historysheet.Weight,
-		Height: historysheet.Height,
-		// BMI:                    historysheet.BMI,
+		Weight:                 historysheet.Weight,
+		Height:                 historysheet.Height,
 		Temperature:            historysheet.Temperature,
 		SystolicBloodPressure:  historysheet.SystolicBloodPressure,
 		DiastolicBloodPressure: historysheet.DiastolicBloodPressure,
@@ -171,58 +170,57 @@ func DeleteHistorySheet(c *gin.Context) {
 
 // PATCH /historysheets
 func UpdateHistorySheet(c *gin.Context) {
-	// var payload entity.HistorySheet
+	var payload entity.HistorySheet
 	var historysheet entity.HistorySheet
-	// var patientregister entity.PatientRegister
-	// var nurse entity.Nurse
-	// var drugallergy entity.DrugAllergy
-	// if err := c.ShouldBindJSON(&historysheet); err != nil {
-	// 	c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-	// 	return
-	// }
-	// if tx := entity.DB().Where("id = ?", historysheet.ID).First(&historysheet); tx.RowsAffected == 0 {
-	// 	c.JSON(http.StatusBadRequest, gin.H{"error": "historysheet_id not found"})
-	// 	return
-	// }
-	// if tx := entity.DB().Where("id = ?", historysheet.PatientRegisterID).First(&patientregister); tx.RowsAffected == 0 {
-	// 	c.JSON(http.StatusBadRequest, gin.H{"error": "patientregister_id not found"})
-	// 	return
-	// }
-	// if tx := entity.DB().Where("id = ?", historysheet.NurseID).First(&nurse); tx.RowsAffected == 0 {
-	// 	c.JSON(http.StatusBadRequest, gin.H{"error": "nurse_id not found"})
-	// 	return
-	// }
-	// if tx := entity.DB().Where("id = ?", historysheet.DrugAllergyID).First(&drugallergy); tx.RowsAffected == 0 {
-	// 	c.JSON(http.StatusBadRequest, gin.H{"error": "drugallergy_id not found"})
-	// 	return
-	// }
-	// updatehistorysheet := entity.HistorySheet{
-	// 	Weight:                 historysheet.Weight,
-	// 	Height:                 historysheet.Height,
-	// 	BMI:                    historysheet.BMI,
-	// 	Temperature:            historysheet.Temperature,
-	// 	SystolicBloodPressure:  historysheet.SystolicBloodPressure,
-	// 	DiastolicBloodPressure: historysheet.DiastolicBloodPressure,
-	// 	HeartRate:              historysheet.HeartRate,
-	// 	RespiratoryRate:        historysheet.RespiratoryRate,
-	// 	OxygenSaturation:       historysheet.OxygenSaturation,
-	// 	DrugAllergySymtom:      historysheet.DrugAllergySymtom,
-	// 	PatientSymtom:          historysheet.PatientSymtom,
-	// 	PatientRegister:        patientregister,
-	// 	Nurse:                  nurse,
-	// 	DrugAllergy:            drugallergy,
-	// }
-	// if _, err := govalidator.ValidateStruct(updatehistorysheet); err != nil {
-	// 	c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-	// 	return
-	// }
-	// if err := entity.DB().Where("id = ?", historysheet.ID).Updates(&updatehistorysheet).Error; err != nil {
-	// 	c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-	// 	return
-	// }
-	if err := entity.DB().Save(&historysheet).Error; err != nil {
+	var patientregister entity.PatientRegister
+	var nurse entity.Employee
+	var drugallergy entity.DrugAllergy
+	if err := c.ShouldBindJSON(&payload); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
+	if tx := entity.DB().Where("id = ?", payload.ID).First(&historysheet); tx.RowsAffected == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "historysheet_id not found"})
+		return
+	}
+	if tx := entity.DB().Where("id = ?", payload.PatientRegisterID).First(&patientregister); tx.RowsAffected == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "patientregister_id not found"})
+		return
+	}
+	if tx := entity.DB().Where("id = ?", payload.Employee.RoleID).First(&nurse); tx.RowsAffected == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "nurse_id not found"})
+		return
+	}
+	if tx := entity.DB().Where("id = ?", payload.DrugAllergyID).First(&drugallergy); tx.RowsAffected == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "drugallergy_id not found"})
+		return
+	}
+	updatehistorysheet := entity.HistorySheet{
+		Weight:                 historysheet.Weight,
+		Height:                 historysheet.Height,
+		Temperature:            historysheet.Temperature,
+		SystolicBloodPressure:  historysheet.SystolicBloodPressure,
+		DiastolicBloodPressure: historysheet.DiastolicBloodPressure,
+		HeartRate:              historysheet.HeartRate,
+		RespiratoryRate:        historysheet.RespiratoryRate,
+		OxygenSaturation:       historysheet.OxygenSaturation,
+		DrugAllergySymtom:      historysheet.DrugAllergySymtom,
+		PatientSymtom:          historysheet.PatientSymtom,
+		PatientRegister:        patientregister,
+		Employee:               nurse,
+		DrugAllergy:            drugallergy,
+	}
+	if _, err := govalidator.ValidateStruct(updatehistorysheet); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	if err := entity.DB().Where("id = ?", historysheet.ID).Updates(&updatehistorysheet).Error; err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	// if err := entity.DB().Save(&historysheet).Error; err != nil {
+	// 	c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	// 	return
+	// }
 	c.JSON(http.StatusOK, gin.H{"status": "Updating Success!", "data": historysheet})
 }
