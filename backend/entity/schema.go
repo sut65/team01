@@ -13,9 +13,9 @@ type PatientRegister struct {
 	gorm.Model
 	FirstName            string
 	LastName             string
-	IdentificationNumber string    //`valid:"required"`
-	Age                  int       //`valid:"int, range(0|100)~Age Invalids"`
-	BirthDay             time.Time //`valid:"past~Birth Day Invalids"`
+	IdentificationNumber string    `valid:"required"`
+	Age                  int       `valid:"int, range(0|100)~Age Invalids"`
+	BirthDay             time.Time `valid:"past~Birth Day Invalids"`
 	Mobile               string
 	Occupation           string
 	Address              string
@@ -444,9 +444,9 @@ type TreatmentRecord struct {
 
 	Treatment   string `valid:"required~Treatment cannot be blank"`
 	Note        string `valid:"-"`
-	Appointment *bool  
+	Appointment *bool
 
-	MedicineOrders    []MedicineOrder `gorm:"foreignKey:TreatmentRecordID;  constraint:OnDelete:CASCADE"`
+	MedicineOrders []MedicineOrder `gorm:"foreignKey:TreatmentRecordID;  constraint:OnDelete:CASCADE"`
 
 	Date time.Time `valid:"present~Date must be present"`
 }
@@ -464,13 +464,13 @@ type Medicine struct {
 type MedicineOrder struct {
 	gorm.Model
 
-	OrderAmount int	`valid:"int, range(0|100)~Order Amount must not be negative"`
+	OrderAmount int `valid:"int, range(0|100)~Order Amount must not be negative"`
 
-	MedicineID	*uint	
-	Medicine	Medicine	`gorm:"refernces:ID" valid:"-"`
+	MedicineID *uint
+	Medicine   Medicine `gorm:"refernces:ID" valid:"-"`
 
-	TreatmentRecordID	*uint
-	TreatmentRecord		TreatmentRecord `gorm:"references:ID" valid:"-"`
+	TreatmentRecordID *uint
+	TreatmentRecord   TreatmentRecord `gorm:"references:ID" valid:"-"`
 }
 
 // ========================= diagnosis record ======================
