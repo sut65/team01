@@ -18,10 +18,10 @@ export interface HistorySheetsInterface {
     NurseID: number;
     Nurse: EmployeesInterface;
     DrugAllergyID: number;
-    DrugAllergy: DrugAllergysInterface;
+    DrugAllergy: DrugAllergiesInterface;
 }
 
-export interface DrugAllergysInterface{
+export interface DrugAllergiesInterface{
     ID: string;
     Name: string;
 }
