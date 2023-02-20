@@ -43,9 +43,8 @@ func TestHeartRateMustMoreThanZero(t *testing.T) {
 	// loc, _ := time.LoadLocation("Asia/Bangkok")
 	t.Run("Check Heart Rate must more than 0", func(t *testing.T) {
 		u := HistorySheet{
-			Weight: 33.00,
-			Height: 169,
-			// BMI:                    22.00,
+			Weight:                 33.00,
+			Height:                 169,
 			Temperature:            26.00,
 			SystolicBloodPressure:  60,
 			DiastolicBloodPressure: 60,
