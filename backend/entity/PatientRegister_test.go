@@ -56,30 +56,30 @@ func TestAgeMustBeNotNegativeInteger(t *testing.T) {
 	})
 }
 
-//	func TestIdentificationMustNotBeBlank(t *testing.T) {
-//		g := gomega.NewGomegaWithT(t)
-//		p := "02 Jan 2006"
-//		dob, _ := time.Parse(p, "03 Feb 2002")
-//		fmt.Println(dob)
-//		// loc, _ := time.LoadLocation("Asia/Bangkok")
-//		t.Run("Check identification must not be blank", func(t *testing.T) {
-//			u := PatientRegister{
-//				FirstName:            "Teerasil",
-//				LastName:             "Daengda",
-//				IdentificationNumber: "",
-//				Age:                  23,
-//				BirthDay:             dob,
-//				Mobile:               "0621539985",
-//				Occupation:           "Football Player",
-//				Address:              "BG Pathum United",
-//				// BirthDay: time.Date(2020,06,14,00,00,00,00,loc),
-//			}
-//			ok, err := govalidator.ValidateStruct(u)
-//			g.Expect(ok).NotTo(gomega.BeTrue())
-//			g.Expect(err).ToNot(gomega.BeNil())
-//			g.Expect(err.Error()).To(gomega.Equal("IdentificationNumber: non zero value required"))
-//		})
-//	}
+func TestIdentificationMustNotBeBlank(t *testing.T) {
+	g := gomega.NewGomegaWithT(t)
+	p := "02 Jan 2006"
+	dob, _ := time.Parse(p, "03 Feb 2002")
+	fmt.Println(dob)
+	// loc, _ := time.LoadLocation("Asia/Bangkok")
+	t.Run("Check identification must not be blank", func(t *testing.T) {
+		u := PatientRegister{
+			FirstName:            "Teerasil",
+			LastName:             "Daengda",
+			IdentificationNumber: "",
+			Age:                  23,
+			BirthDay:             dob,
+			Mobile:               "0621539985",
+			Occupation:           "Football Player",
+			Address:              "BG Pathum United",
+			// BirthDay: time.Date(2020,06,14,00,00,00,00,loc),
+		}
+		ok, err := govalidator.ValidateStruct(u)
+		g.Expect(ok).NotTo(gomega.BeTrue())
+		g.Expect(err).ToNot(gomega.BeNil())
+		g.Expect(err.Error()).To(gomega.Equal("IdentificationNumber: non zero value required"))
+	})
+}
 func TestCorrectPatientRegister(t *testing.T) {
 	g := gomega.NewGomegaWithT(t)
 	p := "02 Jan 2006"
