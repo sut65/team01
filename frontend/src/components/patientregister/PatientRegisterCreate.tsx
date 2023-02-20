@@ -21,6 +21,7 @@ import { BloodTypesInterface, DistrictsInterface, MaritalStatusesInterface, Nati
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { EmployeesInterface, GendersInterface } from "../../models/IEmployee/IEmployee";
+import PatientRegisters from "./PatientRegister";
 
 
 const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(props, ref) {
