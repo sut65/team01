@@ -223,103 +223,97 @@ func DeletePatientRegister(c *gin.Context) {
 
 // PATCH /patientregisters
 func UpdatePatientRegister(c *gin.Context) {
-	// var payload entity.PatientRegister
+	var payload entity.PatientRegister
 	var patientregister entity.PatientRegister
-	// var employee entity.Employee
-	// var prefix entity.Prefix
-	// var gender entity.Gender
-	// var nationality entity.Nationality
-	// var religion entity.Religion
-	// var bloodtype entity.BloodType
-	// var maritalstatus entity.MaritalStatus
-	// var province entity.Province
-	// var district entity.District
-	// var subdistrict entity.SubDistrict
-	// if err := c.ShouldBindJSON(&payload); err != nil {
-	// 	c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-	// 	return
-	// }
-	// if tx := entity.DB().Where("id = ?", payload.ID).First(&patientregister); tx.RowsAffected == 0 {
-	// 	c.JSON(http.StatusBadRequest, gin.H{"error": "patientregister_id not found"})
-	// 	return
-	// }
-	// if tx := entity.DB().Where("id = ?", payload.EmployeeID).First(&employee); tx.RowsAffected == 0 {
-	// 	c.JSON(http.StatusBadRequest, gin.H{"error": "employee_id not found"})
-	// 	return
-	// }
-	// if tx := entity.DB().Where("id = ?", payload.PrefixID).First(&prefix); tx.RowsAffected == 0 {
-	// 	c.JSON(http.StatusBadRequest, gin.H{"error": "prefix_id not found"})
-	// 	return
-	// }
-	// if tx := entity.DB().Where("id = ?", payload.GenderID).First(&gender); tx.RowsAffected == 0 {
-	// 	c.JSON(http.StatusBadRequest, gin.H{"error": "gender_id not found"})
-	// 	return
-	// }
-	// if tx := entity.DB().Where("id = ?", payload.NationalityID).First(&nationality); tx.RowsAffected == 0 {
-	// 	c.JSON(http.StatusBadRequest, gin.H{"error": "nationality_id not found"})
-	// 	return
-	// }
-	// if tx := entity.DB().Where("id = ?", payload.ReligionID).First(&religion); tx.RowsAffected == 0 {
-	// 	c.JSON(http.StatusBadRequest, gin.H{"error": "religion_id not found"})
-	// 	return
-	// }
-	// if tx := entity.DB().Where("id = ?", payload.BloodTypeID).First(&bloodtype); tx.RowsAffected == 0 {
-	// 	c.JSON(http.StatusBadRequest, gin.H{"error": "bloodtype_id not found"})
-	// 	return
-	// }
-	// if tx := entity.DB().Where("id = ?", payload.MaritalStatusID).First(&maritalstatus); tx.RowsAffected == 0 {
-	// 	c.JSON(http.StatusBadRequest, gin.H{"error": "maritalstatus_id not found"})
-	// 	return
-	// }
-	// if tx := entity.DB().Where("id = ?", payload.ProvinceID).First(&province); tx.RowsAffected == 0 {
-	// 	c.JSON(http.StatusBadRequest, gin.H{"error": "province_id not found"})
-	// 	return
-	// }
-	// if tx := entity.DB().Where("id = ?", payload.DistrictID).First(&district); tx.RowsAffected == 0 {
-	// 	c.JSON(http.StatusBadRequest, gin.H{"error": "district_id not found"})
-	// 	return
-	// }
-	// if tx := entity.DB().Where("id = ?", payload.SubDistrictID).First(&subdistrict); tx.RowsAffected == 0 {
-	// 	c.JSON(http.StatusBadRequest, gin.H{"error": "subdistrict_id not found"})
-	// 	return
-	// }
-	// updatepatientregister := entity.PatientRegister{
-	// 	FirstName:                              payload.FirstName,
-	// 	LastName:                               payload.LastName,
-	// 	IdentificationNumber:                   payload.IdentificationNumber,
-	// 	Age:                                    payload.Age,
-	// 	BirthDay:                               payload.BirthDay,
-	// 	Mobile:                                 payload.Mobile,
-	// 	Email:                                  payload.Email,
-	// 	Occupation:                             payload.Occupation,
-	// 	Address:                                payload.Address,
-	// 	EmergencyPersonFirstName:               payload.EmergencyPersonFirstName,
-	// 	EmergencyPersonLastName:                payload.EmergencyPersonLastName,
-	// 	EmergencyPersonMobile:                  payload.EmergencyPersonMobile,
-	// 	EmergencyPersonOccupation:              payload.EmergencyPersonOccupation,
-	// 	EmergencyPersonRelationshipWithPatient: payload.EmergencyPersonRelationshipWithPatient,
-	// 	Employee:                               employee,
-	// 	Prefix:                                 prefix,
-	// 	Gender:                                 gender,
-	// 	Nationality:                            nationality,
-	// 	Religion:                               religion,
-	// 	BloodType:                              bloodtype,
-	// 	MaritalStatus:                          maritalstatus,
-	// 	SubDistrict:                            subdistrict,
-	// 	District:                               district,
-	// 	Province:                               province,
-	// }
-	// if _, err := govalidator.ValidateStruct(updatepatientregister); err != nil {
-	// 	c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-	// 	return
-	// }
-	// if err := entity.DB().Where("id = ?", patientregister.ID).Updates(&updatepatientregister).Error; err != nil {
-	// 	c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-	// 	return
-	// }
-	if err := entity.DB().Save(&patientregister).Error; err != nil {
+	var employee entity.Employee
+	var prefix entity.Prefix
+	var gender entity.Gender
+	var nationality entity.Nationality
+	var religion entity.Religion
+	var bloodtype entity.BloodType
+	var maritalstatus entity.MaritalStatus
+	var province entity.Province
+	var district entity.District
+	var subdistrict entity.SubDistrict
+	if err := c.ShouldBindJSON(&payload); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
+	if tx := entity.DB().Where("id = ?", payload.ID).First(&patientregister); tx.RowsAffected == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "patientregister_id not found"})
+		return
+	}
+	if tx := entity.DB().Where("id = ?", payload.EmployeeID).First(&employee); tx.RowsAffected == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "employee_id not found"})
+		return
+	}
+	if tx := entity.DB().Where("id = ?", payload.PrefixID).First(&prefix); tx.RowsAffected == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "prefix_id not found"})
+		return
+	}
+	if tx := entity.DB().Where("id = ?", payload.GenderID).First(&gender); tx.RowsAffected == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "gender_id not found"})
+		return
+	}
+	if tx := entity.DB().Where("id = ?", payload.NationalityID).First(&nationality); tx.RowsAffected == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "nationality_id not found"})
+		return
+	}
+	if tx := entity.DB().Where("id = ?", payload.ReligionID).First(&religion); tx.RowsAffected == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "religion_id not found"})
+		return
+	}
+	if tx := entity.DB().Where("id = ?", payload.BloodTypeID).First(&bloodtype); tx.RowsAffected == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "bloodtype_id not found"})
+		return
+	}
+	if tx := entity.DB().Where("id = ?", payload.MaritalStatusID).First(&maritalstatus); tx.RowsAffected == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "maritalstatus_id not found"})
+		return
+	}
+	if tx := entity.DB().Where("id = ?", payload.ProvinceID).First(&province); tx.RowsAffected == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "province_id not found"})
+		return
+	}
+	if tx := entity.DB().Where("id = ?", payload.DistrictID).First(&district); tx.RowsAffected == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "district_id not found"})
+		return
+	}
+	if tx := entity.DB().Where("id = ?", payload.SubDistrictID).First(&subdistrict); tx.RowsAffected == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "subdistrict_id not found"})
+		return
+	}
+	updatepatientregister := entity.PatientRegister{
+		FirstName:            payload.FirstName,
+		LastName:             payload.LastName,
+		IdentificationNumber: payload.IdentificationNumber,
+		Age:                  payload.Age,
+		BirthDay:             payload.BirthDay,
+		Mobile:               payload.Mobile,
+		Occupation:           payload.Occupation,
+		Address:              payload.Address,
+		Employee:             employee,
+		Prefix:               prefix,
+		Gender:               gender,
+		Nationality:          nationality,
+		Religion:             religion,
+		BloodType:            bloodtype,
+		MaritalStatus:        maritalstatus,
+		SubDistrict:          subdistrict,
+		District:             district,
+		Province:             province,
+	}
+	if _, err := govalidator.ValidateStruct(updatepatientregister); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	if err := entity.DB().Where("id = ?", patientregister.ID).Updates(&updatepatientregister).Error; err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	// if err := entity.DB().Save(&patientregister).Error; err != nil {
+	// 	c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	// 	return
+	// }
 	c.JSON(http.StatusOK, gin.H{"status": "Updating Success!", "data": patientregister})
 }
