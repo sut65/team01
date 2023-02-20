@@ -22,10 +22,10 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { Icon } from "@mui/material";
 
 // interfaces
-import { PatientRegisterInterface } from "../interfaces/IHistorySheet";
-import { HistorySheetInterface } from "../interfaces/IHistorySheet";
-import { NurseInterface } from "../interfaces/IHistorySheet";
-import { DrugAllergyInterface } from "../interfaces/IHistorySheet";
+import { PatientRegistersInterface } from "../../models/IPatientRegister/IPatientRegister";
+import { HistorySheetsInterface } from "../../models/IHistorySheet/IHistorySheet";
+import { EmployeesInterface } from "../../models/IEmployee/IEmployee";
+import { DrugAllergiesInterface } from "../../models/IHistorySheet/IHistorySheet";
 
 const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(props, ref) {
     return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
@@ -36,11 +36,11 @@ function HistorySheetCreate() {
     // ประกาศตัวแปร prefixes และ setPrefixes สำหรับเก็บค่าจาก PrefixesInterface
     // setPrefixes เป็นตัว set ค่าจาก PrefixesInterface เข้าไปที่ตัวแปร prefixes
 
-    const [nurses, setNurses] = React.useState<Partial<NurseInterface>>({ FirstName: "", LastName: "" })
-    const [drugallergies, setDrugAllergies] = React.useState<DrugAllergyInterface[]>([])
-    const [patientregisters, setPatientRegisters] = React.useState<PatientRegisterInterface[]>([])
+    const [nurses, setNurses] = React.useState<Partial<EmployeesInterface>>({ FirstName: "", LastName: "" })
+    const [drugallergies, setDrugAllergies] = React.useState<DrugAllergiesInterface[]>([])
+    const [patientregisters, setPatientRegisters] = React.useState<PatientRegistersInterface[]>([])
     // setUser จะเป็นตัว check ข้อมูลให้ตัวแปร user ว่าได้รับข้อมูลที่ต้องการมาแล้วหรือยัง
-    const [historysheets, setHistorySheets] = React.useState<Partial<HistorySheetInterface>>({
+    const [historysheets, setHistorySheets] = React.useState<Partial<HistorySheetsInterface>>({
         NurseID: 0,
         DrugAllergyID: 0,
         PatientRegisterID: 0,
@@ -333,7 +333,7 @@ function HistorySheetCreate() {
                                 autoFocus
                             >
                                 <option key={0} value={0}></option>
-                                {patientregisters.map((item: PatientRegisterInterface) => (
+                                {patientregisters.map((item: PatientRegistersInterface) => (
                                     <option key={item.ID} value={item.ID}>{item.FirstName} {item.LastName}</option>
                                 ))}
                             </Select>
@@ -522,7 +522,7 @@ function HistorySheetCreate() {
                                 autoFocus
                             >
                                 <option key={0} value={0}></option>
-                                {drugallergies.map((item: DrugAllergyInterface) => (
+                                {drugallergies.map((item: DrugAllergiesInterface) => (
                                     <option key={item.ID} value={item.ID}>{item.Name}</option>
                                 ))}
                             </Select>
