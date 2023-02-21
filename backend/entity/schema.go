@@ -313,7 +313,7 @@ type Admin struct {
 	gorm.Model
 	FirstName string
 	LastName  string
-	Email     string
+	Email     string	`gorm:"uniqueIndex"`
 	Password  string
 	Employee  []Employee `gorm:"foreignKey:AdminID"`
 	Workload  []Workload `gorm:"foreignKey:AdminID"`

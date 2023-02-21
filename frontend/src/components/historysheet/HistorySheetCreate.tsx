@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link as RouterLink } from "react-router-dom";
+import { Link as RouterLink, useParams } from "react-router-dom";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import AccountCircleSharpIcon from '@mui/icons-material/AccountCircleSharp';
@@ -32,6 +32,8 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(props,
 });
 
 function HistorySheetCreate() {
+    // ประกาศตัวแปร params สำหรับรับค่าจาก url
+    const params = useParams();
 
     // ประกาศตัวแปร prefixes และ setPrefixes สำหรับเก็บค่าจาก PrefixesInterface
     // setPrefixes เป็นตัว set ค่าจาก PrefixesInterface เข้าไปที่ตัวแปร prefixes
@@ -60,9 +62,9 @@ function HistorySheetCreate() {
         if (reason === "clickaway") {
             return;
         }
-        // if (success === true) {
-        //     window.location.href = "/historysheet";
-        // }
+        if (success === true) {
+            window.location.href = "/historysheet";
+        }
         setSuccess(false);
         setError(false);
     };
@@ -185,40 +187,65 @@ function HistorySheetCreate() {
             });
     }
 
+    const getHistorySheet = async (id: string) => {
+        const apiUrl = `http://localhost:8080/historysheet/${id}`;
+        const requestOptions = {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${localStorage.getItem("token")}`
+            }
+        };
+
+        fetch(apiUrl, requestOptions)
+            .then((response) => response.json())
+            .then((res) => {
+                if (res.data) {
+                    setHistorySheets(res.data);
+                } else {
+                    console.log(res.error);
+                }
+            });
+    }
+
     function submit() {
 
         // ตัวแปร data เป็นตัวรับข้อมูลจากตัวแปร user เพื่อส่งไปหลังบ้าน
-        let data = {
-            Weight: typeof historysheets.Weight === "string" ? parseFloat(historysheets.Weight) : 0,
-            Height: typeof historysheets.Height === "string" ? parseFloat(historysheets.Height) : 0,
-            BMI: typeof historysheets.BMI === "string" ? parseFloat(historysheets.BMI) : 0,
-            Temperature: typeof historysheets.Temperature === "string" ? parseFloat(historysheets.Temperature) : 0,
-            SystolicBloodPressure: typeof historysheets.SystolicBloodPressure === "string" ? parseInt(historysheets.SystolicBloodPressure) : 0,
-            DiastolicBloodPressure: typeof historysheets.DiastolicBloodPressure === "string" ? parseInt(historysheets.DiastolicBloodPressure) : 0,
-            HeartRate: typeof historysheets.HeartRate === "string" ? parseInt(historysheets.HeartRate) : 0,
-            RespiratoryRate: typeof historysheets.RespiratoryRate === "string" ? parseInt(historysheets.RespiratoryRate) : 0,
-            OxygenSaturation: typeof historysheets.OxygenSaturation === "string" ? parseInt(historysheets.OxygenSaturation) : 0,
+        let data: any = {
+            Weight: typeof historysheets.Weight === "string" ? parseFloat(historysheets.Weight) : historysheets.Weight,
+            Height: typeof historysheets.Height === "string" ? parseFloat(historysheets.Height) : historysheets.Height,
+            BMI: typeof historysheets.BMI === "string" ? parseFloat(historysheets.BMI) : historysheets.BMI,
+            Temperature: typeof historysheets.Temperature === "string" ? parseFloat(historysheets.Temperature) : historysheets.Temperature,
+            SystolicBloodPressure: typeof historysheets.SystolicBloodPressure === "string" ? parseInt(historysheets.SystolicBloodPressure) : historysheets.SystolicBloodPressure,
+            DiastolicBloodPressure: typeof historysheets.DiastolicBloodPressure === "string" ? parseInt(historysheets.DiastolicBloodPressure) : historysheets.DiastolicBloodPressure,
+            HeartRate: typeof historysheets.HeartRate === "string" ? parseInt(historysheets.HeartRate) : historysheets.HeartRate,
+            RespiratoryRate: typeof historysheets.RespiratoryRate === "string" ? parseInt(historysheets.RespiratoryRate) : historysheets.RespiratoryRate,
+            OxygenSaturation: typeof historysheets.OxygenSaturation === "string" ? parseInt(historysheets.OxygenSaturation) : historysheets.OxygenSaturation,
 
             DrugAllergySymtom: historysheets.DrugAllergySymtom ?? "",
             PatientSymtom: historysheets.PatientSymtom ?? "",
 
-            PatientRegisterID: typeof historysheets.PatientRegisterID === "string" ? parseInt(historysheets.PatientRegisterID) : 0,
+            PatientRegisterID: typeof historysheets.PatientRegisterID === "string" ? parseInt(historysheets.PatientRegisterID) : historysheets.PatientRegisterID,
             NurseID: nurses.ID,
-            DrugAllergyID: typeof historysheets.DrugAllergyID === "string" ? parseInt(historysheets.DrugAllergyID) : 0,
+            DrugAllergyID: typeof historysheets.DrugAllergyID === "string" ? parseInt(historysheets.DrugAllergyID) : historysheets.DrugAllergyID,
         };
 
+        if (params.id) {
+            data["ID"] = parseInt(params.id);
+        }
+
+        console.log(data);
         // หน้าบ้าน จะใช้ JSON สื่อสารกันกับ หลังบ้าน
         // หน้าบ้านจะแนบ header(content-type) และ body(app-json) เพื่อติดต่อไปยังหลังงบ้านที่ method POST
         const apiUrl = "http://localhost:8080/historysheets";
         const requestOptions = {
-            method: "POST",
+            method: params.id ? "PATCH" : "POST",
             headers: {
                 "Content-Type": "application/json",
                 Authorization: `Bearer ${localStorage.getItem("token")}`
             },
             body: JSON.stringify(data),
         };
-
 
         // หลังบ้านรับ request มา
         // หลังบ้าน check data
@@ -228,8 +255,8 @@ function HistorySheetCreate() {
                 if (res.data) {
                     console.log(res.data);    // ข้อมูลถูกต้อง บันทึกข้อมูลที่หลังบ้านและแสดงข้อมูลที่ console
                     setSuccess(true);       // แสดง pop up การทำงานสำเร็จ
-                    setMessage("Successfully!!");
-                    // window.location.href = "/historysheet";
+                    setMessage("Successfully!");
+                    window.location.href = "/historysheet";
                     // loginRegisted();      // เป็นการ login เข้าระบบแบบ auto
                 } else {
                     setError(true);       // ข้อมูลไม่ถูกต้อง แสดง pop up การทำงานไม่สำเร็จ
@@ -237,6 +264,7 @@ function HistorySheetCreate() {
                     console.log(res.error); // ข้อมูลไม่ถูกต้อง จะแสดงค่า error ที่ console
                 }
             });
+
     }
 
     // const loginRegisted = () => {
@@ -277,6 +305,10 @@ function HistorySheetCreate() {
         getPatientRegister();
         getDrugAllergy();
         getNurse();
+
+        if (params.id) {
+            getHistorySheet(params.id)
+        }
     }, []);
 
     console.log(historysheets);
@@ -285,7 +317,7 @@ function HistorySheetCreate() {
         <Container maxWidth="md">
             <Snackbar
                 open={success}
-                // autoHideDuration={3000}
+                autoHideDuration={6000}
                 onClose={handleClose}
                 anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
             >
@@ -294,7 +326,7 @@ function HistorySheetCreate() {
                 </Alert>
             </Snackbar>
             <Snackbar open={error}
-                // autoHideDuration={6000} 
+                autoHideDuration={6000}
                 onClose={handleClose}>
                 <Alert onClose={handleClose} severity="error">
                     {message}
@@ -309,7 +341,7 @@ function HistorySheetCreate() {
                             </Grid>
                             <Grid item xs={9}>
                                 <Typography component="h2" variant="h6" color="primary" gutterBottom>
-                                    Create User
+                                    Patient
                                 </Typography>
                             </Grid>
                         </Grid>
@@ -339,16 +371,40 @@ function HistorySheetCreate() {
                             </Select>
                         </FormControl>
                     </Grid>
-                    <Grid item xs={6}>
-                        <p>Nurse</p>
-                        <FormControl fullWidth>
-                            <TextField disabled label="Nurse" value={`${nurses?.FirstName} ${nurses?.LastName}`} />
-                        </FormControl>
-                    </Grid>
                 </Grid>
-                <Grid container spacing={3} sx={{ padding: 2 }}>
-                    <Grid item xs={6}>
-                        <Box
+            </Paper>
+            <Paper>
+                <Box display="flex" sx={{ marginTop: 2, }}>
+                    <Box sx={{ paddingX: 2, paddingY: 1 }}>
+                        <Grid container spacing={2} sx={{ paddingX: 20 }}>
+                            <Grid item xs={2} >
+                                <AccountCircleSharpIcon fontSize="large" color="primary" />
+                            </Grid>
+                            <Grid item xs={10}>
+                                <Typography component="h2" variant="h6" color="primary" gutterBottom>
+                                    บันทึกค่าการวัดร่างกาย
+                                </Typography>
+                            </Grid>
+                        </Grid>
+                    </Box>
+                </Box>
+                <Divider />
+                <Grid container spacing={2} sx={{ padding: 2 }}>
+                    <Grid item xs={3}>
+                        <p>Weight</p>
+                        <TextField
+                            id="Weight"
+                            variant="outlined"
+                            type="number"
+                            size="medium"
+                            InputProps={{ inputProps: { min: -50, step: "0.01" } }}
+                            InputLabelProps={{
+                                shrink: true,
+                            }}
+                            value={historysheets.Weight || ""}
+                            onChange={handleInputChange}
+                        />
+                        {/* <Box
                             component="form"
                             sx={{
                                 '& .MuiTextField-root': { width: '35ch' },
@@ -369,57 +425,31 @@ function HistorySheetCreate() {
                                 value={historysheets.Weight || ""}
                                 onChange={handleInputChange}
                             />
-                        </Box>
+                        </Box> */}
                     </Grid>
-                    <Grid item xs={6}>
-                        <Box
-                            component="form"
-                            sx={{
-                                '& .MuiTextField-root': { width: '35ch' },
-                            }}
-                            noValidate
-                            autoComplete="off"
-                        >
-                            <p>Height</p>
-                            <TextField
-                                id="Height"
-                                variant="outlined"
-                                type="number"
-                                size="medium"
-                                InputProps={{ inputProps: { min: 0, step: "1" } }}
-                                InputLabelProps={{
-                                    shrink: true,
-                                }}
-                                value={historysheets.Height || ""}
-                                onChange={handleInputChange}
-                            />
-                        </Box>
-                    </Grid>
-                    {/* <Grid item xs={4}>
-                        <p>BMI</p>
+                    <Grid item xs={3}>
+                        <p>Height</p>
                         <TextField
-                            id="BMI"
+                            id="Height"
                             variant="outlined"
                             type="number"
                             size="medium"
-                            InputProps={{ inputProps: { min: 1 } }}
+                            InputProps={{ inputProps: { min: -50, step: "1" } }}
                             InputLabelProps={{
                                 shrink: true,
                             }}
-                            value={historysheets.BMI || ""}
+                            value={historysheets.Height || ""}
                             onChange={handleInputChange}
                         />
-                    </Grid> */}
-                </Grid>
-                <Grid container spacing={3} sx={{ padding: 2 }}>
-                    <Grid item xs={4}>
+                    </Grid>
+                    <Grid item xs={3}>
                         <p>Temperature</p>
                         <TextField
                             id="Temperature"
                             variant="outlined"
                             type="number"
                             size="medium"
-                            InputProps={{ inputProps: { min: 1 } }}
+                            InputProps={{ inputProps: { min: -50, step: "0.1" } }}
                             InputLabelProps={{
                                 shrink: true,
                             }}
@@ -427,14 +457,14 @@ function HistorySheetCreate() {
                             onChange={handleInputChange}
                         />
                     </Grid>
-                    <Grid item xs={4}>
+                    <Grid item xs={3}>
                         <p>SystolicBloodPressure</p>
                         <TextField
                             id="SystolicBloodPressure"
                             variant="outlined"
                             type="number"
                             size="medium"
-                            InputProps={{ inputProps: { min: 1 } }}
+                            InputProps={{ inputProps: { min: 0, step: "1" } }}
                             InputLabelProps={{
                                 shrink: true,
                             }}
@@ -442,7 +472,9 @@ function HistorySheetCreate() {
                             onChange={handleInputChange}
                         />
                     </Grid>
-                    <Grid item xs={4}>
+                </Grid>
+                <Grid container spacing={2} sx={{ padding: 2 }}>
+                    <Grid item xs={3}>
                         <p>DiastolicBloodPressure</p>
                         <TextField
                             id="DiastolicBloodPressure"
@@ -457,24 +489,7 @@ function HistorySheetCreate() {
                             onChange={handleInputChange}
                         />
                     </Grid>
-                </Grid>
-                <Grid container spacing={3} sx={{ padding: 2 }}>
-                    <Grid item xs={4}>
-                        <p>HeartRate</p>
-                        <TextField
-                            id="HeartRate"
-                            variant="outlined"
-                            type="number"
-                            size="medium"
-                            InputProps={{ inputProps: { min: -50 } }}
-                            InputLabelProps={{
-                                shrink: true,
-                            }}
-                            value={historysheets.HeartRate || ""}
-                            onChange={handleInputChange}
-                        />
-                    </Grid>
-                    <Grid item xs={4}>
+                    <Grid item xs={3}>
                         <p>RespiratoryRate</p>
                         <TextField
                             id="RespiratoryRate"
@@ -489,7 +504,22 @@ function HistorySheetCreate() {
                             onChange={handleInputChange}
                         />
                     </Grid>
-                    <Grid item xs={4}>
+                    <Grid item xs={3}>
+                        <p>HeartRate</p>
+                        <TextField
+                            id="HeartRate"
+                            variant="outlined"
+                            type="number"
+                            size="medium"
+                            InputProps={{ inputProps: { min: -50 } }}
+                            InputLabelProps={{
+                                shrink: true,
+                            }}
+                            value={historysheets.HeartRate || ""}
+                            onChange={handleInputChange}
+                        />
+                    </Grid>
+                    <Grid item xs={3}>
                         <p>OxygenSaturation</p>
                         <TextField
                             id="OxygenSaturation"
@@ -505,6 +535,23 @@ function HistorySheetCreate() {
                         />
                     </Grid>
                 </Grid>
+            </Paper>
+            <Paper>
+                <Box display="flex" sx={{ marginTop: 2, }}>
+                    <Box sx={{ paddingX: 2, paddingY: 1 }}>
+                        <Grid container spacing={2} sx={{ paddingX: 20 }}>
+                            <Grid item xs={3} >
+                                <AccountCircleSharpIcon fontSize="large" color="primary" />
+                            </Grid>
+                            <Grid item xs={9}>
+                                <Typography component="h2" variant="h6" color="primary" gutterBottom>
+                                    Symtom
+                                </Typography>
+                            </Grid>
+                        </Grid>
+                    </Box>
+                </Box>
+                <Divider />
                 <Grid container spacing={3} sx={{ padding: 2 }}>
                     <Grid item xs={4}>
                         <p>Drug Allergy</p>
@@ -549,20 +596,45 @@ function HistorySheetCreate() {
                         </FormControl>
                     </Grid>
                 </Grid>
+            </Paper>
+            <Paper>
+                <Box display="flex" sx={{ marginTop: 2, }}>
+                    <Box sx={{ paddingX: 2, paddingY: 1 }}>
+                        <Grid container spacing={2} sx={{ paddingX: 20 }}>
+                            <Grid item xs={3} >
+                                <AccountCircleSharpIcon fontSize="large" color="primary" />
+                            </Grid>
+                            <Grid item xs={9}>
+                                <Typography component="h2" variant="h6" color="primary" gutterBottom>
+                                    Employee
+                                </Typography>
+                            </Grid>
+                        </Grid>
+                    </Box>
+                </Box>
                 <Divider />
-                <Grid container spacing={2}>
-                    <Grid item xs={5} sx={{ textAlign: 'right', marginTop: 2, paddingX: 4, paddingY: 1, marginBottom: 2 }}>
-                        <Button
-                            onClick={submit}
-                            variant="contained"
-                            color="primary"
-                        >
-                            Sign up
-                        </Button>
+                <Grid container spacing={3} sx={{ padding: 2 }}>
+                    <Grid item xs={6}>
+                        <p>Nurse</p>
+                        <FormControl fullWidth>
+                            <TextField disabled label="Nurse" value={`${nurses?.FirstName} ${nurses?.LastName}`} />
+                        </FormControl>
                     </Grid>
                 </Grid>
             </Paper>
-        </Container>
+            <Divider />
+            <Grid container spacing={2}>
+                <Grid item xs={5} sx={{ textAlign: 'right', marginTop: 2, paddingX: 4, paddingY: 1, marginBottom: 2 }}>
+                    <Button
+                        onClick={submit}
+                        variant="contained"
+                        color="primary"
+                    >
+                        Submit
+                    </Button>
+                </Grid>
+            </Grid>
+        </Container >
     );
 }
 export default HistorySheetCreate;
