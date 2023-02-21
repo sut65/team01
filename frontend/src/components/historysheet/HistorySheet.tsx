@@ -183,7 +183,7 @@ function HistorySheets() {
       <Container maxWidth="lg">
         <Snackbar
           open={success}
-          autoHideDuration={6000}
+          autoHideDuration={5000}
           onClose={handleClose}
           anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
         >
