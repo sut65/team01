@@ -7,6 +7,8 @@ import Home from "./components/Home";
 import Login from "./components/Login";
 import HistorySheets from "./components/HistorySheet";
 import HistorySheetCreate from "./components/HistorySheetCreate";
+import Employees from "./components/employee/Employees";
+import EmployeeCreate from "./components/employee/EmployeeCreate";
 
 export default function App() {
   // const [token, setToken] = React.useState<string | null>();
@@ -26,6 +28,8 @@ export default function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
+            <Route path="/employees" element={<Employees />} />
+            <Route path="/createemployee" element={<EmployeeCreate />} />
             {/* <Route path="/create" element={<UserCreate />} /> */}
             <Route path="*" element={<Navigate to="/" />} />
           </Routes>
