@@ -9,6 +9,8 @@ import HistorySheets from "./components/HistorySheet";
 import HistorySheetCreate from "./components/HistorySheetCreate";
 import Employees from "./components/employee/Employees";
 import EmployeeCreate from "./components/employee/EmployeeCreate";
+import WorkloadCreate from "./components/workload/WorkloadCreate";
+import Workloads from "./components/workload/Workloads";
 
 export default function App() {
   // const [token, setToken] = React.useState<string | null>();
@@ -30,6 +32,8 @@ export default function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/employees" element={<Employees />} />
             <Route path="/createemployee" element={<EmployeeCreate />} />
+            <Route path="/createworkload" element={<WorkloadCreate />}/>
+            <Route path="/workloads" element={<Workloads />}/>
             {/* <Route path="/create" element={<UserCreate />} /> */}
             <Route path="*" element={<Navigate to="/" />} />
           </Routes>
