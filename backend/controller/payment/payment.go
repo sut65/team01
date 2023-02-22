@@ -16,7 +16,6 @@ func CreatePayment(c *gin.Context) {
 	var cashier entity.Employee
 	var medicinerecord entity.MedicineRecord
 	var payment entity.Payment
-	var total int
 
 	// ผลลัพธ์ที่ได้จากขั้นตอนที่ 8 จะถูก bind เข้าตัวแปร payment
 	if err := c.ShouldBindJSON(&payment); err != nil {
@@ -93,10 +92,10 @@ func CreatePayment(c *gin.Context) {
 
 	//ตรวจสอบฟิลด์ว่ามีค่าตรงกันกับ ค่าใช้จ่ายทั้งหมดหรือไหม
 
-	if payment.Total != total {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Total input not match !!"})
-		return
-	}
+	// if payment.Total != total {
+	// 	c.JSON(http.StatusBadRequest, gin.H{"error": "Total input not match !!"})
+	// 	return
+	// }
 
 	// : บันทึก payment
 	if err := entity.DB().Create(&pm).Error; err != nil {
@@ -108,7 +107,7 @@ func CreatePayment(c *gin.Context) {
 
 }
 
-// GET /getmedbypatient/:id
+// GET /GetMedbyPatient
 func GetMedbyPatient(c *gin.Context) {
 	var medicinerecord []entity.MedicineRecord
 	id := c.Param("id")
@@ -166,22 +165,54 @@ func ListPayments(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"data": payments})
 }
-
-// PATCH /payments
 func UpdatePayment(c *gin.Context) {
 	var payment entity.Payment
+
+	var paymenttype entity.PaymentType
+	var patientright entity.PatientRight
+	var cashier entity.Employee
+	var medicinerecord entity.MedicineRecord
+	var payload entity.Payment
 
 	if err := c.ShouldBindJSON(&payment); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	if tx := entity.DB().Where("id = ?", payment.ID).First(&payment); tx.RowsAffected == 0 {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "diagnosis not found"})
+	if tx := entity.DB().Where("id = ?", payload.ID).First(&payment); tx.RowsAffected == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "payment not found"})
+		return
+	}
+	if tx := entity.DB().Where("id = ?", payload.PatientRightID).First(&patientright); tx.RowsAffected == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "payment not found"})
+		return
+	}
+	if tx := entity.DB().Where("id = ?", payload.PaymentTypeID).First(&paymenttype); tx.RowsAffected == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "payment not found"})
+		return
+	}
+	if tx := entity.DB().Where("id = ?", payload.CashierID).First(&cashier); tx.RowsAffected == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "payment not found"})
+		return
+	}
+	if tx := entity.DB().Where("id = ?", payload.MedicineRecordID).First(&medicinerecord); tx.RowsAffected == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "payment not found"})
+		return
+	}
+	updatepm := entity.Payment{
+		PatientRight:   patientright,
+		PaymentType:    paymenttype,
+		Cashier:        cashier,
+		MedicineRecord: medicinerecord,
+		PaymentTime:    payment.PaymentTime,
+		Total:          payment.Total,
+	}
+	if _, err := govalidator.ValidateStruct(updatepm); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	if err := entity.DB().Save(&payment).Error; err != nil {
+	if err := entity.DB().Where("id = ?", payment.ID).Updates(&updatepm).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
@@ -189,7 +220,7 @@ func UpdatePayment(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"data": payment})
 }
 
-// DELETE /payments/:id
+// DELETE /payment/:id
 func DeletePayment(c *gin.Context) {
 	id := c.Param("id")
 	var payments []entity.Payment
@@ -198,6 +229,19 @@ func DeletePayment(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "payment not found"})
 		return
 	}
+	if err := entity.DB().
+		Preload("PatientRight").
+		Preload("PaymentType").
+		Preload("MedicineRecord").
+		Preload("MedicineRecord.TreatmentRecord").
+		Preload("MedicineRecord.TreatmentRecord.DiagnosisRecord").
+		Preload("MedicineRecord.TreatmentRecord.DiagnosisRecord.HistorySheet").
+		Preload("MedicineRecord.TreatmentRecord.DiagnosisRecord.HistorySheet.PatientRegister").
+		Preload("Cashier").
+		Raw("SELECT * FROM payments").Find(&payments).Error; err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
 
-	c.JSON(http.StatusOK, gin.H{"data": payments})
+	c.JSON(http.StatusOK, gin.H{"status": "Updating Success!", "data": payments})
 }
