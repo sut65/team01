@@ -9,7 +9,7 @@ import (
 	"github.com/asaskevich/govalidator"
 )
 
-// POST /medicinerecords
+// POST /medicinerecord
 func CreateMedicineRecord(c *gin.Context) {
 
 	var pharmacist entity.Employee
@@ -84,7 +84,8 @@ func GetMedicineRecord(c *gin.Context) {
 func ListMedicineRecords(c *gin.Context) {
 	var medicinerecords []entity.MedicineRecord
 	if err := entity.DB().Preload("TreatmentRecord").
-		Preload("TreatmentRecord.Medicine").
+		Preload("TreatmentRecord.MedicineOrders").
+		Preload("TreatmentRecord.MedicineOrders.Medicine").
 		Preload("TreatmentRecord.DiagnosisRecord").
 		Preload("TreatmentRecord.DiagnosisRecord.HistorySheet").
 		Preload("TreatmentRecord.DiagnosisRecord.HistorySheet.PatientRegister").
@@ -102,8 +103,22 @@ func ListMedicineRecords(c *gin.Context) {
 // DELETE /medicinerecords/:id
 func DeleteMedicineRecord(c *gin.Context) {
 	id := c.Param("id")
+	var medicinerecords entity.MedicineRecord
 	if tx := entity.DB().Exec("DELETE FROM medicine_records WHERE id = ?", id); tx.RowsAffected == 0 {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "medicinerecord not found"})
+		return
+	}
+	if err := entity.DB().Preload("TreatmentRecord").
+		Preload("TreatmentRecord.MedicineOrders").
+		Preload("TreatmentRecord.MedicineOrders.Medicine").
+		Preload("TreatmentRecord.DiagnosisRecord").
+		Preload("TreatmentRecord.DiagnosisRecord.HistorySheet").
+		Preload("TreatmentRecord.DiagnosisRecord.HistorySheet.PatientRegister").
+		Preload("Pharmacist").
+		Preload("StatusMed").
+		Raw("SELECT * FROM medicine_records").
+		Find(&medicinerecords).Error; err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -113,20 +128,48 @@ func DeleteMedicineRecord(c *gin.Context) {
 // PATCH /medicinerecords
 func UpdateMedicineRecord(c *gin.Context) {
 	var medicinerecord entity.MedicineRecord
+	var pharmacist entity.Employee
+	var treatmentrecord entity.TreatmentRecord
+	var statusmed entity.StatusMed
+	var payload entity.MedicineRecord
 	if err := c.ShouldBindJSON(&medicinerecord); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	if tx := entity.DB().Where("id = ?", medicinerecord.ID).First(&medicinerecord); tx.RowsAffected == 0 {
+	if tx := entity.DB().Where("id = ?", payload.ID).First(&medicinerecord); tx.RowsAffected == 0 {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "medicinerecord not found"})
 		return
 	}
+	if tx := entity.DB().Where("id = ?", payload.TreatmentRecordID).First(&treatmentrecord); tx.RowsAffected == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "treatmentrecord not found"})
+		return
+	}
+	if tx := entity.DB().Where("id = ?", payload.PharmacistID).First(&pharmacist); tx.RowsAffected == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "pharmacist not found"})
+		return
+	}
+	if tx := entity.DB().Where("id = ?", payload.StatusMedID).First(&statusmed); tx.RowsAffected == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "statusmed not found"})
+		return
+	}
 
-	if err := entity.DB().Save(&medicinerecord).Error; err != nil {
+	updatemr := entity.MedicineRecord{
+		TreatmentRecord: treatmentrecord,    // โยงความสัมพันธ์กับ Entity TreatmentRecord
+		Pharmacist:      pharmacist,         // โยงความสัมพันธ์กับ Entity Employee
+		StatusMed:       statusmed,          // โยงความสัมพันธ์กับ Entity StatusMed
+		Advicetext:      payload.Advicetext, // ตั้งค่าฟิลด์ Advicetext
+		MedTime:         payload.MedTime,    // ตั้งค่าฟิลด์ MedicineRecord
+	}
+	if _, err := govalidator.ValidateStruct(updatemr); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"data": medicinerecord})
+	if err := entity.DB().Where("id = ?", medicinerecord.ID).Updates(&updatemr).Error; err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"status": "Updating Success!", "data": medicinerecord})
 }
