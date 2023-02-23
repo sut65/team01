@@ -23,8 +23,8 @@ type PatientRegister struct {
 	EmployeeID *uint
 	Employee   Employee `gorm:"references:ID"`
 
-	GenderID *uint
-	Gender   Gender `gorm:"references:ID"`
+	PatientRegisterGenderID *uint
+	PatientRegisterGender   PatientRegisterGender `gorm:"references:ID"`
 
 	PrefixID *uint
 	Prefix   Prefix `gorm:"references:ID"`
@@ -50,7 +50,8 @@ type PatientRegister struct {
 	ProvinceID *uint
 	Province   Province `gorm:"references:ID"`
 
-	HistorySheets []HistorySheet `gorm:"foreignKey:DrugAllergyID"`
+	Patientrights []PatientRight `gorm:"foreignKey:PatientRegisterID"`
+	HistorySheets []HistorySheet `gorm:"foreignKey:PatientRegisterID"`
 	Appointment   []Appointment  `gorm:"foreignKey:PatientRegisterID"`
 }
 
@@ -168,8 +169,10 @@ type PatientRight struct {
 
 	DateRocrcord time.Time `valid:"Now~Time must be Now"`
 
-	PatientRegister []PatientRegister `gorm:"foreignKey:PatientRightID"`
-	Payments        []Payment         `gorm:"foreignKey:PatientRightID" valid:"-"`
+	PatientRegisterID *uint
+	PatientRegister   PatientRegister `gorm:"references:id" valid:"-"`
+
+	Payments []Payment `gorm:"foreignKey:PatientRightID" valid:"-"`
 }
 
 type RightType struct {
@@ -257,8 +260,8 @@ type OutpatientScreening struct {
 	Note string `valid:"required~Note cannot be blank"`
 	Time time.Time
 
-	// EmployeeID *uint
-	// Employee   Employee `gorm:"references:ID"`
+	EmployeeID *uint
+	Employee   Employee `gorm:"references:ID"`
 
 	HistorySheetID *uint
 	HistorySheet   HistorySheet `gorm:"references:ID"`
@@ -313,7 +316,7 @@ type Admin struct {
 	gorm.Model
 	FirstName string
 	LastName  string
-	Email     string	`gorm:"uniqueIndex"`
+	Email     string `gorm:"uniqueIndex"`
 	Password  string
 	Employee  []Employee `gorm:"foreignKey:AdminID"`
 	Workload  []Workload `gorm:"foreignKey:AdminID"`
@@ -366,8 +369,8 @@ type Employee struct {
 	OutpatientScreening []OutpatientScreening `gorm:"foreignKey:EmployeeID"`
 	Appointment         []Appointment         `gorm:"foreignKey:EmployeeID"`
 	PatientRight        []PatientRight        `gorm:"foreignKey:EmployeeID"`
-	Payments            []Payment             `gorm:"foreignKey:EmployeeID"`
-	MedicineRecords     []MedicineRecord      `gorm:"foreignKey: EmployeeID" `
+	Payments            []Payment             `gorm:"foreignKey:CashierID"`
+	MedicineRecords     []MedicineRecord      `gorm:"foreignKey:PharmacistID" `
 }
 
 //=================MedicineRecord=========================
