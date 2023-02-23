@@ -1,8 +1,8 @@
 import React from "react";
-import { SigninInterface } from "../models/ISignin/ISignin";
+import { SigninInterface } from "../models/ISignin";
 
-import { MedicineRecordsInterface } from "../models/IMedicineRecord/IMedicineRecord";
-import { EmployeesInterface } from "../models/IEmployee/IEmployee";
+import { MedicineRecordsInterface } from "../models/IMedicineRecord";
+import { EmployeesInterface } from "../models/IEmployee";
 
 const apiUrl = "http://localhost:8080";
 
@@ -50,10 +50,34 @@ async function GetMedicineRecord() {
 
   return res;
 }
+async function GetMedicineRecordById(id: string) {
+  const requestOptions = {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+      "Content-Type": "application/json",
+    },
+  };
+
+  let res = await fetch(`${apiUrl}/medicinerecord/${id}`, requestOptions)
+    .then((response) => response.json())
+    .then((res) => {
+      if (res.data) {
+        return res.data;
+      } else {
+        return false;
+      }
+    });
+
+  return res;
+}
+
 
 
 async function GetEmployee() {
-  let id = localStorage.getItem("uid");
+  let id = localStorage.getItem("id");
+  console.log(id);
+  
   const requestOptions = {
     method: "GET",
     headers: {
@@ -129,4 +153,5 @@ export {
   GetStatusMed,
   GetEmployee,
   CreateMedicineRecords,
+  GetMedicineRecordById,
 };

@@ -293,6 +293,29 @@ func main() {
 			protected.POST("/rooms", controller_workload.CreateRoom)
 			protected.PATCH("/rooms", controller_workload.UpdateRoom)
 			protected.DELETE("/rooms/:id", controller_workload.DeleteRoom)
+
+			// //Paymenttype Routes
+			protected.GET("/paymenttypes", controller_payment.ListPaymentTypes)
+			protected.GET("/paymenttype/:id", controller_payment.GetPaymentType)
+
+			//Payment Routes
+			protected.POST("/createpayment", controller_payment.CreatePayment)
+			protected.GET("/payments", controller_payment.ListPayments)
+			protected.GET("/payment/:id", controller_payment.GetPayment)
+			protected.PATCH("/payments", controller_payment.UpdatePayment)
+			protected.DELETE("/payments/:id", controller_payment.DeletePayment)
+
+			protected.DELETE("/medbypatien/:id", controller_payment.GetMedbyPatient)
+			// MedicineRecord Routes
+			protected.POST("/createmedicinerecord", controller_medicinerecord.CreateMedicineRecord)
+			protected.GET("/medicinerecords", controller_medicinerecord.ListMedicineRecords)
+			protected.GET("/medicinerecord/:id", controller_medicinerecord.GetMedicineRecord)
+			protected.PATCH("/medicinerecord", controller_medicinerecord.UpdateMedicineRecord)
+			protected.DELETE("/medicinerecords/:id", controller_medicinerecord.DeleteMedicineRecord)
+
+			//StatusMed Routes
+			protected.GET("/statusmeds", controller_medicinerecord.ListStatusMeds)
+			protected.GET("/statusmed/:id", controller_medicinerecord.GetStatusMed)
 		}
 	}
 

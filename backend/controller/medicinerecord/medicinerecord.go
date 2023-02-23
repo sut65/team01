@@ -12,7 +12,7 @@ import (
 // POST /medicinerecord
 func CreateMedicineRecord(c *gin.Context) {
 
-	var pharmacist entity.Employee
+	var employee entity.Employee
 	var treatmentrecord entity.TreatmentRecord
 	var statusmed entity.StatusMed
 	var medicinerecord entity.MedicineRecord
@@ -35,13 +35,13 @@ func CreateMedicineRecord(c *gin.Context) {
 		return
 	}
 	// : ค้นหา employee ด้วย id
-	if tx := entity.DB().Where("id = ?", medicinerecord.PharmacistID).First(&pharmacist); tx.RowsAffected == 0 {
+	if tx := entity.DB().Where("id = ?", medicinerecord.EmployeeID).First(&employee); tx.RowsAffected == 0 {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "pharmacist not found"})
 		return
 	}
-	entity.DB().Joins("Role").Find(&pharmacist)
+	entity.DB().Joins("Role").Find(&employee)
 
-	if pharmacist.Role.Name != "Pharmacist" {
+	if employee.Role.Name != "Pharmacist" {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "The data recorder should be a Pharmacist"})
 		return
 	}
@@ -49,7 +49,7 @@ func CreateMedicineRecord(c *gin.Context) {
 	// : สร้าง medicinerecord
 	mr := entity.MedicineRecord{
 		TreatmentRecord: treatmentrecord,           // โยงความสัมพันธ์กับ Entity TreatmentRecord
-		Pharmacist:      pharmacist,                // โยงความสัมพันธ์กับ Entity Employee
+		Employee:        employee,                  // โยงความสัมพันธ์กับ Entity Employee
 		StatusMed:       statusmed,                 // โยงความสัมพันธ์กับ Entity StatusMed
 		Advicetext:      medicinerecord.Advicetext, // ตั้งค่าฟิลด์ Advicetext
 		MedTime:         medicinerecord.MedTime,    // ตั้งค่าฟิลด์ MedicineRecord
@@ -73,7 +73,17 @@ func CreateMedicineRecord(c *gin.Context) {
 func GetMedicineRecord(c *gin.Context) {
 	var medicinerecord entity.MedicineRecord
 	id := c.Param("id")
-	if err := entity.DB().Preload("TreatmentRecord").Preload("Pharmacist").Raw("SELECT * FROM medicine_records WHERE id = ?", id).Find(&medicinerecord).Error; err != nil {
+	if err := entity.DB().
+		Preload("TreatmentRecord").
+		Preload("TreatmentRecord.MedicineOrders").
+		Preload("TreatmentRecord.MedicineOrders.Medicine").
+		Preload("TreatmentRecord.DiagnosisRecord").
+		Preload("TreatmentRecord.DiagnosisRecord.HistorySheet").
+		Preload("TreatmentRecord.DiagnosisRecord.HistorySheet.PatientRegister").
+		Preload("Employee").
+		Preload("StatusMed").
+		Raw("SELECT * FROM medicine_records WHERE id = ?", id).
+		Find(&medicinerecord).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
@@ -83,13 +93,14 @@ func GetMedicineRecord(c *gin.Context) {
 // GET /medicinerecords
 func ListMedicineRecords(c *gin.Context) {
 	var medicinerecords []entity.MedicineRecord
-	if err := entity.DB().Preload("TreatmentRecord").
+	if err := entity.DB().
+		Preload("TreatmentRecord").
 		Preload("TreatmentRecord.MedicineOrders").
 		Preload("TreatmentRecord.MedicineOrders.Medicine").
 		Preload("TreatmentRecord.DiagnosisRecord").
 		Preload("TreatmentRecord.DiagnosisRecord.HistorySheet").
 		Preload("TreatmentRecord.DiagnosisRecord.HistorySheet.PatientRegister").
-		Preload("Pharmacist").
+		Preload("Employee").
 		Preload("StatusMed").
 		Raw("SELECT * FROM medicine_records").
 		Find(&medicinerecords).Error; err != nil {
@@ -114,7 +125,7 @@ func DeleteMedicineRecord(c *gin.Context) {
 		Preload("TreatmentRecord.DiagnosisRecord").
 		Preload("TreatmentRecord.DiagnosisRecord.HistorySheet").
 		Preload("TreatmentRecord.DiagnosisRecord.HistorySheet.PatientRegister").
-		Preload("Pharmacist").
+		Preload("Employee").
 		Preload("StatusMed").
 		Raw("SELECT * FROM medicine_records").
 		Find(&medicinerecords).Error; err != nil {
@@ -127,49 +138,43 @@ func DeleteMedicineRecord(c *gin.Context) {
 
 // PATCH /medicinerecords
 func UpdateMedicineRecord(c *gin.Context) {
-	var medicinerecord entity.MedicineRecord
-	var pharmacist entity.Employee
-	var treatmentrecord entity.TreatmentRecord
-	var statusmed entity.StatusMed
+	// var medicinerecord entity.MedicineRecord
+
+	// var pharmacist entity.Employee
+	// var treatmentrecord entity.TreatmentRecord
+	// var statusmed entity.StatusMed
 	var payload entity.MedicineRecord
-	if err := c.ShouldBindJSON(&medicinerecord); err != nil {
+	var newpayload entity.MedicineRecord
+
+	if err := c.ShouldBindJSON(&payload); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	if tx := entity.DB().Where("id = ?", payload.ID).First(&medicinerecord); tx.RowsAffected == 0 {
+	if tx := entity.DB().Where("id = ?", payload.ID).First(&newpayload); tx.RowsAffected == 0 {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "medicinerecord not found"})
 		return
 	}
-	if tx := entity.DB().Where("id = ?", payload.TreatmentRecordID).First(&treatmentrecord); tx.RowsAffected == 0 {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "treatmentrecord not found"})
-		return
-	}
-	if tx := entity.DB().Where("id = ?", payload.PharmacistID).First(&pharmacist); tx.RowsAffected == 0 {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "pharmacist not found"})
-		return
-	}
-	if tx := entity.DB().Where("id = ?", payload.StatusMedID).First(&statusmed); tx.RowsAffected == 0 {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "statusmed not found"})
-		return
-	}
 
+	newpayload.TreatmentRecord = payload.TreatmentRecord
+	newpayload.StatusMed = payload.StatusMed
+	newpayload.Advicetext = payload.Advicetext
+	newpayload.MedTime = payload.MedTime
 	updatemr := entity.MedicineRecord{
-		TreatmentRecord: treatmentrecord,    // โยงความสัมพันธ์กับ Entity TreatmentRecord
-		Pharmacist:      pharmacist,         // โยงความสัมพันธ์กับ Entity Employee
-		StatusMed:       statusmed,          // โยงความสัมพันธ์กับ Entity StatusMed
-		Advicetext:      payload.Advicetext, // ตั้งค่าฟิลด์ Advicetext
-		MedTime:         payload.MedTime,    // ตั้งค่าฟิลด์ MedicineRecord
+		TreatmentRecord: newpayload.TreatmentRecord, // โยงความสัมพันธ์กับ Entity TreatmentRecord
+		StatusMed:       newpayload.StatusMed,       // โยงความสัมพันธ์กับ Entity StatusMed
+		Advicetext:      newpayload.Advicetext,      // ตั้งค่าฟิลด์ Advicetext
+		MedTime:         newpayload.MedTime,         // ตั้งค่าฟิลด์ MedicineRecord
 	}
 	if _, err := govalidator.ValidateStruct(updatemr); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	if err := entity.DB().Where("id = ?", medicinerecord.ID).Updates(&updatemr).Error; err != nil {
+	if err := entity.DB().Save(&newpayload).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"status": "Updating Success!", "data": medicinerecord})
+	c.JSON(http.StatusOK, gin.H{"status": "Updating Success!", "data": newpayload})
 }
