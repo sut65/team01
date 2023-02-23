@@ -208,20 +208,6 @@ func main() {
 			protected.PATCH("/diseases", controller_diagnosisrecord.UpdateDisease)
 			protected.DELETE("/diseases/:id", controller_diagnosisrecord.DeleteDisease)
 
-			// MedicineRecord Routes ------------------------------------------------------------------------------------------------------------------------------------------------
-			protected.GET("/medicinerecords", controller_medicinerecord.ListMedicineRecords)
-			protected.GET("/medicinerecord/:id", controller_medicinerecord.GetMedicineRecord)
-			protected.POST("/medicinerecords", controller_medicinerecord.CreateMedicineRecord)
-			protected.PATCH("/medicinerecords", controller_medicinerecord.UpdateMedicineRecord)
-			protected.DELETE("/medicinerecords/:id", controller_medicinerecord.DeleteMedicineRecord)
-
-			// StatusMed Routes
-			protected.GET("/statusmeds", controller_medicinerecord.ListStatusMeds)
-			protected.GET("/statusmed/:id", controller_medicinerecord.GetStatusMed)
-			protected.POST("/statusmeds", controller_medicinerecord.CreateStatusMed)
-			protected.PATCH("/statusmeds", controller_medicinerecord.UpdateStatusMed)
-			protected.DELETE("/statusmeds/:id", controller_medicinerecord.DeleteStatusMed)
-
 			// PatientRight ------------------------------------------------------------------------------------------------------------------------------------------------
 			protected.GET("/patientrights", controller_patientright.ListPatientRights)
 			protected.GET("/patientright/:id", controller_patientright.GetPatientRights)
@@ -242,22 +228,6 @@ func main() {
 			protected.POST("/patienttypes", controller_patientright.CreateRightType)
 			protected.PATCH("/patienttypes", controller_patientright.UpdatePatientType)
 			protected.DELETE("/patienttypes/:id", controller_patientright.DeletePatientType)
-
-			// Payment ------------------------------------------------------------------------------------------------------------------------------------------------
-			protected.GET("/payments", controller_payment.ListPayments)
-			protected.GET("/payment/:id", controller_payment.GetPayment)
-			protected.POST("/payments", controller_payment.CreatePayment)
-			protected.PATCH("/payments", controller_payment.UpdatePayment)
-			protected.DELETE("/payments/:id", controller_payment.DeletePayment)
-
-			protected.GET("/getmedbypatient/:id", controller_payment.GetMedbyPatient)
-
-			// PaymentType Routes
-			protected.GET("/paymenttypes", controller_payment.ListPaymentTypes)
-			protected.GET("/paymenttype/:id", controller_payment.GetPaymentType)
-			protected.POST("/paymenttypes", controller_payment.CreatePaymentType)
-			protected.PATCH("/paymenttypes", controller_payment.UpdatePaymentType)
-			protected.DELETE("/paymenttypes/:id", controller_payment.DeletePaymentType)
 
 			// TreatmentRecord ------------------------------------------------------------------------------------------------------------------------------------------------
 			protected.GET("/treatmentrecords", controller_treatmentrecord.ListTreatmentRecords)
@@ -294,19 +264,7 @@ func main() {
 			protected.PATCH("/rooms", controller_workload.UpdateRoom)
 			protected.DELETE("/rooms/:id", controller_workload.DeleteRoom)
 
-			// //Paymenttype Routes
-			protected.GET("/paymenttypes", controller_payment.ListPaymentTypes)
-			protected.GET("/paymenttype/:id", controller_payment.GetPaymentType)
-
-			//Payment Routes
-			protected.POST("/createpayment", controller_payment.CreatePayment)
-			protected.GET("/payments", controller_payment.ListPayments)
-			protected.GET("/payment/:id", controller_payment.GetPayment)
-			protected.PATCH("/payments", controller_payment.UpdatePayment)
-			protected.DELETE("/payments/:id", controller_payment.DeletePayment)
-
-			protected.DELETE("/medbypatien/:id", controller_payment.GetMedbyPatient)
-			// MedicineRecord Routes
+			// MedicineRecord Routes ----------------------------------------------------------------------------------------------------------------------------------
 			protected.POST("/createmedicinerecord", controller_medicinerecord.CreateMedicineRecord)
 			protected.GET("/medicinerecords", controller_medicinerecord.ListMedicineRecords)
 			protected.GET("/medicinerecord/:id", controller_medicinerecord.GetMedicineRecord)
@@ -316,6 +274,22 @@ func main() {
 			//StatusMed Routes
 			protected.GET("/statusmeds", controller_medicinerecord.ListStatusMeds)
 			protected.GET("/statusmed/:id", controller_medicinerecord.GetStatusMed)
+
+			// Payment ------------------------------------------------------------------------------------------------------------------------------------------------
+			protected.GET("/payments", controller_payment.ListPayments)
+			protected.GET("/payment/:id", controller_payment.GetPayment)
+			protected.POST("/payments", controller_payment.CreatePayment)
+			protected.PATCH("/payments", controller_payment.UpdatePayment)
+			protected.DELETE("/payments/:id", controller_payment.DeletePayment)
+
+			protected.GET("/getmedbypatient/:id", controller_payment.GetMedbyPatient)
+
+			// PaymentType Routes
+			protected.GET("/paymenttypes", controller_payment.ListPaymentTypes)
+			protected.GET("/paymenttype/:id", controller_payment.GetPaymentType)
+			protected.POST("/paymenttypes", controller_payment.CreatePaymentType)
+			protected.PATCH("/paymenttypes", controller_payment.UpdatePaymentType)
+			protected.DELETE("/paymenttypes/:id", controller_payment.DeletePaymentType)
 		}
 	}
 

@@ -418,45 +418,45 @@ func SetupDatabase() {
 
 	// DiabetesLevel Data
 	DiabetesLevel1 := DiabetesLevel{
-		Level:             "กลุ่มเสี่ยงสูงมาก",
-		AssessmentForms:   "Diabetes risk score มากกว่า 8",
-		HistoryTakingForm: "Text Field",
+		Level:                     "กลุ่มเสี่ยงสูงมาก",
+		DiabetesAssessmentForms:   "Diabetes risk score มากกว่า 8",
+		DiabetesHistoryTakingForm: "Text Field",
 	}
 	db.Model(&DiabetesLevel{}).Create(&DiabetesLevel1)
 
 	DiabetesLevel2 := DiabetesLevel{
-		Level:             "กลุ่มเสี่ยงสูง",
-		AssessmentForms:   "Diabetes risk score 6-8 คะแนน",
-		HistoryTakingForm: "Text Field",
+		Level:                     "กลุ่มเสี่ยงสูง",
+		DiabetesAssessmentForms:   "Diabetes risk score 6-8 คะแนน",
+		DiabetesHistoryTakingForm: "Text Field",
 	}
 	db.Model(&DiabetesLevel{}).Create(&DiabetesLevel2)
 
 	DiabetesLevel3 := DiabetesLevel{
-		Level:             "กลุ่มเสี่ยงปานกลาง",
-		AssessmentForms:   "Diabetes risk score 3-5 คะแนน",
-		HistoryTakingForm: "Text Field",
+		Level:                     "กลุ่มเสี่ยงปานกลาง",
+		DiabetesAssessmentForms:   "Diabetes risk score 3-5 คะแนน",
+		DiabetesHistoryTakingForm: "Text Field",
 	}
 	db.Model(&DiabetesLevel{}).Create(&DiabetesLevel3)
 
 	DiabetesLevel4 := DiabetesLevel{
-		Level:             "กลุ่มปกติ",
-		AssessmentForms:   "Diabetes risk score น้อยกว่า 3 คะแนน",
-		HistoryTakingForm: "Text Field",
+		Level:                     "กลุ่มปกติ",
+		DiabetesAssessmentForms:   "Diabetes risk score น้อยกว่า 3 คะแนน",
+		DiabetesHistoryTakingForm: "Text Field",
 	}
 	db.Model(&DiabetesLevel{}).Create(&DiabetesLevel4)
 
 	// ObesityLevel Data
 	ObesityLevel1 := ObesityLevel{
-		Level:             "กลุ่มผิดปกติ",
-		AssessmentForms:   "BMI > 35, มีความผิดปกติมากกว่าเท่ากับ 3 ข้อจาก 5 ข้อในการซักประวัติ",
-		HistoryTakingForm: "Text Field",
+		Level:                    "กลุ่มผิดปกติ",
+		ObesityAssessmentForms:   "BMI > 35, มีความผิดปกติมากกว่าเท่ากับ 3 ข้อจาก 5 ข้อในการซักประวัติ",
+		ObesityHistoryTakingForm: "Text Field",
 	}
 	db.Model(&ObesityLevel{}).Create(&ObesityLevel1)
 
 	ObesityLevel2 := ObesityLevel{
-		Level:             "กลุ่มปกติ",
-		AssessmentForms:   "BMI < 35, มีความผิดปกติน้อยกว่า 3 ข้อจาก 5 ข้อในการซักประวัติ",
-		HistoryTakingForm: "Text Field",
+		Level:                    "กลุ่มปกติ",
+		ObesityAssessmentForms:   "BMI < 35, มีความผิดปกติน้อยกว่า 3 ข้อจาก 5 ข้อในการซักประวัติ",
+		ObesityHistoryTakingForm: "Text Field",
 	}
 	db.Model(&ObesityLevel{}).Create(&ObesityLevel2)
 
