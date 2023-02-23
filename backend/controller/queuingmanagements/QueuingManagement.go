@@ -3,8 +3,8 @@ package controller
 import (
 	"net/http"
 
-	"github.com/ChatreeDev/sa-65-example/entity"
 	"github.com/gin-gonic/gin"
+	"github.com/sut65/team01/entity"
 )
 
 // POST /queuingManagements
