@@ -55,7 +55,7 @@ export default function App() {
         <Route path="/historysheet" element={<HistorySheets />} />
         <Route path="/patient" element={<PatientRegisters />} />
         <Route path="/patientcreate/:id?" element={<PatientRegisterCreate />} />
-        {/* <Route path="/historysheetcreate/:id?" element={<HistorySheetCreate />} /> */}
+        <Route path="/historysheetcreate/:id?" element={<HistorySheetCreate />} />
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </div>

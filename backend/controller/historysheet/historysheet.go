@@ -38,10 +38,10 @@ func CreateHistorySheet(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "patientregister not found"})
 		return
 	}
-	// if tx := entity.DB().Table("employees").Where("id = ?", employee.RoleID).First(&employee); tx.RowsAffected == 0 {
-	// 	c.JSON(http.StatusBadRequest, gin.H{"error": "nurse not found"})
-	// 	return
-	// }
+	if tx := entity.DB().Table("employees").Where("id = ?", employee.RoleID).First(&employee); tx.RowsAffected == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "nurse not found"})
+		return
+	}
 	if tx := entity.DB().Table("drug_allergies").Where("id = ?", historysheet.DrugAllergyID).First(&drugallergy); tx.RowsAffected == 0 {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "drugallergy not found"})
 		return

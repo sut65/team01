@@ -16,8 +16,10 @@ export interface HistorySheetsInterface {
 
     PatientRegisterID: number;
     PatientRegister: PatientRegistersInterface;
+
     EmployeeID: number;
     Employee: EmployeesInterface;
+    
     DrugAllergyID: number;
     DrugAllergy: DrugAllergiesInterface;
 }
