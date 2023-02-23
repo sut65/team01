@@ -1,29 +1,54 @@
 import React, { useEffect } from "react";
 import { Link as RouterLink } from "react-router-dom";
-import Typography from "@mui/material/Typography";
+import Typography from '@mui/material/Typography';
 import Button from "@mui/material/Button";
-import Paper from "@mui/material/Paper";
-import Box from '@mui/material/Box';
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
-import Container from '@mui/material/Container';
+import IconButton from "@mui/material/IconButton";
+import Container from "@mui/material/Container";
+import Box from "@mui/material/Box";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogTitle from "@mui/material/DialogTitle";
+import DialogContent from "@mui/material/DialogContent";
+import Snackbar from "@mui/material/Snackbar";
+import MuiAlert, { AlertProps } from "@mui/material/Alert";
 import { EmployeesInterface } from "../../models/IEmployee/IEmployee";
+import { DataGrid, GridColDef } from "@mui/x-data-grid";
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
 import moment from "moment";
-import { Divider } from "@mui/material";
+import { Tooltip } from "@mui/material";
+
+const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(props, ref) {
+  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
 
 function Employees() {
-  const [employees, setEmployee] = React.useState<EmployeesInterface[]>([]);
-  const getEmployee = async () => {
+const [employees, setEmployees] = React.useState<EmployeesInterface[]>([]);
+const [success, setSuccess] = React.useState(false);
+const [error, setError] = React.useState(false);
+const [message, setMessage] = React.useState("");
+const [open, setOpen] = React.useState<boolean[]>([]);
+
+useEffect(() => {
+  getEmployees();
+}, []);
+
+
+const handleClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setSuccess(false);
+    setError(false);
+  };
+
+  const getEmployees = async () => {
     const apiUrl = "http://localhost:8080/employees";
     const requestOptions = {
       method: "GET",
       headers: {
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
         "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("token")}`
       },
     };
 
@@ -32,27 +57,138 @@ function Employees() {
       .then((res) => {
         console.log(res.data);
         if (res.data) {
-          setEmployee(res.data);
+          setEmployees(res.data)
         } else {
-          console.log("else");
+          console.log(res.error)
         }
       });
+    console.log(employees);
   };
-  console.log("data", employees)
 
-  useEffect(() => {
-    getEmployee();
-  }, []);
+  const deleteEmployee = async (id: number) => {
+    const apiUrl = "http://localhost:8080";
+    const requestOptions = {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("token")}`
+      },
+    };
+
+    fetch(`${apiUrl}/employees/`+id, requestOptions)
+    // fetch(apiUrl, requestOptions)
+      .then((response) => response.json())
+      .then((res) => {
+        console.log(res.data);
+        if (res.data) {
+          setEmployees(res.data)
+          setSuccess(true);
+          setMessage("Delete Success");
+          console.log(res.data);
+        }
+        else {
+          setError(true);
+          setMessage("Delete Error");
+          console.log("Helpppp");
+        }
+      });
+
+    window.location.reload();
+    handleCloseDialog(id);
+  }
+
+  const checkOpen = (id: number): boolean => {
+    return open[id] ? open[id] : false;
+  }
+
+  const handleOpen = (id: number) => {
+    let openArr = [...open];
+    openArr[id] = true;
+    setOpen(openArr);
+  };
+
+  const handleCloseDialog = (id: number) => {
+    let openArr = [...open];
+    openArr[id] = false;
+    setOpen(openArr);
+  };
+
+
+  const columns: GridColDef[] = [
+    { field: "IDCard", headerName: "เลขประจำตัวประชาชน", width: 150, },
+    { field: "FirstName", headerName: "ชื่อ", width: 96 },
+    { field: "LastName", headerName: "นามสกุล", width: 96 },
+    { field: "Role", headerName: "ตำแหน่ง", width: 96, valueGetter: (params) => { return params.row.Role.Name}},
+    { field: "PhoneNumber", headerName: "เบอร์โทรศัพท์", width: 150 },
+    { field: "Email", headerName: "อีเมล", width: 180 },
+    { field: "Password", headerName: "รหัสผ่าน", width: 96 },
+    { field: "Gender", headerName: "เพศ", width: 96,valueGetter: (params) => { return params.row.Gender.Name}},
+    { field: "Salary", headerName: "เงินเดือน", width: 96 },
+    { field: "Birthday", headerName: "วันเกิด", width: 120,valueFormatter: function (params) {return moment(params.value).format('D MMM YYYY');}, },
+    { field: "Admin", headerName: "ผู้ดูแลระบบ", width: 150,valueGetter: (params) => { return params.row.Admin.FirstName + " " + params.row.Admin.LastName}},
+    {
+        field: "Actions",
+        // type: "action",
+        // width: 100,
+        headerName: "Action",
+        sortable: false,
+        renderCell: (params) => {
+          return (
+            <React.Fragment>
+            <Tooltip title="แก้ไข">
+              <IconButton size="small" component={RouterLink} to={`/createemployee/${params.row.ID}`}>
+                <EditIcon color="success" fontSize="small"></EditIcon>
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="ลบ">
+              <IconButton size="small" onClick={() => handleOpen(params.row.ID)}>
+                <DeleteIcon color="error" fontSize="small"></DeleteIcon>
+              </IconButton>
+            </Tooltip>
+              <Dialog open={checkOpen(params.row.ID)} onClose={() => handleCloseDialog(params.row.ID)}>
+                <DialogTitle>Confirm Delete</DialogTitle>
+                <DialogContent>Do you want to delete data of '{ params.row.FirstName + " " + params.row.LastName }' ?</DialogContent>
+                <DialogActions>
+                  <Button onClick={() => handleCloseDialog(params.row.ID)}>Cancel</Button>
+                  <Button onClick={() => deleteEmployee(params.row.ID)}>OK</Button>
+                </DialogActions>
+              </Dialog>
+            </React.Fragment>
+          )
+        }
+      }
+  ];
+
+  // เมื่อมีการ log out ฟังก์ชันนี้จะทำการ clear token ใน local storage และเปลี่ยน path ไปที่หน้า log in
 
   return (
     <div>
-      <Container maxWidth="lg"
-        sx={{ marginTop: 2 }}
-      >
-        <Paper>
-        <Box display="flex">
-          <Box flexGrow={1} sx={{ paddingX: 2, paddingY: 1}}>
-            <Typography 
+      <Container maxWidth="lg">
+        <Snackbar
+          open={success}
+          autoHideDuration={6000}
+          onClose={handleClose}
+          anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+        >
+          <Alert onClose={handleClose} severity="success">
+            {message}
+          </Alert>
+        </Snackbar>
+        <Snackbar open={error}
+          autoHideDuration={6000}
+          onClose={handleClose}>
+          <Alert onClose={handleClose} severity="error">
+            {message}
+          </Alert>
+        </Snackbar>
+        <Box
+          display="flex"
+          sx={{
+            marginTop: 2,
+          }}
+        >
+          <Box flexGrow={1}>
+            <Typography
               component="h2"
               variant="h6"
               color="#4db6ac"
@@ -61,9 +197,8 @@ function Employees() {
               ข้อมูลบุคลากร
             </Typography>
           </Box>
-
           <Box>
-            <Button 
+            <Button
               style={{background: '#4db6ac'}}
               component={RouterLink}
               to="/createemployee"
@@ -75,71 +210,17 @@ function Employees() {
             </Button>
           </Box>
         </Box>
-        <Divider />
-
-        <TableContainer>
-          <Table aria-label="simple table">
-            <TableHead>
-              <TableRow>
-                <TableCell align="center" width="10%" >
-                  เลขประจำตัวประชาชน
-                </TableCell>
-                <TableCell align="center" width="auto">
-                  คำนำหน้า
-                </TableCell>
-                <TableCell align="center" width="12%">
-                  ชื่อ-นามสกุล
-                </TableCell>
-                <TableCell align="center" width="auto">
-                  ตำแหน่ง
-                </TableCell>
-                <TableCell align="center" width="auto">
-                  เบอร์โทรศัพท์
-                </TableCell>
-                <TableCell align="center" width="auto">
-                  อีเมล
-                </TableCell>
-                <TableCell align="center" width="auto">
-                  รหัสผ่าน
-                </TableCell>
-                <TableCell align="center" width="auto">
-                  เพศ
-                </TableCell>
-                <TableCell align="center" width="auto">
-                  เงินเดือน
-                </TableCell>
-                <TableCell align="center" width="auto">
-                  วันเดือนปีเกิด
-                </TableCell>
-                <TableCell align="center" width="auto">
-                  ผู้ดูแลระบบ
-                </TableCell>
-              </TableRow>
-            </TableHead>
-
-            <TableBody>
-              {employees.map((item: EmployeesInterface) => (
-                <TableRow key={item.ID}>
-                  <TableCell align="center">{item.IDCard}</TableCell>
-                  <TableCell align="center">{item.Title.Name}</TableCell>
-                  <TableCell align="center">{item.FirstName} {item.LastName}</TableCell>
-                  <TableCell align="center">{item.Role.Name}</TableCell>
-                  <TableCell align="center">{item.PhoneNumber}</TableCell>
-                  <TableCell align="center">{item.Email}</TableCell>
-                  <TableCell align="center">{item.Password}</TableCell>
-                  <TableCell align="center">{item.Gender.Name}</TableCell>
-                  <TableCell align="center">{item.Salary}</TableCell>
-                  <TableCell align="center">{moment(item.Birthday).format("DD/MM/YYYY")}</TableCell>
-                  <TableCell align="center">{item.Admin.FirstName} {item.Admin.LastName}</TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-        </Paper>
+        <div style={{ height: 400, width: "100%", marginTop: '20px' }}>
+          <DataGrid
+            rows={employees}
+            getRowId={(row) => row.ID}
+            columns={columns}
+            pageSize={5}
+            rowsPerPageOptions={[5]}
+          />
+        </div>
       </Container>
     </div>
-  )
+  );
 }
-
-export default Employees; 
+export default Employees;

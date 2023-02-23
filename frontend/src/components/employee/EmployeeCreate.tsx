@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Link as RouterLink } from "react-router-dom";
+import { Link as RouterLink, useParams } from "react-router-dom";
 import TextField, { TextFieldProps } from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import FormControl from "@mui/material/FormControl";
@@ -7,7 +7,7 @@ import Container from "@mui/material/Container";
 import Paper from "@mui/material/Paper";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
+import Typography from '@mui/material/Typography';
 import Divider from "@mui/material/Divider";
 import Snackbar from "@mui/material/Snackbar";
 import MuiAlert, { AlertProps } from "@mui/material/Alert";
@@ -38,7 +38,8 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
 });
 
 function EmployeeCreate() {
-  
+
+  const params = useParams();
   const [employee, setEmployee] = React.useState<Partial<EmployeesInterface>>({}); //useState
   const [admin, setAdmin] = React.useState<AdminsInterface>();
   const [title, setTitle] = React.useState<TitlesInterface[]>([]);
@@ -53,6 +54,7 @@ function EmployeeCreate() {
     if (reason === "clickaway") {
       return;
     }
+
     setSuccess(false);
     setError(false);
   };
@@ -160,13 +162,26 @@ function EmployeeCreate() {
         }
       });
   }
-  //
-  useEffect(() => {
-    getAdmin();
-    getRole();
-    getTitle();
-    getGender();
-  }, []);
+  const getEmployee = async (id: string) => {
+    const apiUrl = `http://localhost:8080/employee/${id}`;
+    const requestOptions = {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`
+        }
+    };
+
+    fetch(apiUrl, requestOptions)
+        .then((response) => response.json())
+        .then((res) => {
+            if (res.data) {
+                setEmployee(res.data);
+            } else {
+                console.log(res.error);
+            }
+        });
+}
 
   const convertType = (data: string | number | undefined) => {
     let val = typeof data === "string" ? parseInt(data) : data;
@@ -175,25 +190,34 @@ function EmployeeCreate() {
 
   function submit() {
 
-    let data = {
+    let data: any = {
       AdminID: convertType(admin?.ID),
-      IDCard: employee.IDCard,
-      TitleID: convertType(employee.TitleID),
-      FirstName: employee.FirstName,
-      LastName: employee.LastName,
+      IDCard: employee.IDCard ?? "",
+      TitleID: convertType(employee.TitleID ),
+      FirstName: employee.FirstName ?? "",
+      LastName: employee.LastName ?? "",
       RoleID: convertType(employee.RoleID),
-      PhoneNumber: employee.PhoneNumber,
-      Email: employee.Email,
-      Password: employee.Password,
+      PhoneNumber: employee.PhoneNumber ?? "",
+      Email: employee.Email ?? "",
+      Password: employee.Password ?? "",
       GenderID: convertType(employee.GenderID),
       Salary: convertType(employee.Salary),
       Birthday: selectedDate,
     };
+
+    let apiUrl: any 
+    if (params.id) {
+      data["ID"] = parseInt(params.id);
+      apiUrl = "http://localhost:8080/employee";
+    }
+    else {apiUrl = "http://localhost:8080/createemployee";}
     console.log("data", data)
 
-    const apiUrl = "http://localhost:8080/createemployee";
+
+    // const apiUrl = "http://localhost:8080/createemployee";
+    
     const requestOptionsPost = {
-      method: "POST",
+      method: params.id ? "PATCH" : "POST",
       headers: {
         Authorization: `Bearer ${localStorage.getItem("token")}`,
         "Content-Type": "application/json",
@@ -210,7 +234,7 @@ function EmployeeCreate() {
           setSuccess(true);
           setErrorMessage("")
           setTimeout(() => { 
-            window.location.href = "/employees";
+          window.location.href = "/employees";
           }, 2000)
         } else {
           console.log("บันทึกข้อมูลไม่สำเร็จ")
@@ -258,6 +282,24 @@ function EmployeeCreate() {
       });
   }
 
+  useEffect(() => {
+    if (params.id) {
+      getEmployee(params.id)
+    }
+  }, []);
+
+  useEffect(() => {
+    getAdmin();
+    getRole();
+    getTitle();
+    getGender();
+    if (params.id){
+      getEmployee(params.id)
+    }
+  }, [employee]);
+
+  console.log(employee)
+
   return (
     <Container maxWidth="md">
       <Snackbar
@@ -301,7 +343,7 @@ function EmployeeCreate() {
             <p style={{ color: "#006A7D", fontSize: "10" }}>ผู้ดูแลระบบ</p>
             <FormControl fullWidth variant="outlined">
               <TextField
-                id="FirstName"
+                id="Admin"
                 disabled
                 variant="outlined"
                 type="string"
@@ -539,4 +581,5 @@ function EmployeeCreate() {
     </Container>
   );
 }
+
 export default EmployeeCreate;
