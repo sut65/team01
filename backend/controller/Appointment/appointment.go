@@ -134,7 +134,7 @@ func UpdateAppointment(c *gin.Context) {
 		Note:            updateappointment.Note,            // ตั้งค่าฟิลด์ note
 	}
 
-	//ขั้นตอนการ validate ที่นำมาจาก  unit test
+	//ขั้นตอนการ validate ที่นำมาจาก  unit testing
 	if _, err := govalidator.ValidateStruct(upapm); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
