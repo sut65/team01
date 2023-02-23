@@ -27,7 +27,7 @@ func CreatePatientRegister(c *gin.Context) {
 	var patientregister entity.PatientRegister
 	var employee entity.Employee
 	var prefix entity.Prefix
-	var gender entity.Gender
+	var patientregistergender entity.PatientRegisterGender
 	var nationality entity.Nationality
 	var religion entity.Religion
 	var bloodtype entity.BloodType
@@ -48,8 +48,8 @@ func CreatePatientRegister(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "prefix not found"})
 		return
 	}
-	if tx := entity.DB().Table("genders").Where("id = ?", patientregister.GenderID).First(&gender); tx.RowsAffected == 0 {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "gender not found"})
+	if tx := entity.DB().Table("patient_register_genders").Where("id = ?", patientregister.PatientRegisterGenderID).First(&patientregistergender); tx.RowsAffected == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "patient_register_gender not found"})
 		return
 	}
 	if tx := entity.DB().Table("nationalities").Where("id = ?", patientregister.NationalityID).First(&nationality); tx.RowsAffected == 0 {
@@ -81,24 +81,24 @@ func CreatePatientRegister(c *gin.Context) {
 		return
 	}
 	p := entity.PatientRegister{
-		FirstName:            patientregister.FirstName,
-		LastName:             patientregister.LastName,
-		IdentificationNumber: patientregister.IdentificationNumber,
-		Age:                  patientregister.Age,
-		BirthDay:             patientregister.BirthDay,
-		Mobile:               patientregister.Mobile,
-		Occupation:           patientregister.Occupation,
-		Address:              patientregister.Address,
-		Employee:             employee,
-		Prefix:               prefix,
-		Gender:               gender,
-		Nationality:          nationality,
-		Religion:             religion,
-		BloodType:            bloodtype,
-		MaritalStatus:        maritalstatus,
-		SubDistrict:          subdistrict,
-		District:             district,
-		Province:             province,
+		FirstName:             patientregister.FirstName,
+		LastName:              patientregister.LastName,
+		IdentificationNumber:  patientregister.IdentificationNumber,
+		Age:                   patientregister.Age,
+		BirthDay:              patientregister.BirthDay,
+		Mobile:                patientregister.Mobile,
+		Occupation:            patientregister.Occupation,
+		Address:               patientregister.Address,
+		Employee:              employee,
+		Prefix:                prefix,
+		PatientRegisterGender: patientregistergender,
+		Nationality:           nationality,
+		Religion:              religion,
+		BloodType:             bloodtype,
+		MaritalStatus:         maritalstatus,
+		SubDistrict:           subdistrict,
+		District:              district,
+		Province:              province,
 	}
 	if _, err := govalidator.ValidateStruct(p); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -227,7 +227,7 @@ func UpdatePatientRegister(c *gin.Context) {
 	var patientregister entity.PatientRegister
 	var employee entity.Employee
 	var prefix entity.Prefix
-	var gender entity.Gender
+	var patientregistergender entity.PatientRegisterGender
 	var nationality entity.Nationality
 	var religion entity.Religion
 	var bloodtype entity.BloodType
@@ -251,8 +251,8 @@ func UpdatePatientRegister(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "prefix_id not found"})
 		return
 	}
-	if tx := entity.DB().Where("id = ?", payload.GenderID).First(&gender); tx.RowsAffected == 0 {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "gender_id not found"})
+	if tx := entity.DB().Where("id = ?", payload.PatientRegisterGenderID).First(&patientregistergender); tx.RowsAffected == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "patient_register_gender_id not found"})
 		return
 	}
 	if tx := entity.DB().Where("id = ?", payload.NationalityID).First(&nationality); tx.RowsAffected == 0 {
@@ -284,24 +284,24 @@ func UpdatePatientRegister(c *gin.Context) {
 		return
 	}
 	updatepatientregister := entity.PatientRegister{
-		FirstName:            payload.FirstName,
-		LastName:             payload.LastName,
-		IdentificationNumber: payload.IdentificationNumber,
-		Age:                  payload.Age,
-		BirthDay:             payload.BirthDay,
-		Mobile:               payload.Mobile,
-		Occupation:           payload.Occupation,
-		Address:              payload.Address,
-		Employee:             employee,
-		Prefix:               prefix,
-		Gender:               gender,
-		Nationality:          nationality,
-		Religion:             religion,
-		BloodType:            bloodtype,
-		MaritalStatus:        maritalstatus,
-		SubDistrict:          subdistrict,
-		District:             district,
-		Province:             province,
+		FirstName:             payload.FirstName,
+		LastName:              payload.LastName,
+		IdentificationNumber:  payload.IdentificationNumber,
+		Age:                   payload.Age,
+		BirthDay:              payload.BirthDay,
+		Mobile:                payload.Mobile,
+		Occupation:            payload.Occupation,
+		Address:               payload.Address,
+		Employee:              employee,
+		Prefix:                prefix,
+		PatientRegisterGender: patientregistergender,
+		Nationality:           nationality,
+		Religion:              religion,
+		BloodType:             bloodtype,
+		MaritalStatus:         maritalstatus,
+		SubDistrict:           subdistrict,
+		District:              district,
+		Province:              province,
 	}
 	if _, err := govalidator.ValidateStruct(updatepatientregister); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})

@@ -512,6 +512,12 @@ func SetupDatabase() {
 		Status: "การจ่ายยาครั้งที่4",
 	}
 	db.Model(&StatusMed{}).Create(&statusmed4)
+
+	GetDistrictList(db)
+	GetNationalityList(db)
+	GetProvinceList(db)
+	GetSubDistrictList(db)
+
 }
 func GetProvinceList(db *gorm.DB) {
 	resp, err := http.Get("https://raw.githubusercontent.com/kongvut/thai-province-data/master/api_province.json")
@@ -540,6 +546,7 @@ func GetProvinceList(db *gorm.DB) {
 		})
 	}
 	db.Model(&Province{}).Create(&newProvince)
+
 }
 
 func GetDistrictList(db *gorm.DB) {

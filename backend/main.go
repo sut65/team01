@@ -71,11 +71,11 @@ func main() {
 			protected.DELETE("/patientregisters/:id", controller_patientregister.DeletePatientRegister)
 
 			// PatientRegisterGender Routes
-			protected.GET("/genders", controller_patientregister.ListGenders)
-			protected.GET("/gender/:id", controller_patientregister.GetGender)
-			protected.POST("/genders", controller_patientregister.CreateGender)
-			protected.PATCH("/genders", controller_patientregister.UpdateGender)
-			protected.DELETE("/genders/:id", controller_patientregister.DeleteGender)
+			protected.GET("/patientregister/genders", controller_patientregister.ListGenders)
+			protected.GET("/patientregister/gender/:id", controller_patientregister.GetGender)
+			protected.POST("/patientregister/genders", controller_patientregister.CreateGender)
+			protected.PATCH("/patientregister/genders", controller_patientregister.UpdateGender)
+			protected.DELETE("/patientregister/genders/:id", controller_patientregister.DeleteGender)
 
 			// Prefix Routes
 			protected.GET("/prefixes", controller_patientregister.ListPrefixes)
@@ -277,7 +277,7 @@ func main() {
 			protected.GET("/workloads", controller_workload.ListWorkload)
 			protected.GET("/workload/:id", controller_workload.GetWorkload)
 			protected.POST("/workloads", controller_workload.CreateWorkload)
-			protected.PATCH("/medicines", controller_workload.UpdateWorkload)
+			protected.PATCH("/workloads", controller_workload.UpdateWorkload)
 			protected.DELETE("/workloads/:id", controller_workload.DeleteWorkload)
 
 			// Status Routes
