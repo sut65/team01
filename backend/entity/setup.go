@@ -276,22 +276,22 @@ func SetupDatabase() {
 	db.Model(&Disease{}).Create(&disease3)
 
 	disease4 := Disease{
-		Name: "ไข้หวัดใหญ่",
+		Name: "ไข้ หรือ ไข้ไม่ทราบสาเหตุ",
 	}
 	db.Model(&Disease{}).Create(&disease4)
 
 	disease5 := Disease{
-		Name: "ไข้ หรือ ไข้ไม่ทราบสาเหตุ",
+		Name: "ติดเชื้อระบบทางเดินอาหารจากแบคทีเรียชนิดเฉียบพลัน",
 	}
 	db.Model(&Disease{}).Create(&disease5)
 
 	disease6 := Disease{
-		Name: "ติดเชื้อระบบทางเดินอาหารจากแบคทีเรียชนิดเฉียบพลัน",
+		Name: "ทางเดินอาหารอักเสบเฉียบพลันจากไวรัส",
 	}
 	db.Model(&Disease{}).Create(&disease6)
 
 	disease7 := Disease{
-		Name: "ทางเดินอาหารอักเสบเฉียบพลันจากไวรัส",
+		Name: "พิษจากยารักษาโรค",
 	}
 	db.Model(&Disease{}).Create(&disease7)
 
