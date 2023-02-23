@@ -13,7 +13,7 @@ func CreatePayment(c *gin.Context) {
 
 	var paymenttype entity.PaymentType
 	var patientright entity.PatientRight
-	var cashier entity.Employee
+	var employee entity.Employee
 	var medicinerecord entity.MedicineRecord
 	var payment entity.Payment
 
@@ -36,13 +36,8 @@ func CreatePayment(c *gin.Context) {
 	}
 
 	// : ค้นหา cashier ด้วย id
-	if tx := entity.DB().Where("id = ?", payment.CashierID).First(&cashier); tx.RowsAffected == 0 {
+	if tx := entity.DB().Where("id = ?", payment.EmployeeID).First(&employee); tx.RowsAffected == 0 {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "cashier not found"})
-		return
-	}
-	entity.DB().Joins("Role").Find(&cashier)
-	if cashier.Role.Name != "Cashier" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "The data recorder should be a Cashier"})
 		return
 	}
 
@@ -51,13 +46,19 @@ func CreatePayment(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "medicinerecord not found"})
 		return
 	}
+	entity.DB().Joins("Role").Find(&employee)
+
+	// if employee.Role.Name != "Cashier" {
+	// 	c.JSON(http.StatusBadRequest, gin.H{"error": "The data recorder should be a Cashier"})
+	// 	return
+	// }
 	// entity.DB().Joins("Role").Find(&cashier)
 
 	// : สร้าง Payment
 	pm := entity.Payment{
 		PatientRight:   patientright,        // โยงความสัมพันธ์กับ Entity PatientRight
 		PaymentType:    paymenttype,         // โยงความสัมพันธ์ Entity PaymentType
-		Cashier:        cashier,             // โยงความสัมพันธ์กับ Entity cashier
+		Employee:       employee,            // โยงความสัมพันธ์กับ Entity cashier
 		MedicineRecord: medicinerecord,      // โยงความสัมพันธ์กับ Entity MedicineRecord
 		PaymentTime:    payment.PaymentTime, // ตั้งค่าฟิลด์ PaymentTime
 		Total:          payment.Total,       //ตั้งค่าฟิลด์ Total
@@ -74,28 +75,6 @@ func CreatePayment(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Total cannot be zero"})
 		return
 	}
-
-	// for _, item := range payment.PaymentItems {
-
-	// 	var exams entity.Examination
-
-	// 	if tx := entity.DB().Where("id = ?", item.ExaminationID).First(&exams); tx.RowsAffected == 0 {
-	// 		c.JSON(http.StatusBadRequest, gin.H{"error": "examination not found"})
-	// 		return
-	// 	}
-
-	// 	entity.DB().Joins("Medicine").Find(&exams)
-
-	// 	total += (uint(exams.Cost) + exams.Medicine.Cost)
-
-	// }
-
-	//ตรวจสอบฟิลด์ว่ามีค่าตรงกันกับ ค่าใช้จ่ายทั้งหมดหรือไหม
-
-	// if payment.Total != total {
-	// 	c.JSON(http.StatusBadRequest, gin.H{"error": "Total input not match !!"})
-	// 	return
-	// }
 
 	// : บันทึก payment
 	if err := entity.DB().Create(&pm).Error; err != nil {
@@ -115,7 +94,7 @@ func GetMedbyPatient(c *gin.Context) {
 		Preload("TreatmentRecord.DiagnosisRecord").
 		Preload("TreatmentRecord.DiagnosisRecord.HistorySheet").
 		Preload("TreatmentRecord.DiagnosisRecord.HistorySheet.PatientRegister").
-		Preload("Pharmacist").
+		Preload("Employee").
 		Preload("StatusMed").
 		Raw("SELECT * FROM medicinerecord WHERE patientregister.id = ?", id).
 		Find(&medicinerecord).Error; err != nil {
@@ -137,7 +116,7 @@ func GetPayment(c *gin.Context) {
 		Preload("MedicineRecord.TreatmentRecord.DiagnosisRecord").
 		Preload("MedicineRecord.TreatmentRecord.DiagnosisRecord.HistorySheet").
 		Preload("MedicineRecord.TreatmentRecord.DiagnosisRecord.HistorySheet.PatientRegister").
-		Preload("Cashier").
+		Preload("Employee").
 		Raw("SELECT * FROM payments WHERE id = ?", id).
 		Find(&payment).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -157,7 +136,7 @@ func ListPayments(c *gin.Context) {
 		Preload("MedicineRecord.TreatmentRecord.DiagnosisRecord").
 		Preload("MedicineRecord.TreatmentRecord.DiagnosisRecord.HistorySheet").
 		Preload("MedicineRecord.TreatmentRecord.DiagnosisRecord.HistorySheet.PatientRegister").
-		Preload("Cashier").
+		Preload("Employee").
 		Raw("SELECT * FROM payments").Find(&payments).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -166,58 +145,45 @@ func ListPayments(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"data": payments})
 }
 func UpdatePayment(c *gin.Context) {
-	var payment entity.Payment
 
-	var paymenttype entity.PaymentType
-	var patientright entity.PatientRight
-	var cashier entity.Employee
-	var medicinerecord entity.MedicineRecord
 	var payload entity.Payment
+	var newpayload entity.Payment
 
-	if err := c.ShouldBindJSON(&payment); err != nil {
+	if err := c.ShouldBindJSON(&payload); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	if tx := entity.DB().Where("id = ?", payload.ID).First(&payment); tx.RowsAffected == 0 {
+	if tx := entity.DB().Where("id = ?", payload.ID).First(&newpayload); tx.RowsAffected == 0 {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "payment not found"})
 		return
 	}
-	if tx := entity.DB().Where("id = ?", payload.PatientRightID).First(&patientright); tx.RowsAffected == 0 {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "payment not found"})
-		return
-	}
-	if tx := entity.DB().Where("id = ?", payload.PaymentTypeID).First(&paymenttype); tx.RowsAffected == 0 {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "payment not found"})
-		return
-	}
-	if tx := entity.DB().Where("id = ?", payload.CashierID).First(&cashier); tx.RowsAffected == 0 {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "payment not found"})
-		return
-	}
-	if tx := entity.DB().Where("id = ?", payload.MedicineRecordID).First(&medicinerecord); tx.RowsAffected == 0 {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "payment not found"})
-		return
-	}
+
+	newpayload.PatientRight = payload.PatientRight
+	newpayload.PaymentType = payload.PaymentType
+	newpayload.MedicineRecord = payload.MedicineRecord
+	newpayload.PaymentTime = payload.PaymentTime
+	newpayload.Total = payload.Total
+
 	updatepm := entity.Payment{
-		PatientRight:   patientright,
-		PaymentType:    paymenttype,
-		Cashier:        cashier,
-		MedicineRecord: medicinerecord,
-		PaymentTime:    payment.PaymentTime,
-		Total:          payment.Total,
+		PatientRight:   newpayload.PatientRight,   // โยงความสัมพันธ์กับ Entity PatientRight
+		PaymentType:    newpayload.PaymentType,    // โยงความสัมพันธ์ Entity PaymentType
+		MedicineRecord: newpayload.MedicineRecord, // โยงความสัมพันธ์กับ Entity MedicineRecord
+		PaymentTime:    newpayload.PaymentTime,    // ตั้งค่าฟิลด์ PaymentTime
+		Total:          newpayload.Total,          //ตั้งค่าฟิลด์ Total
+
 	}
 	if _, err := govalidator.ValidateStruct(updatepm); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	if err := entity.DB().Where("id = ?", payment.ID).Updates(&updatepm).Error; err != nil {
+	if err := entity.DB().Save(&newpayload).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"data": payment})
+	c.JSON(http.StatusOK, gin.H{"data": newpayload})
 }
 
 // DELETE /payment/:id
@@ -237,7 +203,7 @@ func DeletePayment(c *gin.Context) {
 		Preload("MedicineRecord.TreatmentRecord.DiagnosisRecord").
 		Preload("MedicineRecord.TreatmentRecord.DiagnosisRecord.HistorySheet").
 		Preload("MedicineRecord.TreatmentRecord.DiagnosisRecord.HistorySheet.PatientRegister").
-		Preload("Cashier").
+		Preload("Employee").
 		Raw("SELECT * FROM payments").Find(&payments).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return

@@ -431,8 +431,8 @@ type MedicineRecord struct {
 	MedTime    time.Time `valid:"present~MedTime must be in the present"`
 	Advicetext string    `valid:"required~Advicetext cannot be blank"`
 	// EmployeeID ทำหน้าที่เป็น FK
-	PharmacistID *uint
-	Pharmacist   Employee `gorm:"references:id" valid:"-"`
+	EmployeeID *uint
+	Employee   Employee `gorm:"references:ID" valid:"-"`
 
 	//TreatmentRecordID ทำหน้าที่เป็น ForeignKey
 	TreatmentRecordID *uint
@@ -466,8 +466,8 @@ type Payment struct {
 	PaymentTypeID *uint
 	PaymentType   PaymentType `gorm:"references:ID" valid:"-"`
 
-	CashierID *uint
-	Cashier   Employee `gorm:"references:ID" valid:"-"`
+	EmployeeID *uint
+	Employee   Employee `gorm:"references:ID" valid:"-`
 
 	//MedicineRecordID ทำหน้าที่เป็น ForeignKey
 	MedicineRecordID *uint

@@ -1,7 +1,7 @@
 import React from "react";
-import { SigninInterface } from "../models/ISignin/ISignin";
+import { SigninInterface } from "../models/ISignin";
 
-import { PaymentsInterface } from "../models/IPayment/IPayment";
+import { PaymentsInterface } from "../models/IPayment";
 
 const apiUrl = "http://localhost:8080";
 
@@ -50,6 +50,27 @@ async function GetPayment() {
   return res;
 }
 
+async function GetPaymentById(id: string) {
+  const requestOptions = {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+      "Content-Type": "application/json",
+    },
+  };
+
+  let res = await fetch(`${apiUrl}/payment/${id}`, requestOptions)
+    .then((response) => response.json())
+    .then((res) => {
+      if (res.data) {
+        return res.data;
+      } else {
+        return false;
+      }
+    });
+
+  return res;
+}
 async function GetPaymentType() {
   const requestOptions = {
     method: "GET",
@@ -73,7 +94,7 @@ async function GetPaymentType() {
   }
 
   async function GetEmployee() {
-    let id = localStorage.getItem("uid");
+    let id = localStorage.getItem("id");
     const requestOptions = {
       method: "GET",
       headers: {
@@ -127,4 +148,5 @@ export {
   GetPaymentType,
   GetEmployee,
   CreatePayments,
+  GetPaymentById,
 };
