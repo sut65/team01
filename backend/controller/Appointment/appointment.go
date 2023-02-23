@@ -120,15 +120,15 @@ func UpdateAppointment(c *gin.Context) {
 	}
 
 	// 11: ค้นหา room ด้วย id
-	if tx := entity.DB().Where("id = ?",updateappointment.RoomID).First(&room); tx.RowsAffected == 0 {
+	if tx := entity.DB().Where("id = ?", updateappointment.RoomID).First(&room); tx.RowsAffected == 0 {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "room not found"})
 		return
 	}
 	// 12: สร้าง Appointment
 	upapm := entity.Appointment{
-		PatientRegister: patientregister,             // โยงความสัมพันธ์กับ Entity Patient
-		Employee:        employee,                    // โยงความสัมพันธ์กับ Entity Employee
-		Room:            room,                        // โยงความสัมพันธ์กับ Entity Clinic
+		PatientRegister: patientregister,                   // โยงความสัมพันธ์กับ Entity Patient
+		Employee:        employee,                          // โยงความสัมพันธ์กับ Entity Employee
+		Room:            room,                              // โยงความสัมพันธ์กับ Entity Clinic
 		RoomNumber:      updateappointment.RoomNumber,      // ตั้งค่าฟิลด์ roomnumber
 		AppointmentTime: updateappointment.AppointmentTime, // ตั้งค่าฟิลด์ appointmentTime
 		Note:            updateappointment.Note,            // ตั้งค่าฟิลด์ note
@@ -139,7 +139,7 @@ func UpdateAppointment(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	
+
 	if err := entity.DB().Where("id = ?", appointment.ID).Updates(&upapm).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return

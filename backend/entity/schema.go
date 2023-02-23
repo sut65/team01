@@ -210,6 +210,56 @@ type Appointment struct {
 	Room   Room `gorm:"references:id" valid:"-"` // ไม่ validate ไปในระดับ relation
 }
 
+// ===========================QueuingManagement============================//
+// ช่องบริการ
+type ServiceChannel struct {
+	gorm.Model
+	Name string
+	//IPDSequenceNumber int
+
+	// 1 Sequence สามารถจัดลำดับคิวคนไข้ได้หลายคน
+	QueuingManagement []QueuingManagement `gorm:"foreignKey:ServiceChannelID"`
+}
+
+type ServicePoint struct {
+	gorm.Model
+	Name   string
+	Detail string
+
+	//1 service point สามารถจัดลำดับคิวคนไข้ได้หลายคิว (QueuingManagement)
+	QueuingManagement []QueuingManagement `gorm:"foreignKey:ServicePointID"`
+}
+
+type MedicalAction struct {
+	gorm.Model
+	Action string
+	Detail string
+
+	QueuingManagement []QueuingManagement `gorm:"foreignKey:MedicalActionID"`
+}
+
+type QueuingManagement struct {
+	gorm.Model
+	Time time.Time
+	Note string
+
+	// 1 QueuingManagement สามารถจัดลำดับคิวคนไข้ได้หลายคน (PatientRegister)
+	EmployeeID *uint
+	Employee   Employee `gorm:"references:ID"`
+
+	HistorySheetID *uint
+	HistorySheet   HistorySheet `gorm:"references:ID"`
+
+	ServicePointID *uint
+	ServicePoint   ServicePoint `gorm:"references:ID"`
+
+	ServiceChannelID *uint
+	ServiceChannel   ServiceChannel `gorm:"references:ID"`
+
+	MedicalActionID *uint
+	MedicalAction   MedicalAction `gorm:"references:ID"`
+}
+
 // ===========================Outpatient Screenings============================//
 // EmergencyLevel
 type EmergencyLevel struct {

@@ -43,6 +43,7 @@ func SetupDatabase() {
 		&PaymentType{},
 		&StatusMed{},
 		&OutpatientScreening{},
+		&QueuingManagement{},
 	)
 
 	db = database
