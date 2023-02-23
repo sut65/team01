@@ -493,7 +493,7 @@ function PatientRegisterCreate() {
                             </Grid>
                             <Grid item xs={9}>
                                 <Typography component="h2" variant="h6" color="primary" gutterBottom>
-                                    Create User
+                                     สร้างข้อมูลผู้ป่วย
                                 </Typography>
                             </Grid>
                         </Grid>
@@ -502,9 +502,9 @@ function PatientRegisterCreate() {
                 <Divider />
                 <Grid container spacing={2} sx={{ padding: 2 }}>
                     <Grid item xs={4}>
-                        <p>Prefix</p>
+                        <p>คำนำหน้า</p>
                         <FormControl fullWidth>
-                            <InputLabel>Prefix</InputLabel>
+                            <InputLabel>คำนำหน้า</InputLabel>
                             <Select
                                 id="PrefixID"
                                 title="PrefixID"
@@ -524,7 +524,7 @@ function PatientRegisterCreate() {
                         </FormControl>
                     </Grid>
                     <Grid item xs={4}>
-                        <p>First Name</p>
+                        <p>ชื่อ</p>
                         <FormControl fullWidth>
                             <TextField id="FirstName"
                                 value={patientregisters.FirstName}
@@ -534,7 +534,7 @@ function PatientRegisterCreate() {
                         </FormControl>
                     </Grid>
                     <Grid item xs={4}>
-                        <p>Last Name</p>
+                        <p>สกุล</p>
                         <FormControl fullWidth>
                             <TextField id="LastName"
                                 value={patientregisters.LastName}
@@ -546,9 +546,9 @@ function PatientRegisterCreate() {
                 </Grid>
                 <Grid container spacing={2} sx={{ padding: 2 }}>
                     <Grid item xs={4}>
-                        <p>Gender</p>
+                        <p>เพศ</p>
                         <FormControl fullWidth>
-                            <InputLabel>Gender</InputLabel>
+                            <InputLabel>เพศ</InputLabel>
                             <Select
                                 id="GenderID"
                                 title="GenderID"
@@ -568,7 +568,7 @@ function PatientRegisterCreate() {
                         </FormControl>
                     </Grid>
                     <Grid item xs={4}>
-                        <p>Age</p>
+                        <p>อายุ</p>
                         <TextField
                             id="Age"
                             variant="outlined"
@@ -583,7 +583,7 @@ function PatientRegisterCreate() {
                         />
                     </Grid>
                     <Grid item xs={4}>
-                        <p>Identification Number</p>
+                        <p>เลขประจำตัวประชาชน</p>
                         <FormControl fullWidth>
                             <TextField id="IdentificationNumber"
                                 value={patientregisters.IdentificationNumber}
@@ -595,7 +595,7 @@ function PatientRegisterCreate() {
                 </Grid>
                 <Grid container spacing={2} sx={{ padding: 2 }}>
                     <Grid item xs={4}>
-                        <p>Birth Day</p>
+                        <p>วันเกิด</p>
                         <FormControl fullWidth variant="outlined">
                             <LocalizationProvider dateAdapter={AdapterDateFns}>
                                 <DatePicker
@@ -609,9 +609,9 @@ function PatientRegisterCreate() {
                         </FormControl>
                     </Grid>
                     <Grid item xs={4}>
-                        <p>Blood Type</p>
+                        <p>หมู่เลือด</p>
                         <FormControl fullWidth>
-                            <InputLabel>BloodType</InputLabel>
+                            <InputLabel>หมู่เลือด</InputLabel>
                             <Select
                                 id="BloodTypeID"
                                 title="BloodTypeID"
@@ -631,7 +631,7 @@ function PatientRegisterCreate() {
                         </FormControl>
                     </Grid>
                     <Grid item xs={4}>
-                        <p>Occupation</p>
+                        <p>อาชีพ</p>
                         <FormControl fullWidth>
                             <TextField id="Occupation"
                                 value={patientregisters.Occupation}
@@ -643,9 +643,9 @@ function PatientRegisterCreate() {
                 </Grid>
                 <Grid container spacing={2} sx={{ padding: 2 }}>
                     <Grid item xs={4}>
-                        <p>Nationality</p>
+                        <p>สัญชาติ</p>
                         <FormControl fullWidth>
-                            <InputLabel>Nationality</InputLabel>
+                            <InputLabel>สัญชาติ</InputLabel>
                             <Select
                                 id="NationalityID"
                                 title="NationalityID"
@@ -665,9 +665,9 @@ function PatientRegisterCreate() {
                         </FormControl>
                     </Grid>
                     <Grid item xs={4}>
-                        <p>Religion</p>
+                        <p>ศาสนา</p>
                         <FormControl fullWidth>
-                            <InputLabel>Religion</InputLabel>
+                            <InputLabel>ศาสนา</InputLabel>
                             <Select
                                 id="ReligionID"
                                 title="ReligionID"
@@ -687,9 +687,9 @@ function PatientRegisterCreate() {
                         </FormControl>
                     </Grid>
                     <Grid item xs={4}>
-                        <p>Marital Status</p>
+                        <p>สถานภาพสมรส</p>
                         <FormControl fullWidth>
-                            <InputLabel>MaritalStatus</InputLabel>
+                            <InputLabel>สถานภาพสมรส</InputLabel>
                             <Select
                                 id="MaritalStatusID"
                                 title="MaritalStatusID"
@@ -719,7 +719,7 @@ function PatientRegisterCreate() {
                             </Grid>
                             <Grid item xs={9}>
                                 <Typography component="h2" variant="h6" color="primary" gutterBottom>
-                                    Patient Contact
+                                    ข้อมูลติดต่อ
                                 </Typography>
                             </Grid>
                         </Grid>
@@ -728,7 +728,7 @@ function PatientRegisterCreate() {
                 <Divider />
                 <Grid container spacing={2} sx={{ padding: 2 }}>
                     <Grid item xs={4}>
-                        <p>Mobile</p>
+                        <p>มือถือ</p>
                         <FormControl fullWidth>
                             <TextField id="Mobile"
                                 value={patientregisters.Mobile}
@@ -738,7 +738,7 @@ function PatientRegisterCreate() {
                         </FormControl>
                     </Grid>
                     <Grid item xs={4}>
-                        <p>Address</p>
+                        <p>ที่อยู่</p>
                         <FormControl fullWidth>
                             <TextField id="Address"
                                 value={patientregisters.Address}
@@ -748,7 +748,7 @@ function PatientRegisterCreate() {
                         </FormControl>
                     </Grid>
                     <Grid item xs={4}>
-                        <p>Province</p>
+                        <p>จังหวัด</p>
                         <FormControl fullWidth>
                             <InputLabel>Province</InputLabel>
                             <Select
@@ -772,9 +772,9 @@ function PatientRegisterCreate() {
                 </Grid>
                 <Grid container spacing={2} sx={{ padding: 2 }}>
                     <Grid item xs={4}>
-                        <p>District</p>
+                        <p>อำเภอ</p>
                         <FormControl fullWidth>
-                            <InputLabel>District</InputLabel>
+                            <InputLabel>อำเภอ</InputLabel>
                             <Select
                                 id="DistrictID"
                                 title="DistrictID"
@@ -794,9 +794,9 @@ function PatientRegisterCreate() {
                         </FormControl>
                     </Grid>
                     <Grid item xs={4}>
-                        <p>Sub-District</p>
+                        <p>ตำบล</p>
                         <FormControl fullWidth>
-                            <InputLabel>SubDistrict</InputLabel>
+                            <InputLabel>ตำบล</InputLabel>
                             <Select
                                 id="SubDistrictID"
                                 title="SubDistrictID"
@@ -816,7 +816,7 @@ function PatientRegisterCreate() {
                         </FormControl>
                     </Grid>
                     <Grid item xs={4}>
-                        <p>Post Code</p>
+                        <p>รหัสไปรษณีย์</p>
                         <FormControl fullWidth>
                             <TextField id="PostCode"
                                 disabled
@@ -837,7 +837,7 @@ function PatientRegisterCreate() {
                             </Grid>
                             <Grid item xs={9}>
                                 <Typography component="h2" variant="h6" color="primary" gutterBottom>
-                                    Recorder
+                                    เจ้าหน้าที่บันทึก
                                 </Typography>
                             </Grid>
                         </Grid>
@@ -846,7 +846,7 @@ function PatientRegisterCreate() {
                 <Divider />
                 <Grid container spacing={2} sx={{ padding: 2 }}>
                     <Grid item xs={4}>
-                        <p>Employee</p>
+                        <p>เจ้าหน้าที่</p>
                         <FormControl fullWidth>
                             <TextField id="Employee"
                                 disabled
@@ -865,7 +865,7 @@ function PatientRegisterCreate() {
                             variant="contained"
                             color="primary"
                         >
-                            Submit
+                            บันทึกข้อมูล
                         </Button>
                     </Grid>
                 </Grid>

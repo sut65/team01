@@ -43,7 +43,7 @@ function HistorySheetCreate() {
     const [patientregisters, setPatientRegisters] = React.useState<PatientRegistersInterface[]>([])
     // setUser จะเป็นตัว check ข้อมูลให้ตัวแปร user ว่าได้รับข้อมูลที่ต้องการมาแล้วหรือยัง
     const [historysheets, setHistorySheets] = React.useState<Partial<HistorySheetsInterface>>({
-        NurseID: 0,
+        EmployeeID: 0,
         DrugAllergyID: 0,
         PatientRegisterID: 0,
         Weight: 0,
@@ -145,8 +145,8 @@ function HistorySheetCreate() {
             });
     }
 
-    const getNurse = async () => {
-        const apiUrl = `http://localhost:8080/nurse/${localStorage.getItem("id")}`;
+    const getEmployee = async () => {
+        const apiUrl = `http://localhost:8080/employee/${localStorage.getItem("id")}`;
         const requestOptions = {
             method: "GET",
             headers: {
@@ -304,7 +304,7 @@ function HistorySheetCreate() {
     useEffect(() => {
         getPatientRegister();
         getDrugAllergy();
-        getNurse();
+        getEmployee();
 
         if (params.id) {
             getHistorySheet(params.id)
@@ -341,7 +341,7 @@ function HistorySheetCreate() {
                             </Grid>
                             <Grid item xs={9}>
                                 <Typography component="h2" variant="h6" color="primary" gutterBottom>
-                                    Patient
+                                    บันทึกการซักประวัติ
                                 </Typography>
                             </Grid>
                         </Grid>
@@ -350,9 +350,9 @@ function HistorySheetCreate() {
                 <Divider />
                 <Grid container spacing={3} sx={{ padding: 2 }}>
                     <Grid item xs={6}>
-                        <p>Patient</p>
+                        <p>คนไข้นอก</p>
                         <FormControl fullWidth>
-                            <InputLabel>Patient</InputLabel>
+                            <InputLabel>คนไข้นอก</InputLabel>
                             <Select
                                 id="PatientRegisterID"
                                 title="PatientRegisterID"
@@ -391,7 +391,7 @@ function HistorySheetCreate() {
                 <Divider />
                 <Grid container spacing={2} sx={{ padding: 2 }}>
                     <Grid item xs={3}>
-                        <p>Weight</p>
+                        <p>น้ำหนัก</p>
                         <TextField
                             id="Weight"
                             variant="outlined"
@@ -428,7 +428,7 @@ function HistorySheetCreate() {
                         </Box> */}
                     </Grid>
                     <Grid item xs={3}>
-                        <p>Height</p>
+                        <p>ส่วนสูง</p>
                         <TextField
                             id="Height"
                             variant="outlined"
@@ -443,7 +443,7 @@ function HistorySheetCreate() {
                         />
                     </Grid>
                     <Grid item xs={3}>
-                        <p>Temperature</p>
+                        <p>อุณภูมิ</p>
                         <TextField
                             id="Temperature"
                             variant="outlined"
@@ -458,7 +458,7 @@ function HistorySheetCreate() {
                         />
                     </Grid>
                     <Grid item xs={3}>
-                        <p>SystolicBloodPressure</p>
+                        <p>ความดัน SBP</p>
                         <TextField
                             id="SystolicBloodPressure"
                             variant="outlined"
@@ -475,7 +475,7 @@ function HistorySheetCreate() {
                 </Grid>
                 <Grid container spacing={2} sx={{ padding: 2 }}>
                     <Grid item xs={3}>
-                        <p>DiastolicBloodPressure</p>
+                        <p>ความดัน DBP</p>
                         <TextField
                             id="DiastolicBloodPressure"
                             variant="outlined"
@@ -490,7 +490,7 @@ function HistorySheetCreate() {
                         />
                     </Grid>
                     <Grid item xs={3}>
-                        <p>RespiratoryRate</p>
+                        <p>อัตราการหายใจ</p>
                         <TextField
                             id="RespiratoryRate"
                             variant="outlined"
@@ -505,7 +505,7 @@ function HistorySheetCreate() {
                         />
                     </Grid>
                     <Grid item xs={3}>
-                        <p>HeartRate</p>
+                        <p>อัตราการเต้นของหัวใจ</p>
                         <TextField
                             id="HeartRate"
                             variant="outlined"
@@ -520,7 +520,7 @@ function HistorySheetCreate() {
                         />
                     </Grid>
                     <Grid item xs={3}>
-                        <p>OxygenSaturation</p>
+                        <p>ปริมาณออกซิเจน</p>
                         <TextField
                             id="OxygenSaturation"
                             variant="outlined"
@@ -545,7 +545,7 @@ function HistorySheetCreate() {
                             </Grid>
                             <Grid item xs={9}>
                                 <Typography component="h2" variant="h6" color="primary" gutterBottom>
-                                    Symtom
+                                    อาการ
                                 </Typography>
                             </Grid>
                         </Grid>
@@ -554,9 +554,9 @@ function HistorySheetCreate() {
                 <Divider />
                 <Grid container spacing={3} sx={{ padding: 2 }}>
                     <Grid item xs={4}>
-                        <p>Drug Allergy</p>
+                        <p>การแพ้ยา</p>
                         <FormControl fullWidth>
-                            <InputLabel>DrugAllergy</InputLabel>
+                            <InputLabel>การแพ้ยา</InputLabel>
                             <Select
                                 id="DrugAllergyID"
                                 title="DrugAllergyID"
@@ -576,7 +576,7 @@ function HistorySheetCreate() {
                         </FormControl>
                     </Grid>
                     <Grid item xs={4}>
-                        <p>Drug Allergy Symtom</p>
+                        <p>อาการแพ้ยา</p>
                         <FormControl fullWidth>
                             <TextField id="DrugAllergySymtom"
                                 value={historysheets.DrugAllergySymtom}
@@ -586,7 +586,7 @@ function HistorySheetCreate() {
                         </FormControl>
                     </Grid>
                     <Grid item xs={4}>
-                        <p>Patient Symtom</p>
+                        <p>อาการผู้ป่วย</p>
                         <FormControl fullWidth>
                             <TextField id="PatientSymtom"
                                 value={historysheets.PatientSymtom}
@@ -606,7 +606,7 @@ function HistorySheetCreate() {
                             </Grid>
                             <Grid item xs={9}>
                                 <Typography component="h2" variant="h6" color="primary" gutterBottom>
-                                    Employee
+                                    พยาบาล
                                 </Typography>
                             </Grid>
                         </Grid>
@@ -615,7 +615,7 @@ function HistorySheetCreate() {
                 <Divider />
                 <Grid container spacing={3} sx={{ padding: 2 }}>
                     <Grid item xs={6}>
-                        <p>Nurse</p>
+                        <p>พยาบาล</p>
                         <FormControl fullWidth>
                             <TextField disabled label="Nurse" value={`${nurses?.FirstName} ${nurses?.LastName}`} />
                         </FormControl>
@@ -630,7 +630,7 @@ function HistorySheetCreate() {
                         variant="contained"
                         color="primary"
                     >
-                        Submit
+                        บันทึกข้อมูล
                     </Button>
                 </Grid>
             </Grid>

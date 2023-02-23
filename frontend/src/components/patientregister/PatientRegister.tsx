@@ -123,11 +123,11 @@ function PatientRegisters() {
               <DeleteIcon color="error" fontSize="small"></DeleteIcon>
             </IconButton>
             <Dialog open={checkOpen(params.row.ID)} onClose={() => handleCloseDialog(params.row.ID)}>
-              <DialogTitle>Confirm Delete</DialogTitle>
-              <DialogContent>Do you want to delete patient of '{ params.row.FirstName + " " + params.row.LastName }' (ID: {params.row.ID}) ?</DialogContent>
+              <DialogTitle>ยืนยันลบข้อมูล</DialogTitle>
+              <DialogContent>คุณต้องการลบข้อมูลคนไข้ '{ params.row.FirstName + " " + params.row.LastName }' (ID: {params.row.ID}) ใช่ไหม?</DialogContent>
               <DialogActions>
-                <Button onClick={() => handleCloseDialog(params.row.ID)}>Cancel</Button>
-                <Button onClick={() => deletePatientRegister(params.row.ID)}>OK</Button>
+                <Button onClick={() => handleCloseDialog(params.row.ID)}>ยกเลิก</Button>
+                <Button onClick={() => deletePatientRegister(params.row.ID)}>ตกลง</Button>
               </DialogActions>
             </Dialog>
           </React.Fragment>
@@ -135,25 +135,25 @@ function PatientRegisters() {
       }
     },
     { field: "ID", headerName: "ID", width: 96, },
-    { field: "Prefix ID", headerName: "Prefix", width: 96, valueGetter: (params) => { return params.row.Prefix.Name } },
-    { field: "FirstName", headerName: "First name", width: 96 },
-    { field: "LastName", headerName: "Last name", width: 96 },
-    { field: "Age", headerName: "Age", width: 96 },
-    { field: "Occupation", headerName: "Occupation", width: 96 },
-    { field: "Address", headerName: "Address", width: 96 },
-    { field: "BirthDay", headerName: "BirthDay", width: 96 },
-    { field: "Gender ID", headerName: "Gender", width: 96, valueGetter: (params) => { return params.row.Gender.Name } },
-    { field: "IdentificationNumber", headerName: "Identification", width: 96 },
-    { field: "Mobile", headerName: "Mobile", width: 96 },
-    { field: "PostCode ID", headerName: "PostCode", width: 96, valueGetter: (params) => { return params.row.SubDistrict.PostCode } },
-    { field: "Religion ID", headerName: "Religion", width: 96, valueGetter: (params) => { return params.row.Religion.Name } },
-    { field: "BloodType ID", headerName: "BloodType", width: 96, valueGetter: (params) => { return params.row.BloodType.Name } },
-    { field: "MaritalStatus ID", headerName: "MaritalStatus", width: 96, valueGetter: (params) => { return params.row.MaritalStatus.Name } },
-    { field: "Nationality ID", headerName: "Nationality", width: 96, valueGetter: (params) => { return params.row.Nationality.Name } },
-    { field: "Province ID", headerName: "Province", width: 96, valueGetter: (params) => { return params.row.Province.Name } },
-    { field: "District ID", headerName: "District", width: 96, valueGetter: (params) => { return params.row.District.Name } },
-    { field: "SubDistrict ID", headerName: "SubDistrict", width: 96, valueGetter: (params) => { return params.row.SubDistrict.Name } },
-    { field: "Employee", headerName: "Employee", width: 96, valueGetter: (params) => { return params.row.Employee.FirstName + " " + params.row.Employee.LastName } },
+    { field: "Prefix ID", headerName: "คำนำหน้า", width: 96, valueGetter: (params) => { return params.row.Prefix.Name } },
+    { field: "FirstName", headerName: "ชื่อ", width: 96 },
+    { field: "LastName", headerName: "สกุล", width: 96 },
+    { field: "Age", headerName: "อายุ", width: 96 },
+    { field: "Occupation", headerName: "อาชีพ", width: 96 },
+    { field: "Address", headerName: "ที่อยู่", width: 96 },
+    { field: "BirthDay", headerName: "วันเกิด", width: 96 },
+    { field: "Gender ID", headerName: "เพศ", width: 96, valueGetter: (params) => { return params.row.Gender.Name } },
+    { field: "IdentificationNumber", headerName: "เลขประจำตัวประชาชน", width: 96 },
+    { field: "Mobile", headerName: "มือถือ", width: 96 },
+    { field: "PostCode ID", headerName: "รหัสไปรษณีย์", width: 96, valueGetter: (params) => { return params.row.SubDistrict.PostCode } },
+    { field: "Religion ID", headerName: "ศาสนา", width: 96, valueGetter: (params) => { return params.row.Religion.Name } },
+    { field: "BloodType ID", headerName: "หมู่เลือด", width: 96, valueGetter: (params) => { return params.row.BloodType.Name } },
+    { field: "MaritalStatus ID", headerName: "สถานภาพสมรส", width: 96, valueGetter: (params) => { return params.row.MaritalStatus.Name } },
+    { field: "Nationality ID", headerName: "สัญชาติ", width: 96, valueGetter: (params) => { return params.row.Nationality.Name } },
+    { field: "Province ID", headerName: "จังหวัด", width: 96, valueGetter: (params) => { return params.row.Province.Name } },
+    { field: "District ID", headerName: "อำเภอ", width: 96, valueGetter: (params) => { return params.row.District.Name } },
+    { field: "SubDistrict ID", headerName: "ตำบล", width: 96, valueGetter: (params) => { return params.row.SubDistrict.Name } },
+    { field: "Employee", headerName: "เจ้าหน้าที่", width: 96, valueGetter: (params) => { return params.row.Employee.FirstName + " " + params.row.Employee.LastName } },
   ];
 
   // เมื่อมีการ log out ฟังก์ชันนี้จะทำการ clear token ใน local storage และเปลี่ยน path ไปที่หน้า log in
@@ -199,7 +199,7 @@ function PatientRegisters() {
               color="primary"
               gutterBottom
             >
-              Users
+              คนไข้นอก
             </Typography>
           </Box>
           <Box>
@@ -209,7 +209,7 @@ function PatientRegisters() {
               onClick={logOut}
               sx={{ marginX: 1 }}
             >
-              Log out
+              ลงชื่อออก
             </Button>
           </Box>
         </Box>
