@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Link as RouterLink } from "react-router-dom";
+import { Link as RouterLink ,useParams} from "react-router-dom";
 import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
 import Divider from "@mui/material/Divider";
@@ -29,9 +29,12 @@ import Button from "@mui/material/Button";
 import MuiAlert, { AlertProps } from "@mui/material/Alert";
 // import moment from "moment";
 import { GetMedicineRecord } from "../../services/HttpClientServiceMedicineRecord";
+import { GetTreatmentRecordforMed } from "../../services/HttpClientServiceTreatmentRecord";
 import { GetPatientRight } from "../../services/HttpClientServicePatientRight";
-import { GetPaymentType, GetEmployee } from "../../services/HttpClientServicePayment";
+import { GetPaymentType, GetEmployee, GetPayment,GetPaymentById } from "../../services/HttpClientServicePayment";
 // import { GetPayment } from "../../services/HttpClientServicePayment";
+import {  MedicineOrdersInterface } from "../../models/ITreatmentRecord";
+
 const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
   props,
   ref
@@ -40,11 +43,15 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
 });
 
 export default function PaymentCreate() {
+
+  const params = useParams();
   const [cashiers, setEmployee] = React.useState<EmployeesInterface>();
   const [paymenttypes, setPaymentType] = React.useState<PaymentTypesInterface[]>([]);
   const [patientrights, setPatientRight] = React.useState<PatientRightsInterface[]>([]);
   const [medicinerecords, setMedicineRecord] = React.useState<MedicineRecordsInterface[]>([]);
-  // const [payments, setPayment] = React.useState<PaymentsInterface[]>([]);
+  const [medicineorder, setMedicineOrder] = React.useState<MedicineOrdersInterface[]>([]);
+
+  const [selectedPatientRight, setSelectedPatientRight] = React.useState<PatientRightsInterface>();
   const [payments, setPayment] = React.useState<Partial<PaymentsInterface>>(
     { PatientRightID: 0, PaymentTypeID: 0, PaymentTime: new Date(), Total: 0, });
   const [success, setSuccess] = React.useState(false);
@@ -66,14 +73,20 @@ export default function PaymentCreate() {
     const name = event.target.name as keyof typeof payments;
     console.log("handleChage")
     console.log(event.target.value)
-    sumTotalPrice()
-    // if(name === "MedicineRecordID" ){
-    //   getMedicineRecord();
-    // }
+
+   
     setPayment({
       ...payments,
       [name]: event.target.value,
     });
+    if (name === "MedicineRecordID") {
+      let TreatmentRecordID = medicinerecords.find(m => m.ID === Number(event.target.value))?.TreatmentRecordID;
+      getTreatmentRecordforMed(TreatmentRecordID!);
+    }
+    if (name === "PatientRightID") {
+      let patientRight = patientrights.find(p => p.ID === Number(event.target.value));
+      setSelectedPatientRight(patientRight!);
+    }
   };
 
   const handleInputChange = (
@@ -83,50 +96,50 @@ export default function PaymentCreate() {
     const { value } = event.target;
     setPayment({ ...payments, [id]: value });
   };
-  // const handleSelectChange = (event: SelectChangeEvent<number>) => {
-  //   const name = event.target.name as keyof typeof payments;
-  //   setPayment({ ...payments, [name]: event.target.value });
-  // };
 
-
-
+  const getTreatmentRecordforMed = async (TreatmentRecordID: number) => {
+    let res = await GetTreatmentRecordforMed(TreatmentRecordID)
+    if (res) {
+      setMedicineOrder(res);
+      // console.log(statusmed)
+    }
+  }
   const getPaymentType = async () => {
     let res = await GetPaymentType()
     if (res) {
       setPaymentType(res)
-      console.log(paymenttypes)
+      console.log(res)
     }
   }
   const getPatientRight = async () => {
     let res = await GetPatientRight()
     if (res) {
       setPatientRight(res)
-      console.log(patientrights)
+      console.log(res)
     }
   }
   const getMedicineRecord = async () => {
     let res = await GetMedicineRecord()
     if (res) {
       setMedicineRecord(res)
-      console.log(medicinerecords,"jawooo")
+      console.log(res, "jawooo")
     }
   }
   const getEmployee = async (ID: string | null) => {
     let res = await GetEmployee()
     if (res) {
-      setEmployee(res)
+      setEmployee(res);
+    }
+  }
+  const getPayment = async (id: string) => {
+    let res = await GetPaymentById(id)
+    if (res) {
+      setPayment(res)
+      console.log(res)
     }
   }
 
-  const sumTotalPrice = () => {
-    let MedPrice =
-      medicinerecords.find(b => b.ID === payments.MedicineRecordID)//?.TreatmentRecord.Medicine?.Price ?? 0;
-    let PatientRightPrice = patientrights.find(b => b.ID === payments.PatientRightID)//?.Discount ?? 0;
-    // if(!MedPrice ) return 0
-    // setPayment({ ...payments, Total: MedPrice - PatientRightPrice });
-    console.log(MedPrice, "haloooo")
-    console.log(PatientRightPrice, "halo")
-  };
+  
   
 
   const convertType = (data: string | number | undefined | null | Date) => {
@@ -149,18 +162,28 @@ export default function PaymentCreate() {
     }
     else {
       setError(false)
-      let data = {
+      let data: any = {
         MedicineRecordID: convertType(payments.MedicineRecordID),
         PatientRightID: convertType(payments.PatientRightID),
-        CashierID: cashiers?.ID,
+        EmployeeID: convertType(cashiers?.ID),
         PaymentTypeID: convertType(payments.PaymentTypeID),
         PaymentTime: payments.PaymentTime,
         Total: payments.Total,
       };
+      console.log(data);
+      
+      let apiUrl : any
+      if (params.id){
+        data["ID"] = parseInt(params.id);
+        apiUrl = "http://localhost:8080/payments"
+      }
+      else{
+        apiUrl = "http://localhost:8080/createpayment"
+      }
 
-      const apiUrl = `http://localhost:8080/createpayment`;
+      // const apiUrl = `http://localhost:8080/createpayment`;
       const requestOptions = {
-        method: "POST",
+        method: params.id ? "PATCH" : "POST",
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
           "Content-Type": "application/json",
@@ -176,10 +199,8 @@ export default function PaymentCreate() {
             setSuccess(true);
           } else {
             setError(true);
-            if (res.error == "Total cannot be zero") {
-              setErrorMessage("กรุณาเลือกรายการใหม่")
-            }
-            else if (res.error == "The data recorder should be a Cashier") {
+            
+            if (res.error == "The data recorder should be a Cashier") {
               setErrorMessage("ผู้บันทึกข้อมูลต้องเป็นเจ้าหน้าที่การเงินเท่านั้น")
             }
             else if (res.error == "MedTime must be in the present") {
@@ -195,10 +216,10 @@ export default function PaymentCreate() {
     }
 
   }
-  const handleSelectChange = (event: SelectChangeEvent<number>) => {
-    const name = event.target.name as keyof typeof payments;
-    setPayment({ ...payments, [name]: event.target.value });
-  };
+  // const handleSelectChange = (event: SelectChangeEvent<number>) => {
+  //   const name = event.target.name as keyof typeof payments;
+  //   setPayment({ ...payments, [name]: event.target.value });
+  // };
 
   console.log("Hello")
   console.log(medicinerecords)
@@ -209,12 +230,21 @@ export default function PaymentCreate() {
     getMedicineRecord();
     getEmployee(localStorage.getItem("id"));
 
+    if (params.id){
+      getPayment(params.id)
+    }
   }, []);
   useEffect(() => {
-    sumTotalPrice();
-  }, [payments.MedicineRecord?.TreatmentRecordID, payments.PatientRightID]);
+    setPayment (payment => {
+      let MedPrice = medicineorder.reduce((a, b) => a + Number(b!.OrderAmount! * b!.Medicine!.Price!) , 0) ?? 0;
+      let PatientRightPrice = selectedPatientRight?.Discount ?? 0;
+      return { ...payment, Total: MedPrice - PatientRightPrice }
+    });
+      
+  }, [selectedPatientRight, medicineorder]);
 
-
+  console.log(payments);
+  
   return (
     <Container sx={{ marginTop: 2 }}>
       <Snackbar
@@ -296,7 +326,7 @@ export default function PaymentCreate() {
                 </option>
                 {patientrights.map((item: PatientRightsInterface) => (
                   <option value={item.ID} key={item.ID}>
-                    {item.PatientType.Typename}
+                    {item.Name}
                   </option>
                 ))}
               </Select>
@@ -344,20 +374,18 @@ export default function PaymentCreate() {
               <Table sx={{ miinWidth: 650 }} aria-label="simple table">
                 <TableHead>
                   <TableRow>
-                    <TableCell align="center" width="10%">ลำดับ</TableCell>
                     <TableCell align="center" width="10%">รายการชำระเงิน</TableCell>
                     <TableCell align="center" width="10%">ราคา</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {medicinerecords.map((row: MedicineRecordsInterface, index) => {
-                    sumTotalPrice()
+                  {medicineorder.map((row: MedicineOrdersInterface, index) => {
+                    // sumTotalPrice()
                     if (payments.MedicineRecordID == row.ID)
                       return (
-                        <TableRow key={index}>
-                          <TableCell align="center">{row.TreatmentRecordID}</TableCell>
-                          <TableCell align="center">{medicinerecords.find(m => m.ID === row.TreatmentRecord.MedicineID)?.TreatmentRecord.Medicine?.Name}</TableCell>
-                          <TableCell align="center">{medicinerecords.find(m => m.ID === row.TreatmentRecord.MedicineID)?.TreatmentRecord.Medicine?.Price}</TableCell>
+                      <TableRow key={index}>
+                        <TableCell align="center">{row.Medicine?.Name}</TableCell>
+                        <TableCell align="center">{row!.Medicine!.Price! * row!.OrderAmount!}</TableCell>
                           {/* <TableCell width="5%"><IconButton size="small" onClick={() => removeFromItem(index)}><DeleteIcon /></IconButton></TableCell> */}
 
                         </TableRow>
@@ -392,7 +420,7 @@ export default function PaymentCreate() {
           </Grid>
 
           <Grid item xs={3}>
-            <TextField disabled id="Total" value={0} fullWidth />
+            <TextField disabled id="Total" value={payments.Total} fullWidth />
           </Grid>
 
           <Grid item xs={12}>
