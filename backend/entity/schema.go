@@ -286,9 +286,9 @@ type HighBloodPressureLevel struct {
 type DiabetesLevel struct {
 	gorm.Model
 
-	Level             string
-	AssessmentForms   string
-	HistoryTakingForm string
+	Level                     string
+	DiabetesAssessmentForms   string
+	DiabetesHistoryTakingForm string
 
 	OutpatientScreenings []OutpatientScreening `gorm:"foreignKey:DiabetesLevelID"`
 }
@@ -297,9 +297,9 @@ type DiabetesLevel struct {
 type ObesityLevel struct {
 	gorm.Model
 
-	Level             string
-	AssessmentForms   string
-	HistoryTakingForm string
+	Level                    string
+	ObesityAssessmentForms   string
+	ObesityHistoryTakingForm string
 
 	OutpatientScreenings []OutpatientScreening `gorm:"foreignKey:ObesityLevelID"`
 }
@@ -419,8 +419,8 @@ type Employee struct {
 	OutpatientScreening []OutpatientScreening `gorm:"foreignKey:EmployeeID"`
 	Appointment         []Appointment         `gorm:"foreignKey:EmployeeID"`
 	PatientRight        []PatientRight        `gorm:"foreignKey:EmployeeID"`
-	Payments            []Payment             `gorm:"foreignKey:CashierID"`
-	MedicineRecords     []MedicineRecord      `gorm:"foreignKey:PharmacistID" `
+	Payments            []Payment             `gorm:"foreignKey:EmployeeID"`
+	MedicineRecords     []MedicineRecord      `gorm:"foreignKey:EmployeeID" `
 }
 
 //=================MedicineRecord=========================
