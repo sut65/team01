@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { Link as RouterLink } from "react-router-dom";
-import TextField from "@mui/material/TextField";
+import TextField, { TextFieldProps } from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import FormControl from "@mui/material/FormControl";
 import Container from "@mui/material/Container";
@@ -109,10 +109,11 @@ function WorkloadCreate() {
                     console.log("else")
                 }
             });
+        console.log(admin)
     }
 
     const getDoctor = async () => {
-        const apiUrl = `http://localhost:8080/employeerole/1`;;
+        const apiUrl = `http://localhost:8080/employeerole/1`;
         const requestOptions = {
             method: "GET",
             headers: {
@@ -130,7 +131,7 @@ function WorkloadCreate() {
                     console.log("else")
                 }
             });
-        console.log("Doctor", doctor);
+        console.log(doctor);
     }
 
     const getRoom = async () => {
@@ -153,6 +154,7 @@ function WorkloadCreate() {
                     console.log("else")
                 }
             });
+        console.log(room)
     }
 
     const getStatus = async () => {
@@ -175,15 +177,32 @@ function WorkloadCreate() {
                     console.log("else")
                 }
             });
+        console.log(status)
     }
 
-    useEffect(() => {
-        getAdmin();
-        getDoctor();
-        getRoom();
-        getStatus();
-    }, []);
+    const getWorkload = async (id: string) => {
+        const apiUrl = `http://localhost:8080/workload/${id}`;
+        const requestOptions = {
+            method: "GET",
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+                "Content-Type": "application/json",
+            },
+        }
 
+        fetch(apiUrl, requestOptions)
+            .then((response) => response.json())
+            .then((res) => {
+                console.log(res.data);
+                if (res.data) {
+                    setWorkload(res.data)
+                } else {
+                    console.log("else")
+                }
+            });
+        console.log(workload)
+    }
+ 
     const convertType = (data: string | number | undefined) => {
         let val = typeof data === "string" ? parseInt(data) : data;
         return val;
@@ -222,7 +241,7 @@ function WorkloadCreate() {
                     setSuccess(true);
                     setErrorMessage("")
                     setTimeout(() => {
-                        window.location.href = "/workloads";
+                    window.location.href = "/workloads";
                       }, 2000)
                 } else {
                     console.log(res.error)
@@ -246,6 +265,14 @@ function WorkloadCreate() {
                 }
             });
     }
+
+    useEffect(() => {
+        getAdmin();
+        getDoctor();
+        getRoom();
+        getStatus();
+    }, [workload]);
+    console.log(workload)
 
     return (
         <Container maxWidth="md">
@@ -382,7 +409,10 @@ function WorkloadCreate() {
                                     inputFormat="dd/MM/yyyy"
                                     value={selectedDate}
                                     onChange={handleDateChange}
-                                    renderInput={(params) => <TextField {...params} />}
+                                    renderInput={(params: TextFieldProps) => {
+                                        return <TextField{...params}
+                                        />;
+                                      }}
                                 />
                             </LocalizationProvider>
                         </FormControl>

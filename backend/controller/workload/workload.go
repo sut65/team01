@@ -3,12 +3,11 @@ package controller
 import (
 	"net/http"
 
+	"github.com/sut65/team01/entity"
 	"github.com/asaskevich/govalidator"
 	"github.com/gin-gonic/gin"
-	"github.com/sut65/team01/entity"
 )
 
-// POST /workloads
 func CreateWorkload(c *gin.Context) {
 	var workload entity.Workload
 	var employee entity.Employee
@@ -108,20 +107,58 @@ func DeleteWorkload(c *gin.Context) {
 
 // PATCH /workloads
 func UpdateWorkload(c *gin.Context) {
+	var payload entity.Workload
 	var workload entity.Workload
+	var admin entity.Admin
+	var employee entity.Employee
+	var status entity.Status
+	var room entity.Room
+
 	if err := c.ShouldBindJSON(&workload); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	if tx := entity.DB().Where("id = ?", workload.ID).First(&workload); tx.RowsAffected == 0 {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "workload not found"})
+	if tx := entity.DB().Where("id = ?", payload.ID).First(&workload); tx.RowsAffected == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Workload not found"})
+		return
+	}
+	if tx := entity.DB().Where("id = ?", payload.AdminID).First(&admin); tx.RowsAffected == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Admin not found"})
 		return
 	}
 
-	if err := entity.DB().Save(&workload).Error; err != nil {
+	if tx := entity.DB().Where("id = ?", payload.EmployeeID).First(&employee); tx.RowsAffected == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Title not found"})
+		return
+	}
+
+	if tx := entity.DB().Where("id = ?", payload.RoomID).First(&room); tx.RowsAffected == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Role not found"})
+		return
+	}
+
+	if tx := entity.DB().Where("id = ?", payload.StatusID).First(&status); tx.RowsAffected == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Gender not found"})
+		return
+	}
+	updateEmployee := entity.Workload{
+		Admin:       admin,// โยงความสัมพันธ์กับ Entity Admin
+		Employee:    employee,   // โยงความสัมพันธ์กับ Entity Employee
+		Room:        room,             // โยงความสัมพันธ์กับ Entity Room
+		Status:   	 status, // โยงความสัมพันธ์กับ Entity Status
+		Date:    	 payload.Date,// ตั้งค่าฟิลด์ Date
+		StartTime:   payload.StartTime,  // ตั้งค่าฟิลด์ StartTime
+		EndTime: 	payload.EndTime, // ตั้งค่าฟิลด์ EndTime
+	}
+
+	if _, err := govalidator.ValidateStruct(updateEmployee); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"data": workload})
+	if err := entity.DB().Where("id = ?", workload.ID).Updates(&updateEmployee).Error; err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"status": "Updating Success!", "data": workload})
 }
