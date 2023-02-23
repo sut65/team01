@@ -97,20 +97,56 @@ func DeleteAppointment(c *gin.Context) {
 
 // PATCH /appointments
 func UpdateAppointment(c *gin.Context) {
+	var updateappointment entity.Appointment
 	var appointment entity.Appointment
-	if err := c.ShouldBindJSON(&appointment); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-	}
-
-	if tx := entity.DB().Where("id = ?", appointment.ID).First(&appointment); tx.RowsAffected == 0 {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "appointment not found"})
-		return
-	}
-
-	if err := entity.DB().Save(&appointment).Error; err != nil {
+	var patientregister entity.PatientRegister
+	var room entity.Room
+	var employee entity.Employee
+	// ผลลัพธ์ที่ได้จากขั้นตอนที่ 8 จะถูก bind เข้าตัวแปร appointment
+	if err := c.ShouldBindJSON(&updateappointment); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
+	// 9: ค้นหา patient ด้วย id
+	if tx := entity.DB().Where("id = ?", updateappointment.PatientRegisterID).First(&patientregister); tx.RowsAffected == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "patient not found"})
+		return
+	}
 
-	c.JSON(http.StatusOK, gin.H{"data": appointment})
+	// 10: ค้นหา employee ด้วย id
+	if tx := entity.DB().Where("id = ?", updateappointment.EmployeeID).First(&employee); tx.RowsAffected == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "doctor not found"})
+		return
+	}
+
+	// 11: ค้นหา room ด้วย id
+	if tx := entity.DB().Where("id = ?",updateappointment.RoomID).First(&room); tx.RowsAffected == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "room not found"})
+		return
+	}
+	// 12: สร้าง Appointment
+	upapm := entity.Appointment{
+		PatientRegister: patientregister,             // โยงความสัมพันธ์กับ Entity Patient
+		Employee:        employee,                    // โยงความสัมพันธ์กับ Entity Employee
+		Room:            room,                        // โยงความสัมพันธ์กับ Entity Clinic
+		RoomNumber:      updateappointment.RoomNumber,      // ตั้งค่าฟิลด์ roomnumber
+		AppointmentTime: updateappointment.AppointmentTime, // ตั้งค่าฟิลด์ appointmentTime
+		Note:            updateappointment.Note,            // ตั้งค่าฟิลด์ note
+	}
+
+	//ขั้นตอนการ validate ที่นำมาจาก  unit test
+	if _, err := govalidator.ValidateStruct(upapm); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	
+	if err := entity.DB().Where("id = ?", appointment.ID).Updates(&upapm).Error; err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	// if err := entity.DB().Save(&historysheet).Error; err != nil {
+	// 	c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	// 	return
+	// }
+	c.JSON(http.StatusOK, gin.H{"status": "Updating Success!", "data": appointment})
 }
