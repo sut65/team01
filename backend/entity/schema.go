@@ -480,21 +480,22 @@ type DiagnosisRecord struct {
 
 	//DoctorID เป็น FK
 	DoctorID *uint
-	Doctor   Employee `gorm:"references:id" valid:"-"`
+	Doctor   Employee `gorm:"references:ID" valid:"-"`
 
 	//HistorySheetID เป็น FK
 	HistorySheetID *uint
-	HistorySheet   HistorySheet `gorm:"references:id" valid:"-"`
+	HistorySheet   HistorySheet `gorm:"references:ID" valid:"-"`
 
 	//DiseaseID เป็น FK
 	DiseaseID *uint
-	Disease   Disease `gorm:"references:id" valid:"-"`
+	Disease   Disease `gorm:"references:ID" valid:"-"`
 
 	Examination        string `valid:"required~Examination cannot be Blank"`
 	MedicalCertificate *bool
-	Date               time.Time `valid:"present~Recording time must be current"`
-}
+	Date               time.Time `valid:"present~Date must be present"`
 
+	TreatmentRecords []TreatmentRecord `gorm:"foreignKey:DiagnosisRecordID"`
+}
 type Disease struct {
 	gorm.Model
 
@@ -551,6 +552,7 @@ func init() {
 	})
 }
 
+// ใช้แค่ validate backend Treatment Record เท่านั้น
 func BooleanNotNull(t *bool) (bool, error) {
 	if t == nil {
 		return false, fmt.Errorf("Appointment cannot be Null")
@@ -559,7 +561,7 @@ func BooleanNotNull(t *bool) (bool, error) {
 	}
 }
 
-// ใช้แค่ validate backend เท่านั้น
+// ใช้แค่ validate backend Diagnosis Record เท่านั้น
 func CheckBool(t *bool) (bool, error) {
 	if t == nil {
 		return false, fmt.Errorf("MedicalCertificate cannot be Null")
