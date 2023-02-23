@@ -3,12 +3,11 @@ package controller
 import (
 	"net/http"
 
+	"github.com/sut65/team01/entity"
 	"github.com/asaskevich/govalidator"
 	"github.com/gin-gonic/gin"
-	"github.com/sut65/team01/entity"
 )
 
-// POST /employees
 func CreateEmployee(c *gin.Context) {
 	var employee entity.Employee
 	var admin entity.Admin
@@ -47,18 +46,18 @@ func CreateEmployee(c *gin.Context) {
 
 	// 14: สร้าง Employee
 	WV := entity.Employee{
-		Admin: 			admin,
-		IDCard:     	employee.IDCard, // ตั้งค่าฟิลด์ IDCard 
-		Title:   		title,    // โยงความสัมพันธ์กับ Entity Title
-		FirstName:  	employee.FirstName,   // ตั้งค่าฟิลด์ Name
-		LastName:   	employee.LastName,
-		Role:   		role,    // โยงความสัมพันธ์กับ Entity Position
-		PhoneNumber:    employee.PhoneNumber,   // ตั้งค่าฟิลด์ PhoneNumber
-		Email: 			employee.Email,  /// ตั้งค่าฟิลด์ Email
-		Password: 		employee.Password,  // ตั้งค่าฟิลด์ Password
-		Gender:     	gender,      // โยงความสัมพันธ์กับ Entity Gender
-		Salary:			employee.Salary, // ตั้งค่าฟิลด์ Salary
-		Birthday: 		employee.Birthday, // ตั้งค่าฟิลด์ BirthDay
+		Admin:       admin,
+		IDCard:      employee.IDCard,    // ตั้งค่าฟิลด์ IDCard
+		Title:       title,              // โยงความสัมพันธ์กับ Entity Title
+		FirstName:   employee.FirstName, // ตั้งค่าฟิลด์ Name
+		LastName:    employee.LastName,
+		Role:        role,                 // โยงความสัมพันธ์กับ Entity Position
+		PhoneNumber: employee.PhoneNumber, // ตั้งค่าฟิลด์ PhoneNumber
+		Email:       employee.Email,       /// ตั้งค่าฟิลด์ Email
+		Password:    employee.Password,    // ตั้งค่าฟิลด์ Password
+		Gender:      gender,               // โยงความสัมพันธ์กับ Entity Gender
+		Salary:      employee.Salary,      // ตั้งค่าฟิลด์ Salary
+		Birthday:    employee.Birthday,    // ตั้งค่าฟิลด์ BirthDay
 	}
 
 	//ขั้นตอนการ validate ที่นำมาจาก  unit test
@@ -66,7 +65,7 @@ func CreateEmployee(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	
+
 	// 15: บันทึก
 	if err := entity.DB().Create(&WV).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -99,42 +98,89 @@ func GetEmployee(c *gin.Context) {
 // GET /Employeerole/:roleid
 // Get Employeerole by roleid
 func GetEmployeerole(c *gin.Context) {
-	var Employee []entity.Employee
+	var employee []entity.Employee
 	roleid := c.Param("roleid")
-	if err := entity.DB().Preload("Role").Raw("SELECT * FROM employees WHERE role_id = ?", roleid).Find(&Employee).Error; err != nil {
+	if err := entity.DB().Preload("Role").Raw("SELECT * FROM employees WHERE role_id = ?", roleid).Find(&employee).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-
-	c.JSON(http.StatusOK, gin.H{"data": Employee})
+	c.JSON(http.StatusOK, gin.H{"data": employee})
 }
 
 // DELETE /employees/:id
 func DeleteEmployee(c *gin.Context) {
 	id := c.Param("id")
+	// var employee entity.Employee
 	if tx := entity.DB().Exec("DELETE FROM employees WHERE id = ?", id); tx.RowsAffected == 0 {
-		   c.JSON(http.StatusBadRequest, gin.H{"error": "employee not found"})
-		   return
+		c.JSON(http.StatusBadRequest, gin.H{"error": "employee not found"})
+		return
 	}
+	// if err := entity.DB().Preload("Admin").Preload("Title").Preload("Role").Preload("Gender").Raw("SELECT * FROM employees").Find(&employee).Error; err != nil {
+	// 	c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	// 	return
+	// }
 	c.JSON(http.StatusOK, gin.H{"data": id})
 }
 
 // PATCH /employees
 func UpdateEmployee(c *gin.Context) {
+	var payload entity.Employee
 	var employee entity.Employee
+	var admin entity.Admin
+	var title entity.Title
+	var role entity.Role
+	var gender entity.Gender
+
 	if err := c.ShouldBindJSON(&employee); err != nil {
-		   c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		   return
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
 	}
 
-	if tx := entity.DB().Where("id = ?", employee.ID).First(&employee); tx.RowsAffected == 0 {
-		   c.JSON(http.StatusBadRequest, gin.H{"error": "employee not found"})
-		   return
+	if tx := entity.DB().Where("id = ?", payload.ID).First(&employee); tx.RowsAffected == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Employee not found"})
+		return
+	}
+	if tx := entity.DB().Where("id = ?", payload.AdminID).First(&admin); tx.RowsAffected == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Admin not found"})
+		return
 	}
 
-	if err := entity.DB().Save(&employee).Error; err != nil {
-		   c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		   return
+	if tx := entity.DB().Where("id = ?", payload.TitleID).First(&title); tx.RowsAffected == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Title not found"})
+		return
 	}
-	c.JSON(http.StatusOK, gin.H{"data": employee})
+
+	if tx := entity.DB().Where("id = ?", payload.RoleID).First(&role); tx.RowsAffected == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Role not found"})
+		return
+	}
+
+	if tx := entity.DB().Where("id = ?", payload.GenderID).First(&gender); tx.RowsAffected == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Gender not found"})
+		return
+	}
+	updateEmployee := entity.Employee{
+		Admin:       admin,
+		IDCard:      payload.IDCard,    // ตั้งค่าฟิลด์ IDCard
+		Title:       title,             // โยงความสัมพันธ์กับ Entity Title
+		FirstName:   payload.FirstName, // ตั้งค่าฟิลด์ Name
+		LastName:    payload.LastName,
+		Role:        role,                // โยงความสัมพันธ์กับ Entity Position
+		PhoneNumber: payload.PhoneNumber, // ตั้งค่าฟิลด์ PhoneNumber
+		Email:       payload.Email,       /// ตั้งค่าฟิลด์ Email
+		Password:    payload.Password,    // ตั้งค่าฟิลด์ Password
+		Gender:      gender,              // โยงความสัมพันธ์กับ Entity Gender
+		Salary:      payload.Salary,      // ตั้งค่าฟิลด์ Salary
+		Birthday:    payload.Birthday,    // ตั้งค่าฟิลด์ BirthDay
+	}
+
+	if _, err := govalidator.ValidateStruct(updateEmployee); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	if err := entity.DB().Where("id = ?", employee.ID).Updates(&updateEmployee).Error; err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"status": "Updating Success!", "data": employee})
 }
