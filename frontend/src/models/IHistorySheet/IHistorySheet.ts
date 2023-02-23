@@ -13,10 +13,11 @@ export interface HistorySheetsInterface {
     OxygenSaturation: number;
     DrugAllergySymtom: string;
     PatientSymtom: string;
+
     PatientRegisterID: number;
     PatientRegister: PatientRegistersInterface;
-    NurseID: number;
-    Nurse: EmployeesInterface;
+    EmployeeID: number;
+    Employee: EmployeesInterface;
     DrugAllergyID: number;
     DrugAllergy: DrugAllergiesInterface;
 }

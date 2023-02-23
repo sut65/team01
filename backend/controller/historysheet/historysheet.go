@@ -38,10 +38,10 @@ func CreateHistorySheet(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "patientregister not found"})
 		return
 	}
-	if tx := entity.DB().Table("nurses").Where("id = ?", employee.RoleID).First(&employee); tx.RowsAffected == 0 {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "nurse not found"})
-		return
-	}
+	// if tx := entity.DB().Table("employees").Where("id = ?", employee.RoleID).First(&employee); tx.RowsAffected == 0 {
+	// 	c.JSON(http.StatusBadRequest, gin.H{"error": "nurse not found"})
+	// 	return
+	// }
 	if tx := entity.DB().Table("drug_allergies").Where("id = ?", historysheet.DrugAllergyID).First(&drugallergy); tx.RowsAffected == 0 {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "drugallergy not found"})
 		return
@@ -91,7 +91,7 @@ func GetHistorySheet(c *gin.Context) {
 	id := c.Param("id")
 	if err := entity.DB().Raw("SELECT * FROM history_sheets WHERE id = ?", id).
 		Preload("PatientRegister").
-		Preload("Nurse").
+		Preload("Employee").
 		Preload("DrugAllergy").
 		Find(&historysheet).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -117,7 +117,7 @@ func ListHistorySheets(c *gin.Context) {
 	var historysheets []entity.HistorySheet
 	if err := entity.DB().Raw("SELECT * FROM history_sheets").
 		Preload("PatientRegister").
-		Preload("Nurse").
+		Preload("Employee").
 		Preload("DrugAllergy").
 		Find(&historysheets).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -173,7 +173,7 @@ func UpdateHistorySheet(c *gin.Context) {
 	var payload entity.HistorySheet
 	var historysheet entity.HistorySheet
 	var patientregister entity.PatientRegister
-	var nurse entity.Employee
+	var employee entity.Employee
 	var drugallergy entity.DrugAllergy
 	if err := c.ShouldBindJSON(&payload); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -187,7 +187,7 @@ func UpdateHistorySheet(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "patientregister_id not found"})
 		return
 	}
-	if tx := entity.DB().Where("id = ?", payload.Employee.RoleID).First(&nurse); tx.RowsAffected == 0 {
+	if tx := entity.DB().Where("id = ?", payload.Employee.RoleID).First(&employee); tx.RowsAffected == 0 {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "nurse_id not found"})
 		return
 	}
@@ -207,7 +207,7 @@ func UpdateHistorySheet(c *gin.Context) {
 		DrugAllergySymtom:      payload.DrugAllergySymtom,
 		PatientSymtom:          payload.PatientSymtom,
 		PatientRegister:        patientregister,
-		Employee:               nurse,
+		Employee:               employee,
 		DrugAllergy:            drugallergy,
 	}
 	if _, err := govalidator.ValidateStruct(updatehistorysheet); err != nil {

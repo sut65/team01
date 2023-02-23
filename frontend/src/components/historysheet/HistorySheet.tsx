@@ -139,11 +139,11 @@ function HistorySheets() {
               <DeleteIcon color="error" fontSize="small"></DeleteIcon>
             </IconButton>
             <Dialog open={checkOpen(params.row.ID)} onClose={() => handleCloseDialog(params.row.ID)}>
-              <DialogTitle>Confirm Delete</DialogTitle>
-              <DialogContent>Do you want to delete history sheet of '{ params.row.PatientRegister.FirstName + " " + params.row.PatientRegister.LastName }' (ID: { params.row.ID }) ?</DialogContent>
+              <DialogTitle>ยืนยันลบข้อมูล</DialogTitle>
+              <DialogContent>คุณต้องการลบข้อมูลการซักประวัติคนไข้ '{ params.row.PatientRegister.FirstName + " " + params.row.PatientRegister.LastName }' (ID: { params.row.ID }) ใช่ไหม?</DialogContent>
               <DialogActions>
-                <Button onClick={() => handleCloseDialog(params.row.ID)}>Cancel</Button>
-                <Button onClick={() => deleteHistorySheet(params.row.ID)}>OK</Button>
+                <Button onClick={() => handleCloseDialog(params.row.ID)}>ยกเลิก</Button>
+                <Button onClick={() => deleteHistorySheet(params.row.ID)}>ตกลง</Button>
               </DialogActions>
             </Dialog>
           </React.Fragment>
@@ -211,7 +211,7 @@ function HistorySheets() {
               color="primary"
               gutterBottom
             >
-              Users
+              ข้อมูลการซักประวัติ
             </Typography>
           </Box>
           <Box>
@@ -221,7 +221,7 @@ function HistorySheets() {
               onClick={logOut}
               sx={{ marginX: 1 }}
             >
-              Log out
+              ลงชื่อออก
             </Button>
           </Box>
         </Box>
