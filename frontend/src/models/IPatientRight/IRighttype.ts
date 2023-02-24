@@ -1,4 +1,4 @@
-export interface RightTypeInterface {
+export interface RightTypesInterface {
     ID: number,
     Typename: string,
 }

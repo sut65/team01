@@ -1,12 +1,8 @@
 import {EmployeesInterface} from "../IEmployee/IEmployee"
-import { HistorySheetsInterface } from "../HistorySheet/IHistorySheet";
-//import { PatientRegistersInterface } from "../IPatientRegister/IPatientRegister";
+import { HistorySheetsInterface } from "../IHistorySheet/IHistorySheet";
 
 export interface DiagnosisRecordsInterface {
 	ID?: number;
-
-	// PatientRegisterID?: number;
-	// PatientRegister?: PatientRegisterInterface;
 
 	DoctorID?: number;
 	Doctor?: EmployeesInterface;

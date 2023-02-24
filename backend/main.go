@@ -270,6 +270,7 @@ func main() {
 			protected.GET("/medicinerecord/:id", controller_medicinerecord.GetMedicineRecord)
 			protected.PATCH("/medicinerecord", controller_medicinerecord.UpdateMedicineRecord)
 			protected.DELETE("/medicinerecords/:id", controller_medicinerecord.DeleteMedicineRecord)
+			protected.GET("/treatmentrecordbymed/:id", controller_medicinerecord.GetTreatmentRecordforMed)
 
 			//StatusMed Routes
 			protected.GET("/statusmeds", controller_medicinerecord.ListStatusMeds)

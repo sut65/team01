@@ -14,10 +14,10 @@ import Snackbar from '@mui/material/Snackbar';
 import Select,{SelectChangeEvent}from "@mui/material/Select";
 import { FormControl } from "@mui/material";
 import { EmployeesInterface } from "../../models/IEmployee/IEmployee";
-import { HospitalInterface } from "../../models/IPatientRight/IHospital";
+import { HospitalsInterface } from "../../models/IPatientRight/IHospital";
 import { PatientRegistersInterface } from "../../models/IPatientRegister/IPatientRegister";
-import { RightTypeInterface } from "../../models/IPatientRight/IRighttype";
-import { PatientRightInterface } from "../../models/IPatientRight/IPatientRight";
+import { RightTypesInterface } from "../../models/IPatientRight/IRighttype";
+import { PatientRightsInterface } from "../../models/IPatientRight/IPatientRight";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
 import { TextFieldProps } from "@mui/material/TextField";
@@ -42,10 +42,10 @@ function CreatePatientRight() {
 
   const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
   const [SendingTime, setSendingTime] = React.useState<Date | null>(new Date(),);
-  const [hospital, setHospital] = useState<HospitalInterface[]>([]);
+  const [hospital, setHospital] = useState<HospitalsInterface[]>([]);
   const [patients, setPatients] = useState<PatientRegistersInterface[]>([]); 
-  const [righttype, setRightType] = useState<RightTypeInterface[]>([]);
-  const [patientright, setPatientRight] = useState<Partial<PatientRightInterface>>({});
+  const [righttype, setRightType] = useState<RightTypesInterface[]>([]);
+  const [patientright, setPatientRight] = useState<Partial<PatientRightsInterface>>({});
   const [nurse, setNurse] = useState<EmployeesInterface>();
   const [errorMessage, setErrorMessage] = useState("");
 
@@ -303,7 +303,7 @@ function CreatePatientRight() {
                 <option aria-label="None" value="">
                   กรุณาเลือกประเภทสิทธิของผู้ป่วย
                 </option>
-                {righttype.map((item: RightTypeInterface) => (
+                {righttype.map((item: RightTypesInterface) => (
                   <option value={item.ID} key={item.ID}>
                     {item.Typename}
                   </option>
@@ -325,7 +325,7 @@ function CreatePatientRight() {
                 <option aria-label="None" value="">
                   กรุณาเลือกโรงพยาบาลที่ใช้สิทธิ
                 </option>
-                {hospital.map((item: HospitalInterface) => (
+                {hospital.map((item: HospitalsInterface) => (
                   <option value={item.ID} key={item.ID}>
                     {item.Name}
                   </option>

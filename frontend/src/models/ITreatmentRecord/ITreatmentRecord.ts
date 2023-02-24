@@ -1,11 +1,8 @@
 import { DiagnosisRecordsInterface } from "../IDiagnosisRecord/IDiagnosisRecord";
 import {EmployeesInterface} from "../IEmployee/IEmployee"
 
-export interface TreatmentRecordInterface {
+export interface TreatmentRecordsInterface {
     ID?: number;
-
-    // PatientRegisterID?: number;
-    // PatientRegister?:   PatientRegisterInterface;
 
 	DoctorID?: number;
 	Doctor?: EmployeesInterface;
@@ -22,7 +19,7 @@ export interface TreatmentRecordInterface {
     Date?: Date | null;
 }
 
-export interface MedicineInterface {
+export interface MedicinesInterface {
     ID: number;
 
     Name: string;
@@ -34,10 +31,10 @@ export interface MedicineOrdersInterface {
     ID: number;
 
     TreatmentRecordID?: number;
-    TreatmentRecord?:   TreatmentRecordInterface;
+    TreatmentRecord?:   TreatmentRecordsInterface;
 
     MedicineID?:    number;
-    Medicine?:      MedicineInterface;
+    Medicine?:      MedicinesInterface;
 
     OrderAmount?:   number;
 

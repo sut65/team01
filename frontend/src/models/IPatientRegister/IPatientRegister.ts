@@ -15,8 +15,8 @@ export interface PatientRegistersInterface {
     EmployeeID: number;
     Employee: EmployeesInterface;
 
-    GenderID: number;
-    Gender: GendersInterface;
+    PatientRegisterGenderID: number;
+    PatientRegisterGender: PatientRegisterGendersInterface;
 
     PrefixID: number;
     Prefix: PrefixesInterface;
@@ -42,7 +42,7 @@ export interface PatientRegistersInterface {
     ProvinceID: number;
     Province: ProvincesInterface;
 }
-export interface GendersInterface {
+export interface PatientRegisterGendersInterface {
     ID: string;
     Name: string;
 }

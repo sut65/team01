@@ -13,7 +13,7 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import moment from "moment";
 
-import { QueuingManagementsInterface } from "../models/IQueuingManagements";
+import { QueuingManagementsInterface } from "../../models/IQueuingManagement/IQueuingManagements";
 //import { QueuingManagementsInterface, QueuingManagementsQueuingManagementsetsInterface} from "../models/IQueuingManagements";
 
 function QueuingManagements() {

@@ -1,5 +1,5 @@
-import { EmployeesInterface } from "./IEmployee";
-import { HistorySheetsInterface } from "./IHistorySheet";
+import { EmployeesInterface } from "../IEmployee/IEmployee";
+import { HistorySheetsInterface } from "../IHistorySheet/IHistorySheet";
 import { EmergencyLevelsInterface } from "./IEmergencyLevel";
 import { HighBloodPressureLevelsInterface } from "./IHighBloodPressureLevel";
 import { DiabetesLevelsInterface } from "./IDiabetesLevel";

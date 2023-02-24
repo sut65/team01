@@ -20,10 +20,10 @@ import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import MuiAlert, { AlertProps } from "@mui/material/Alert";
 
 import '../App.css';
-import { EmployeesInterface, GendersInterface } from "../models/IEmployee";
-import { PatientRegistersInterface } from "../models/IPatientRegister";
-import { DiagnosisRecordsInterface, DiseasesInterface } from "../models/IDiagnosisRecord";
-import { MedicineInterface, MedicineOrdersInterface, TreatmentRecordInterface } from "../models/ITreatmentRecord";
+import { EmployeesInterface } from "../../models/IEmployee/IEmployee";
+import { PatientRegistersInterface } from "../../models/IPatientRegister/IPatientRegister";
+import { DiagnosisRecordsInterface, DiseasesInterface } from "../../models/IDiagnosisRecord/IDiagnosisRecord";
+import { MedicinesInterface, MedicineOrdersInterface, TreatmentRecordsInterface } from "../../models/ITreatmentRecord/ITreatmentRecord";
 
 import {
   GetEmployee,
@@ -31,7 +31,7 @@ import {
   GetDiagnosisRecord,
   GetMedicine,
   CreateTreatmentRecord,
-} from "../services/HttpClientService";
+} from "../../services/HttpClientService";
 import { DatePicker } from "@mui/x-date-pickers";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import moment from "moment";
@@ -46,9 +46,9 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
 function TreatmentRecordCreate() {
   const [employee, setEmployee] = useState<EmployeesInterface[]>([]);
   const [patient, setPatient] = useState<PatientRegistersInterface[]>([]);
-  const [medicine, setMedicine] = useState<MedicineInterface[]>([]);
+  const [medicine, setMedicine] = useState<MedicinesInterface[]>([]);
   const [diagnosisRecord, setDiagnosisRecord] = useState<DiagnosisRecordsInterface[]>([]);
-  const [treatmentRecord, setTreatmentRecord] = useState<Partial<TreatmentRecordInterface>>({
+  const [treatmentRecord, setTreatmentRecord] = useState<Partial<TreatmentRecordsInterface>>({
     Treatment: "",
     Note: "",
     Appointment: undefined,
@@ -313,7 +313,7 @@ function TreatmentRecordCreate() {
                 <option key={0} value={0}></option>
                 {patient.map((item: PatientRegistersInterface) => (
                   <option value={item.ID} key={item.ID}>
-                    {item.Gender.Name}
+                    {item.PatientRegisterGender.Name}
                   </option>
                 ))}
               </Select>
@@ -441,7 +441,7 @@ function TreatmentRecordCreate() {
                 <option key={0} >
                   เลือกข้อมูล
                 </option>
-                {medicine.map((item: MedicineInterface) => (
+                {medicine.map((item: MedicinesInterface) => (
                   <option value={item.ID} key={item.ID}>
                     {item.Name}
                   </option>

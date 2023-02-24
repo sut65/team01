@@ -90,6 +90,27 @@ func GetMedicineRecord(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"data": medicinerecord})
 }
 
+// GET /medicinerecord/:id
+func GetTreatmentRecordforMed(c *gin.Context) {
+	var medicinerecord entity.MedicineRecord
+	id := c.Param("id")
+	if err := entity.DB().
+		Preload("TreatmentRecord").
+		Preload("TreatmentRecord.MedicineOrders").
+		Preload("TreatmentRecord.MedicineOrders.Medicine").
+		Preload("TreatmentRecord.DiagnosisRecord").
+		Preload("TreatmentRecord.DiagnosisRecord.HistorySheet").
+		Preload("TreatmentRecord.DiagnosisRecord.HistorySheet.PatientRegister").
+		Preload("Employee").
+		Preload("StatusMed").
+		Raw("SELECT * FROM medicine_records WHERE id = ?", id).
+		Find(&medicinerecord).Error; err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"data": medicinerecord})
+}
+
 // GET /medicinerecords
 func ListMedicineRecords(c *gin.Context) {
 	var medicinerecords []entity.MedicineRecord

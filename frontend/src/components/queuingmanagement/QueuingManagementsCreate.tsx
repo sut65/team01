@@ -26,12 +26,12 @@ import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import Link from '@mui/material/Link';
 
-import { EmployeesInterface } from "../models/IEmployees";
-import { HistorySheetsInterface } from "../models/IHistorySheets";
-import { ServicePointsInterface } from "../models/IServicePoints";
-import { ServiceChannelsInterface } from "../models/IServiceChannels";
-import { MedicalActionsInterface } from "../models/IMedicalActions";
-import { QueuingManagementsInterface } from "../models/IQueuingManagements";
+import { EmployeesInterface } from "../../models/IEmployee/IEmployee";
+import { HistorySheetsInterface } from "../../models/IHistorySheet/IHistorySheet";
+import { ServicePointsInterface } from "../../models/IQueuingManagement/IServicePoints";
+import { ServiceChannelsInterface } from "../../models/IQueuingManagement/IServiceChannels";
+import { MedicalActionsInterface } from "../../models/IQueuingManagement/IMedicalActions";
+import { QueuingManagementsInterface } from "../../models/IQueuingManagement/IQueuingManagements";
 import { Note } from "@mui/icons-material";
 
 

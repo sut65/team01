@@ -17,7 +17,7 @@ import MuiAlert, { AlertProps } from "@mui/material/Alert";
 import { Button, TextField } from "@mui/material";
 
 // interfaces
-import { BloodTypesInterface, DistrictsInterface, MaritalStatusesInterface, NationalitiesInterface, PatientRegistersInterface, PrefixesInterface, ProvincesInterface, ReligionsInterface, SubDistrictsInterface } from "../../models/IPatientRegister/IPatientRegister";
+import { BloodTypesInterface, DistrictsInterface, MaritalStatusesInterface, NationalitiesInterface, PatientRegisterGendersInterface, PatientRegistersInterface, PrefixesInterface, ProvincesInterface, ReligionsInterface, SubDistrictsInterface } from "../../models/IPatientRegister/IPatientRegister";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { EmployeesInterface, GendersInterface } from "../../models/IEmployee/IEmployee";
@@ -37,7 +37,7 @@ function PatientRegisterCreate() {
         FirstName: "", LastName: ""
     })
     const [prefixes, setPrefixes] = React.useState<PrefixesInterface[]>([])
-    const [genders, setGenders] = React.useState<GendersInterface[]>([])
+    const [patientregistergenders, setGenders] = React.useState<PatientRegisterGendersInterface[]>([])
     const [nationalities, setNationalities] = React.useState<NationalitiesInterface[]>([])
     const [religions, setReligions] = React.useState<ReligionsInterface[]>([])
     const [bloodtypes, setBloodTypes] = React.useState<BloodTypesInterface[]>([])
@@ -51,7 +51,7 @@ function PatientRegisterCreate() {
 
     // setUser จะเป็นตัว check ข้อมูลให้ตัวแปร user ว่าได้รับข้อมูลที่ต้องการมาแล้วหรือยัง
     const [patientregisters, setPatientRegisters] = React.useState<Partial<PatientRegistersInterface>>({
-        EmployeeID: 0, PrefixID: 0, GenderID: 0, NationalityID: 0, ReligionID: 0, BloodTypeID: 0, MaritalStatusID: 0, SubDistrictID: 0, DistrictID: 0, ProvinceID: 0,
+        EmployeeID: 0, PrefixID: 0, PatientRegisterGenderID: 0, NationalityID: 0, ReligionID: 0, BloodTypeID: 0, MaritalStatusID: 0, SubDistrictID: 0, DistrictID: 0, ProvinceID: 0,
         FirstName: "", LastName: "", IdentificationNumber: "", Age: 0, BirthDay: new Date(), Mobile: "", Occupation: "", Address: "",
     });
     const [success, setSuccess] = React.useState(false);
@@ -381,7 +381,7 @@ function PatientRegisterCreate() {
 
             EmployeeID: employees.ID,
             PrefixID: typeof patientregisters.PrefixID === "string" ? parseInt(patientregisters.PrefixID) : patientregisters.PrefixID,
-            GenderID: typeof patientregisters.GenderID === "string" ? parseInt(patientregisters.GenderID) : patientregisters.GenderID,
+            GenderID: typeof patientregisters.PatientRegisterGenderID === "string" ? parseInt(patientregisters.PatientRegisterGenderID) : patientregisters.PatientRegisterGenderID,
             NationalityID: typeof patientregisters.NationalityID === "string" ? parseInt(patientregisters.NationalityID) : patientregisters.NationalityID,
             ReligionID: typeof patientregisters.ReligionID === "string" ? parseInt(patientregisters.ReligionID) : patientregisters.ReligionID,
             BloodTypeID: typeof patientregisters.BloodTypeID === "string" ? parseInt(patientregisters.BloodTypeID) : patientregisters.BloodTypeID,
@@ -555,13 +555,13 @@ function PatientRegisterCreate() {
                                 inputProps={{
                                     name: "GenderID"
                                 }}
-                                value={patientregisters.GenderID || 0}
+                                value={patientregisters.PatientRegisterGenderID || 0}
                                 onChange={handleSelectChange}
                                 native
                                 autoFocus
                             >
                                 <option key={0} value={0}></option>
-                                {genders.map((item: GendersInterface) => (
+                                {patientregistergenders.map((item: PatientRegisterGendersInterface) => (
                                     <option key={item.ID} value={item.ID}>{item.Name}</option>
                                 ))}
                             </Select>
