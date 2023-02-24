@@ -17,7 +17,6 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import moment from "moment";
 import { Tooltip } from "@mui/material";
-
 const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
 });
@@ -28,11 +27,6 @@ const [success, setSuccess] = React.useState(false);
 const [error, setError] = React.useState(false);
 const [message, setMessage] = React.useState("");
 const [open, setOpen] = React.useState<boolean[]>([]);
-
-useEffect(() => {
-  getEmployees();
-}, []);
-
 
 const handleClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
     if (reason === "clickaway") {
@@ -89,7 +83,7 @@ const handleClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
         else {
           setError(true);
           setMessage("Delete Error");
-          console.log("Helpppp");
+          console.log(res.error);
         }
       });
 
@@ -113,9 +107,13 @@ const handleClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
     setOpen(openArr);
   };
 
+  useEffect(() => {
+    getEmployees();
+  }, []);
 
   const columns: GridColDef[] = [
     { field: "IDCard", headerName: "เลขประจำตัวประชาชน", width: 150, },
+    { field: "Title", headerName: "คำนำหน้า", width: 96, valueGetter: (params) => { return params.row.Title.Name}},
     { field: "FirstName", headerName: "ชื่อ", width: 96 },
     { field: "LastName", headerName: "นามสกุล", width: 96 },
     { field: "Role", headerName: "ตำแหน่ง", width: 96, valueGetter: (params) => { return params.row.Role.Name}},
@@ -147,7 +145,7 @@ const handleClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
             </Tooltip>
               <Dialog open={checkOpen(params.row.ID)} onClose={() => handleCloseDialog(params.row.ID)}>
                 <DialogTitle>Confirm Delete</DialogTitle>
-                <DialogContent>Do you want to delete data of '{ params.row.FirstName + " " + params.row.LastName }' ?</DialogContent>
+                <DialogContent>คุณต้องการลบภาระงานของ { params.row.FirstName + " " + params.row.LastName } ?</DialogContent>
                 <DialogActions>
                   <Button onClick={() => handleCloseDialog(params.row.ID)}>Cancel</Button>
                   <Button onClick={() => deleteEmployee(params.row.ID)}>OK</Button>

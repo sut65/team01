@@ -69,6 +69,7 @@ function EmployeeCreate() {
     const name = event.target.name as keyof typeof employee;
     setEmployee({ ...employee, [name]: event.target.value });
   };
+  
 
   const handleDateChange = (date: Date | null) => {
     console.log(date);
@@ -95,6 +96,7 @@ function EmployeeCreate() {
           console.log("else")
         }
       });
+    console.log(admin)
   }
 
   const getTitle = async () => {
@@ -117,6 +119,7 @@ function EmployeeCreate() {
           console.log("else")
         }
       });
+    console.log(title)
   }
 
   const getRole = async () => {
@@ -139,6 +142,7 @@ function EmployeeCreate() {
           console.log("else")
         }
       });
+    console.log(role)
   }
 
   const getGender = async () => {
@@ -161,26 +165,51 @@ function EmployeeCreate() {
           console.log("else")
         }
       });
+    console.log(gender)
   }
-  const getEmployee = async (id: string) => {
-    const apiUrl = `http://localhost:8080/employee/${id}`;
-    const requestOptions = {
-        method: "GET",
-        headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`
-        }
-    };
 
-    fetch(apiUrl, requestOptions)
-        .then((response) => response.json())
-        .then((res) => {
-            if (res.data) {
-                setEmployee(res.data);
-            } else {
-                console.log(res.error);
-            }
-        });
+  //   const apiUrl = `http://localhost:8080/employees`;
+  //   const requestOptions = {
+  //       method: "GET",
+  //       headers: {
+  //           "Content-Type": "application/json",
+  //           Authorization: `Bearer ${localStorage.getItem("token")}`
+  //       }
+  //   };
+
+  //   fetch(apiUrl, requestOptions)
+  //       .then((response) => response.json())
+  //       .then((res) => {
+  //           if (res.data) {
+  //               setEmployee(res.data);
+  //           } else {
+  //               console.log(res.error);
+  //           }
+  //       });
+  // console.log(employee)
+
+const getEmployeeByID = async (id: string) => {
+  const apiUrl = `http://localhost:8080/employee/${id}`;
+  const requestOptions = {
+      method: "GET",
+      headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`
+      }
+  };
+
+  fetch(apiUrl, requestOptions)
+      .then((response) => response.json())
+      .then((res) => {
+          if (res.data) {
+            setEmployee(res.data);
+              // return res.data;
+              
+          } else {
+            console.log(res.error);
+          }
+      });
+    
 }
 
   const convertType = (data: string | number | undefined) => {
@@ -204,18 +233,12 @@ function EmployeeCreate() {
       Salary: convertType(employee.Salary),
       Birthday: selectedDate,
     };
-
-    let apiUrl: any 
     if (params.id) {
       data["ID"] = parseInt(params.id);
-      apiUrl = "http://localhost:8080/employee";
-    }
-    else {apiUrl = "http://localhost:8080/createemployee";}
-    console.log("data", data)
+  }
+  console.log(data);
 
-
-    // const apiUrl = "http://localhost:8080/createemployee";
-    
+    const apiUrl = "http://localhost:8080/employee";
     const requestOptionsPost = {
       method: params.id ? "PATCH" : "POST",
       headers: {
@@ -281,21 +304,17 @@ function EmployeeCreate() {
         }
       });
   }
-
   useEffect(() => {
-    if (params.id) {
-      getEmployee(params.id)
+    console.log(params.id);
+    if (params.id){
+      getEmployeeByID(params.id)
     }
   }, []);
-
   useEffect(() => {
     getAdmin();
     getRole();
     getTitle();
     getGender();
-    if (params.id){
-      getEmployee(params.id)
-    }
   }, [employee]);
 
   console.log(employee)
