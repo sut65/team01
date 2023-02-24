@@ -3,6 +3,7 @@ package controller
 import (
 	"net/http"
 
+	"github.com/asaskevich/govalidator"
 	"github.com/gin-gonic/gin"
 	"github.com/sut65/team01/entity"
 )
@@ -51,6 +52,15 @@ func CreateQueuingManagements(c *gin.Context) {
 		ServicePoint:   service_points,   // โยงความสัมพันธ์กับ Entity service_points
 		ServiceChannel: service_channels, // โยงความสัมพันธ์กับ Entity service_channels
 		MedicalAction:  medical_actions,  // โยงความสัมพันธ์กับ Entity medical_actions
+		Note:           queuing_managements.Note,
+		TimeStart:      queuing_managements.TimeStart,
+		TimeEnd:        queuing_managements.TimeEnd,
+	}
+
+	//ขั้นตอนการ validate
+	if _, err := govalidator.ValidateStruct(wv); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
 	}
 
 	// 15: บันทึก
