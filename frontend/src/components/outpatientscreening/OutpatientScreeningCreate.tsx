@@ -7,12 +7,6 @@ import Container from '@mui/material/Container';
 import Paper from '@mui/material/Paper';
 import Grid from '@mui/material/Grid';
 import TextField from '@mui/material/TextField';
-import Autocomplete from '@mui/material/Autocomplete';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
@@ -26,14 +20,14 @@ import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import Link from '@mui/material/Link';
 
-// interfaces
-import { EmployeesInterface } from "../../models/IEmployee/IEmployee";
-import { HistorySheetsInterface } from "../../models/IHistorySheet/IHistorySheet";
-import { EmergencyLevelsInterface } from "../../models/IOutpatientScreening/IEmergencyLevel";
-import { HighBloodPressureLevelsInterface } from "../../models/IOutpatientScreening/IHighBloodPressureLevel";
-import { DiabetesLevelsInterface } from "../../models/IOutpatientScreening/IDiabetesLevel";
-import { ObesityLevelsInterface } from "../../models/IOutpatientScreening/IObesityLevel";
-import { OutpatientScreeningsInterface } from "../../models/IOutpatientScreening/IOutpatientScreenings";
+import { EmployeesInterface } from "../models/IEmployee";
+import { HistorySheetsInterface } from "../models/IHistorySheet";
+import { EmergencyLevelsInterface } from "../models/IEmergencyLevel";
+import { HighBloodPressureLevelsInterface } from "../models/IHighBloodPressureLevel";
+import { DiabetesLevelsInterface } from "../models/IDiabetesLevel";
+import { ObesityLevelsInterface } from "../models/IObesityLevel";
+import { OutpatientScreeningsInterface } from "../models/IOutpatientScreenings";
+import { time } from "console";
 
 
 const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
@@ -45,7 +39,7 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
 
 
 
-  function OutpatientScreeningCreate() {
+  function OutpatientScreeningCreates() {
 
     const  [AddedTime,setAddedTime] = React.useState<Date | null>(new Date());
     const handleAddedTime = (date: Date | null | undefined) => {
@@ -127,7 +121,6 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
 
   //Get Function
   const getHistorySheet = async () => {
-    
     // const apiUrl = `http://localhost:8080/HistorySheet/${HistorySheetId}`;
     const apiUrl = `http://localhost:8080/HistorySheet/1`;  
     const requestOptions = {
@@ -260,7 +253,6 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
     };
     console.log(data)
 
-    
     const apiUrl = "http://localhost:8080/outpatientScreenings";
     const requestOptionsPost = {
       
@@ -279,11 +271,11 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
           console.log("บันทึกได้")
           setSuccess(true);
           setErrorMessage("")
-          ClearForm();
+          //ClearForm();
         } else {
           console.log("ไม่สามารถบันทึกได้")
           setError(true);
-          if(res.error.includes("Note cannot be blank")){
+          if(res.error.includes("กรุณากรอกการซักประวัติเพิ่มเติม")){
             setErrorMessage("กรุณากรอกการซักประวัติเพิ่มเติม")
           }else if (res.error.includes("Date must be present")){
             setErrorMessage("กรุณาเลือกวันที่ที่เป็นปัจจุบันหรืออนาคต")
@@ -293,16 +285,18 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
             setErrorMessage("เวลาสิ้นสุดต้องเป็นอนาคต")
           }         
         }
-  });
-  }const ClearForm = () => {
-    setOutpatientScreenings({
-      Note: "",
-      HistorySheetID: 0,
-      EmergencyLevelID: 0,
-      HighBloodPressureLevelID: 0,
-      DiabetesLevelID: 0,
-      ObesityLevelID: 0,
-    });
+      });
+  // }
+  
+  // const ClearForm = () => {
+  //   setOutpatientScreenings({
+  //     Note: "",
+  //     HistorySheetID: 0,
+  //     EmergencyLevelID: 0,
+  //     HighBloodPressureLevelID: 0,
+  //     DiabetesLevelID: 0,
+  //     ObesityLevelID: 0,
+  //   });
   };
 
 
@@ -316,7 +310,7 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
      </Snackbar>
      <Snackbar open={error} autoHideDuration={6000} onClose={handleClose}>
        <Alert onClose={handleClose} severity="error">
-         บันทึกข้อมูลไม่สำเร็จ
+         บันทึกข้อมูลไม่สำเร็จ {errorMessage}
        </Alert>
      </Snackbar>
      <Paper sx={{ padding: 2, color: "text.secondary" }}>
@@ -352,12 +346,42 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
              />
            </FormControl>
          </Grid> */}
-        <Grid item xs={12}>
-           <p>ข้อมูลการซักประวัติ</p>
+         <Grid item xs={3}>
+           <p>น้ำหนัก</p>
+           <FormControl fullWidth variant="outlined" >
+             <TextField
+               id="Weight"
+               variant="outlined"
+               //disabled
+               type="string"
+               size="small"
+               value={HistorySheet?.Weight}
+               onChange={handleInputChange}
+             />
+           </FormControl>
+         </Grid>
+         <Grid item xs={3}>
+           <p>ส่วนสูง</p>
+           <FormControl fullWidth variant="outlined" >
+             <TextField
+               id="Height"
+               variant="outlined"
+               //disabled
+               type="string"
+               size="small"
+               value={HistorySheet?.Height}
+               onChange={handleInputChange}
+             />
+           </FormControl>
+         </Grid>
+
+        <Grid item xs={3}>
+           <p>BMI</p>
            <FormControl fullWidth variant="outlined" >
              <TextField
                id="BMI"
                variant="outlined"
+               //disabled
                type="string"
                size="small"
                value={HistorySheet?.BMI}
@@ -365,6 +389,79 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
              />
            </FormControl>
          </Grid>
+         <Grid item xs={3}>
+           <p>อุณหภูมิ</p>
+           <FormControl fullWidth variant="outlined" >
+             <TextField
+               id="Temperature"
+               variant="outlined"
+               //disabled
+               type="string"
+               size="small"
+               value={HistorySheet?.Temperature}
+               onChange={handleInputChange}
+             />
+           </FormControl>
+         </Grid>
+         <Grid item xs={3}>
+           <p>อัตราการเต้นของหัวใจ</p>
+           <FormControl fullWidth variant="outlined" >
+             <TextField
+               id="HeartRate"
+               variant="outlined"
+               //disabled
+               type="string"
+               size="small"
+               value={HistorySheet?.HeartRate}
+               onChange={handleInputChange}
+             />
+           </FormControl>
+         </Grid>
+         <Grid item xs={3}>
+           <p>ความดัน</p>
+           <FormControl fullWidth variant="outlined" >
+             <TextField
+               id="DiastolicBloodPressure"
+               variant="outlined"
+               //disabled
+               type="string"
+               size="small"
+               value={HistorySheet?.DiastolicBloodPressure}
+               onChange={handleInputChange}
+             />
+           </FormControl>
+         </Grid>
+         <Grid item xs={3}>
+           <p>อัตราการหายใจ</p>
+           <FormControl fullWidth variant="outlined" >
+             <TextField
+               id="RespiratoryRate"
+               variant="outlined"
+               //disabled
+               type="string"
+               size="small"
+               value={HistorySheet?.RespiratoryRate}
+               onChange={handleInputChange}
+             />
+           </FormControl>
+         </Grid>
+         <Grid item xs={3}>
+           <p>ความอิ่มตัวของออกซิเจน</p>
+           <FormControl fullWidth variant="outlined" >
+             <TextField
+               id="OxygenSaturation"
+               variant="outlined"
+               //disabled
+               type="string"
+               size="small"
+               value={HistorySheet?.OxygenSaturation}
+               onChange={handleInputChange}
+             />
+           </FormControl>
+         </Grid>
+         
+         
+         
          <Grid item xs={3}>
          <FormControl fullWidth variant="outlined">
               <p>คัดกรองตามความเร่งด่วน</p>
@@ -679,9 +776,4 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
 
   );
 }
-export default OutpatientScreeningCreate; 
-
-
-
-
-
+export default OutpatientScreeningCreates; 
