@@ -81,12 +81,13 @@ func ListPatientRights(c *gin.Context) {
 	var patientrights []entity.PatientRight
 	if err := entity.DB().Raw("SELECT * FROM patient_rights").
 	Preload("PatientRegister").
-	Preload("Employee").
+	Preload("Employee"). 
 	Preload("Hospital").
 	Preload("RightType").
 	Find(&patientrights).Error; err != nil {
 	c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-	return
+	return  
+	
 	}
 
 	c.JSON(http.StatusOK, gin.H{"data": patientrights})

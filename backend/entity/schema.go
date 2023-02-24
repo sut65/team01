@@ -155,6 +155,7 @@ type DrugAllergy struct {
 // ===========================Structure PatientRight============================//
 type PatientRight struct {
 	gorm.Model
+	
 	RightTypeID *uint
 	RightType   RightType `gorm:"references:id" valid:"-"`
 
