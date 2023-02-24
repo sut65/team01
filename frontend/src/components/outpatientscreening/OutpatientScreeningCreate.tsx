@@ -40,6 +40,9 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
 
   function OutpatientScreeningCreates() {
 
+
+    const params = useParams();
+    
     const  [AddedTime,setAddedTime] = React.useState<Date | null>(new Date());
     const handleAddedTime = (date: Date | null | undefined) => {
      if (!date) {
@@ -231,16 +234,34 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
     let val = typeof data === "string" ? parseInt(data) : data;
     return val;
   };
-  useEffect(() => {
-    getHistorySheet();
-    getEmergencyLevel();
-    getHighBloodPressureLevel();
-    getDiabetesLevel();
-    getObesityLevel();
-  }, []);
+
+  const apiUrl = "http://localhost:8080";
+
+  async function GetOutpatientScreeningById(id: string) {
+    const requestOptions = {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+        "Content-Type": "application/json",
+      },
+    };
+  
+    let res = await fetch(`${apiUrl}/outpatientScreening/${id}`, requestOptions)
+      .then((response) => response.json())
+      .then((res) => {
+        if (res.data) {
+          return res.data;
+        } else {
+          return false;
+        }
+      });
+  
+    return res;
+  }
+  
 
   function submit() {
-    let data = {
+    let data: any = {
       HistorySheetID: convertType(OutpatientScreenings.HistorySheetID),
       EmergencyLevelID: convertType(OutpatientScreenings. EmergencyLevelID),
       HighBloodPressureLevelID: convertType(OutpatientScreenings.HighBloodPressureLevelID),
@@ -250,13 +271,26 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
       Date: selectedDate,
       TimeStart: AddedTime,
       TimeEnd: AddedTime1,
-    };
-    console.log(data)
 
-    const apiUrl = "http://localhost:8080/outpatientScreenings";
+    };
+
+    let apiUrl : any
+      if (params.id){
+        data["ID"] = parseInt(params.id);
+        apiUrl = "http://localhost:8080/outpatientScreenings"
+      }
+      else{
+        apiUrl = "http://localhost:8080/outpatientScreenings"
+      }
+
+    // if (params.id){
+    //    data["ID"] = parseInt(params.id);
+    // }
+
+    console.log(data);
+
     const requestOptionsPost = {
-      
-      method: "POST",
+      method: params.id ? "PATCH" : "POST",
       headers: {
         Authorization: `Bearer ${localStorage.getItem("token")}`,
         "Content-Type": "application/json",
@@ -298,6 +332,18 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
   //     ObesityLevelID: 0,
   //   });
   };
+
+  useEffect(() => {
+    getHistorySheet();
+    getEmergencyLevel();
+    getHighBloodPressureLevel();
+    getDiabetesLevel();
+    getObesityLevel();
+    if (params.id){
+      GetOutpatientScreeningById(params.id)
+    }
+
+  }, []);
 
 
   
@@ -775,5 +821,5 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
     
 
   );
-}
+};
 export default OutpatientScreeningCreates; 

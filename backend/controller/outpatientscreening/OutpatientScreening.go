@@ -126,3 +126,70 @@ func GetOutpatientScreening(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, gin.H{"data": outpatientScreening})
 }
+
+// PATCH /outpatientScreenings
+func UpdateOutpatientScreening(c *gin.Context) {
+	var payload entity.OutpatientScreening
+	var outpatient_screenings entity.OutpatientScreening
+	var history_sheets entity.HistorySheet
+	var emergency_levels entity.EmergencyLevel
+	var high_blood_pressure_levels entity.HighBloodPressureLevel
+	var diabetes_levels entity.DiabetesLevel
+	var obesity_levels entity.ObesityLevel
+
+	if err := c.ShouldBindJSON(&payload); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	if tx := entity.DB().Where("id = ?", payload.ID).First(&outpatient_screenings); tx.RowsAffected == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"outpatient_screenings error": " not found"})
+		return
+	}
+	if tx := entity.DB().Where("id = ?", payload.HistorySheetID).First(&history_sheets); tx.RowsAffected == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "HistorySheet not found"})
+		return
+	}
+	if tx := entity.DB().Where("id = ?", payload.EmergencyLevelID).First(&emergency_levels); tx.RowsAffected == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "EmergencyLevel not found"})
+		return
+	}
+	if tx := entity.DB().Where("id = ?", payload.HighBloodPressureLevelID).First(&high_blood_pressure_levels); tx.RowsAffected == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "HighBloodPressureLevel not found"})
+		return
+	}
+
+	if tx := entity.DB().Where("id = ?", payload.DiabetesLevelID).First(&diabetes_levels); tx.RowsAffected == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "HighBloodPressureLevel not found"})
+		return
+	}
+	//
+	if tx := entity.DB().Where("id = ?", payload.ObesityLevelID).First(&obesity_levels); tx.RowsAffected == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "HighBloodPressureLevel not found"})
+		return
+	}
+	updateoutpatientscreening := entity.OutpatientScreening{
+		Note:                   payload.Note,
+		TimeStart:              payload.TimeStart,
+		TimeEnd:                payload.TimeEnd,
+		HistorySheet:           history_sheets,
+		EmergencyLevel:         emergency_levels,
+		HighBloodPressureLevel: high_blood_pressure_levels,
+		DiabetesLevel:          diabetes_levels,
+		ObesityLevel:           obesity_levels,
+	}
+
+	if _, err := govalidator.ValidateStruct(updateoutpatientscreening); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	if err := entity.DB().Where("id = ?", outpatient_screenings.ID).Updates(&updateoutpatientscreening).Error; err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	// if err := entity.DB().Save(&outpatient_screenings).Error; err != nil {
+	// 	c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	// 	return
+	// }
+	c.JSON(http.StatusOK, gin.H{"status": "Updating Success!", "data": outpatient_screenings})
+}
