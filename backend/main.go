@@ -253,23 +253,15 @@ func main() {
 			// WorkLoad Routes ------------------------------------------------------------------------------------------------------------------------------------------------
 			protected.GET("/workloads", controller_workload.ListWorkload)
 			protected.GET("/workload/:id", controller_workload.GetWorkload)
-			protected.POST("/workloads", controller_workload.CreateWorkload)
-			protected.PATCH("/workloads", controller_workload.UpdateWorkload)
+			protected.POST("/workload", controller_workload.CreateWorkload)
+			protected.PATCH("/workload", controller_workload.UpdateWorkload)
 			protected.DELETE("/workloads/:id", controller_workload.DeleteWorkload)
-
-			// Status Routes
-			protected.GET("/statuses", controller_workload.ListStatus)
-			protected.GET("/status/:id", controller_workload.GetStatus)
-			protected.POST("/statuses", controller_workload.CreateStatus)
-			protected.PATCH("/statuses", controller_workload.UpdateStatus)
-			protected.DELETE("/statuses/:id", controller_workload.DeleteStatus)
-
-			// Room Routes
-			protected.GET("/rooms", controller_workload.ListRoom)
+			//Room
 			protected.GET("/room/:id", controller_workload.GetRoom)
-			protected.POST("/rooms", controller_workload.CreateRoom)
-			protected.PATCH("/rooms", controller_workload.UpdateRoom)
-			protected.DELETE("/rooms/:id", controller_workload.DeleteRoom)
+			protected.GET("/rooms", controller_workload.ListRoom) //ดึง Room
+			//Status
+			protected.GET("/status/:id", controller_workload.GetStatus)
+			protected.GET("/statuses", controller_workload.ListStatus) //ดึง Status
 
 			// MedicineRecord Routes ----------------------------------------------------------------------------------------------------------------------------------
 			protected.POST("/createmedicinerecord", controller_medicinerecord.CreateMedicineRecord)

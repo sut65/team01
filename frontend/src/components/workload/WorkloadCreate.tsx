@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Link as RouterLink } from "react-router-dom";
+import { Link as RouterLink, useParams } from "react-router-dom";
 import TextField, { TextFieldProps } from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import FormControl from "@mui/material/FormControl";
@@ -20,6 +20,8 @@ import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { Select } from '@mui/material';
 import { SelectChangeEvent } from '@mui/material';
+import { DesktopTimePicker } from '@mui/x-date-pickers';
+import moment from 'moment';
 
 const theme = createTheme({
     palette: {
@@ -40,21 +42,8 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
 });
 
 function WorkloadCreate() {
-    const [AddedTime1, setAddedTime1] = React.useState<Date | null>(new Date());
-    const handleAddedTime1 = (date: Date | null | undefined) => {
-        if (!date) {
-            return
-        }
-        setAddedTime1(date);
-    }
-    const [AddedTime2, setAddedTime2] = React.useState<Date | null>(new Date());
-    const handleAddedTime2 = (date: Date | null | undefined) => {
-        if (!date) {
-            return
-        }
-        setAddedTime2(date);
-    }
-    
+
+    const params = useParams();
     const [workload, setWorkload] = React.useState<Partial<WorkloadsInterface>>({});
     const [doctor, setDoctor] = React.useState<EmployeesInterface[]>([]);
     const [admin, setAdmin] = React.useState<AdminsInterface>();
@@ -64,7 +53,31 @@ function WorkloadCreate() {
     const [success, setSuccess] = React.useState(false);
     const [error, setError] = React.useState(false);
     const [errorMessage, setErrorMessage] = React.useState("");
+    var getStartTime = new Date(moment(workload.StartTime).format());
+    var getEndTime = new Date(moment(workload.EndTime).format());
+    // new Date(moment(workload.StartTime).format());
+    const [AddedTime1, setAddedTime1] = React.useState<Date | null>(new Date());
+    
 
+    const handleAddedTime1 = (date: Date | null | undefined) => {
+        console.log(date);
+        if (!date) {
+            return
+        }
+        setAddedTime1(date);
+
+  
+        // setWorkload(date);
+    }
+    const [AddedTime2, setAddedTime2] = React.useState<Date | null>(new Date());
+    const handleAddedTime2 = (date: Date | null | undefined) => {
+        console.log(date);
+        if (!date) {
+            return
+        }
+        setAddedTime2(date);
+    }
+    
     const handleClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
         if (reason === "clickaway") {
             return;
@@ -88,7 +101,7 @@ function WorkloadCreate() {
         console.log(date);
         setSelectedDate(date);
     };
-
+    console.log("errrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr",workload.StartTime===undefined? "true" : workload.StartTime)
     const getAdmin = async () => {
         const apiUrl = `http://localhost:8080/admin/${localStorage.getItem("id")}`; //localStorage เก็บไอดีของพนักงานที่ล็อกอินเข้ามา
         const requestOptions = {
@@ -197,7 +210,7 @@ function WorkloadCreate() {
                 if (res.data) {
                     setWorkload(res.data)
                 } else {
-                    console.log("else")
+                    console.log(res.error)
                 }
             });
         console.log(workload)
@@ -207,24 +220,26 @@ function WorkloadCreate() {
         let val = typeof data === "string" ? parseInt(data) : data;
         return val;
     };
-
+    
     function submit() {
 
-        let data = {
+        let data: any = {
             AdminID: convertType(admin?.ID),
             EmployeeID: convertType(workload.EmployeeID),
             RoomID: convertType(workload.RoomID),
             StatusID: convertType(workload.StatusID),
             Date: selectedDate,
-            StartTime: AddedTime1,
-            EndTime: AddedTime2
+            StartTime: (moment(AddedTime1).format()),
+            EndTime: (moment(AddedTime2).format()),
         };
+        if (params.id) {
+            data["ID"] = parseInt(params.id);
+        }
+        console.log(data)
 
-        console.log("data", data)
-
-        const apiUrl = "http://localhost:8080/createworkload";
+        const apiUrl = "http://localhost:8080/workload";
         const requestOptionsPost = {
-            method: "POST",
+            method: params.id ? "PATCH" : "POST",
             headers: {
                 Authorization: `Bearer ${localStorage.getItem("token")}`,
                 "Content-Type": "application/json",
@@ -240,9 +255,9 @@ function WorkloadCreate() {
                     console.log("บันทึกข้อมูลสำเร็จ")
                     setSuccess(true);
                     setErrorMessage("")
-                    setTimeout(() => {
-                    window.location.href = "/workloads";
-                      }, 2000)
+                    // setTimeout(() => {
+                    // window.location.href = "/workloads";
+                    //   }, 2000)
                 } else {
                     console.log(res.error)
                     console.log("บันทึกข้อมูลไม่สำเร็จ")
@@ -259,18 +274,28 @@ function WorkloadCreate() {
                         setErrorMessage("เวลาเริ่มต้นต้องเป็นอนาคต")
                     } else if (res.error.includes("End Time must be future")) {
                         setErrorMessage("เวลาสิ้นสุดต้องเป็นอนาคต")
+                    } else if (res.error.includes("เวลาเริ่มต้นต้องน้อยกว่าเวลาสิ้นสุด")) {
+                        setErrorMessage("เวลาเริ่มต้นต้องน้อยกว่าเวลาสิ้นสุด")
+                    
+                    
                     }else {
                         setErrorMessage(res.error);
                       }
                 }
             });
     }
-
+    useEffect(() => {
+        if (params.id){
+          getWorkload(params.id)
+        }
+      }, []);
     useEffect(() => {
         getAdmin();
         getDoctor();
         getRoom();
         getStatus();
+        setAddedTime1(getStartTime)
+        setAddedTime2(getEndTime)
     }, [workload]);
     console.log(workload)
 
@@ -426,10 +451,12 @@ function WorkloadCreate() {
                             <LocalizationProvider dateAdapter={AdapterDateFns}>
                                 <TimePicker
                                     value={AddedTime1}
+                                    // value = {workload.StartTime === undefined ? AddedTime1 || workload.StartTime}
                                     onChange={(newValue) => handleAddedTime1(newValue)}
                                     renderInput={(params) => <TextField {...params} />}
                                     ampm={false}
                                 />
+                                
                             </LocalizationProvider>
                         </FormControl>
                     </Grid>

@@ -37,6 +37,7 @@ export default function App() {
             <Route path="/createemployee" element={<EmployeeCreate />} />
             <Route path="/createemployee/:id" element={<EmployeeCreate />} />
             <Route path="/createworkload" element={<WorkloadCreate />}/>
+            <Route path="/createworkload/:id" element={<WorkloadCreate />}/>
             <Route path="/workloads" element={<Workloads />}/>
             <Route path="*" element={<Navigate to="/" />} />
           </Routes>
