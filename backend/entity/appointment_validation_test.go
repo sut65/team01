@@ -13,7 +13,7 @@ func TestAppointmentPass(t *testing.T) {
 
 	//ข้อมูลที่ถูกต้องหมดทุก field
 	appointment := Appointment{
-		AppointmentTime: time.Date(2023, 1, 1, 12, 00, 00, 00, time.UTC),
+		AppointmentTime: time.Date(2029, 1, 1, 12, 00, 00, 00, time.UTC),
 		Note:            "ฉีดวัคซีน",
 		RoomNumber:      111,
 	}
@@ -62,7 +62,7 @@ func TestAppointmentNote(t *testing.T) {
 	g := NewGomegaWithT(t)
 
 	appointment := Appointment{
-		AppointmentTime: time.Date(2023, 1, 1, 12, 00, 00, 00, time.UTC),
+		AppointmentTime: time.Date(2029, 1, 1, 12, 00, 00, 00, time.UTC),
 		Note:            "", //ผิดต้องไม่เป็นข้อมูลว่าง
 		RoomNumber:      111,
 	}
@@ -84,7 +84,7 @@ func TestAppointmentRoomNumber(t *testing.T) {
 	g := NewGomegaWithT(t)
 
 	appointment := Appointment{
-		AppointmentTime: time.Date(2023, 1, 1, 12, 00, 00, 00, time.UTC),
+		AppointmentTime: time.Date(2029, 1, 1, 12, 00, 00, 00, time.UTC),
 		Note:            "ฉีดวัคซีน",
 		RoomNumber:      -1, //ผิดต้องมีค่ามากกว่า 0
 	}
@@ -107,7 +107,7 @@ func TestAppointmentRoomNumbernotblank(t *testing.T) {
 	g := NewGomegaWithT(t)
 
 	appointment := Appointment{
-		AppointmentTime: time.Date(2023, 1, 1, 12, 00, 00, 00, time.UTC),
+		AppointmentTime: time.Date(2029, 1, 1, 12, 00, 00, 00, time.UTC),
 		Note:            "ฉีดวัคซีน",
 		RoomNumber:      0, //ผิดต้องไม่เป็นค่าว่างหรือ0
 	}

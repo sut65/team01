@@ -56,11 +56,11 @@ func TestTotal(t *testing.T) {
 
 }
 
-func TestPaymentTimeNotNow(t *testing.T) {
+func TestPaymentTimeNotPast(t *testing.T) {
 	g := NewGomegaWithT(t)
 
 	payment := Payment{
-		PaymentTime: time.Date(2022, 1, 1, 12, 00, 00, 00, time.UTC), //ผิด
+		PaymentTime: time.Date(2002, 1, 1, 12, 00, 00, 00, time.UTC), //ผิด
 		Total:       100,
 	}
 
@@ -75,5 +75,26 @@ func TestPaymentTimeNotNow(t *testing.T) {
 	g.Expect(err).ToNot(BeNil())
 
 	// err.Error ต้องมี error message แสดงออกมา
-	g.Expect(err.Error()).To(Equal("PaymentTime must be in the present"))
+	g.Expect(err.Error()).To(Equal("Payment incorrect"))
+}
+func TestPaymentTimeNotFuture(t *testing.T) {
+	g := NewGomegaWithT(t)
+
+	payment := Payment{
+		PaymentTime: time.Date(2029, 1, 1, 12, 00, 00, 00, time.UTC), //ผิด
+		Total:       100,
+	}
+
+	// ตรวจสอบด้วย govalidator
+	ok, err := govalidator.ValidateStruct(payment)
+	fmt.Printf("%v\n", err)
+
+	// ok ต้องไม่เป็นค่า true แปลว่าต้องจับ error ได้
+	g.Expect(ok).ToNot(BeTrue())
+
+	// err ต้องไม่เป็นค่า nil แปลว่าต้องจับ error ได้
+	g.Expect(err).ToNot(BeNil())
+
+	// err.Error ต้องมี error message แสดงออกมา
+	g.Expect(err.Error()).To(Equal("Payment incorrect"))
 }

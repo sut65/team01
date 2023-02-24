@@ -11,6 +11,7 @@ import (
 	controller_patientregister "github.com/sut65/team01/controller/patientregister"
 	controller_patientright "github.com/sut65/team01/controller/patientright"
 	controller_payment "github.com/sut65/team01/controller/payment"
+	controller_queuingmanagement "github.com/sut65/team01/controller/queuingmanagements"
 	controller_treatmentrecord "github.com/sut65/team01/controller/treatmentrecord"
 	controller_workload "github.com/sut65/team01/controller/workload"
 	"github.com/sut65/team01/entity"
@@ -174,26 +175,26 @@ func main() {
 
 			// QueuingMangement Routes ------------------------------------------------------------------------------------------------------------------------------------------------
 			// ServicePoint Routes
-			protected.GET("/ServicePoint", controller.ListServicePoint)
-			protected.GET("ServicePoint/:id", controller.GetServicePoint)
-			protected.POST("/ServicePoints", controller.CreateServicePoint)
+			protected.GET("/ServicePoint", controller_queuingmanagement.ListServicePoints)
+			protected.GET("ServicePoint/:id", controller_queuingmanagement.GetServicePoint)
+			protected.POST("/ServicePoints", controller_queuingmanagement.CreateServicePoint)
 
 			// ServiceChannel Routes
-			protected.GET("/ServiceChannel", controller.ListServiceChannel)
-			protected.GET("/ServiceChannel/:id", controller.GetServiceChannel)
-			protected.POST("/ServiceChannels", controller.CreateServiceChannel)
+			protected.GET("/ServiceChannel", controller_queuingmanagement.ListServiceChannel)
+			protected.GET("/ServiceChannel/:id", controller_queuingmanagement.GetServiceChannel)
+			protected.POST("/ServiceChannels", controller_queuingmanagement.CreateServiceChannel)
 
 			// MedicalAction Routes
-			protected.GET("/MedicalAction", controller.ListMedicalAction)
-			protected.GET("/MedicalAction/:id", controller.GetMedicaAction)
-			protected.POST("/MedicalActions", controller.CreateMedicalAction)
+			protected.GET("/MedicalAction", controller_queuingmanagement.ListMedicalAction)
+			protected.GET("/MedicalAction/:id", controller_queuingmanagement.GetMedicaAction)
+			protected.POST("/MedicalActions", controller_queuingmanagement.CreateMedicalAction)
 
 			// Queu Routes
-			protected.GET("/queuingManagement", controller.ListQueuingManagements)
-			protected.GET("/queuingManagement/:id", controller.GetQueuingManagement)
-			protected.GET("/queuingManagements/count", controller.GetCountQueuingManagements)
-			protected.DELETE("/queuingManagements/:id", controller.DeleteQueuingManagement)
-			protected.POST("/queuingManagements", controller.CreateQueuingManagements)
+			protected.GET("/queuingManagement", controller_queuingmanagement.ListQueuingManagements)
+			protected.GET("/queuingManagement/:id", controller_queuingmanagement.GetQueuingManagement)
+			protected.GET("/queuingManagements/count", controller_queuingmanagement.GetCountQueuingManagements)
+			protected.DELETE("/queuingManagements/:id", controller_queuingmanagement.DeleteQueuingManagement)
+			protected.POST("/queuingManagements", controller_queuingmanagement.CreateQueuingManagements)
 			// Appointment Routes ------------------------------------------------------------------------------------------------------------------------------------------------
 			protected.GET("/appointments", controller_appointment.ListAppointments)
 			protected.GET("/appointment/:id", controller_appointment.GetAppointment)
@@ -239,6 +240,7 @@ func main() {
 			// TreatmentRecord ------------------------------------------------------------------------------------------------------------------------------------------------
 			protected.GET("/treatmentrecords", controller_treatmentrecord.ListTreatmentRecords)
 			protected.GET("/treatmentrecord/:id", controller_treatmentrecord.GetTreatmentRecord)
+			protected.GET("/treatmentrecord/medicineorder/:id", controller_treatmentrecord.GetTreatmentRecordforMed)
 			protected.POST("/treatmentrecords", controller_treatmentrecord.CreateTreatmentRecord)
 			protected.PATCH("/treatmentrecords", controller_treatmentrecord.UpdateTreatmentRecord)
 			protected.DELETE("/treamentrecords/:id", controller_treatmentrecord.DeleteTreatmentRecord)
@@ -269,7 +271,6 @@ func main() {
 			protected.GET("/medicinerecord/:id", controller_medicinerecord.GetMedicineRecord)
 			protected.PATCH("/medicinerecord", controller_medicinerecord.UpdateMedicineRecord)
 			protected.DELETE("/medicinerecords/:id", controller_medicinerecord.DeleteMedicineRecord)
-			protected.GET("/treatmentrecordbymed/:id", controller_medicinerecord.GetTreatmentRecordforMed)
 
 			//StatusMed Routes
 			protected.GET("/statusmeds", controller_medicinerecord.ListStatusMeds)
