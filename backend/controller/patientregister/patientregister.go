@@ -130,7 +130,7 @@ func GetPatientRegister(c *gin.Context) {
 	id := c.Param("id")
 	if err := entity.DB().Raw("SELECT * FROM patient_registers WHERE id = ?", id).
 		Preload("Employee").
-		Preload("Gender").
+		Preload("PatientRegisterGender").
 		Preload("Prefix").
 		Preload("Nationality").
 		Preload("Religion").
@@ -163,7 +163,7 @@ func ListPatientRegisters(c *gin.Context) {
 	var patientregisters []entity.PatientRegister
 	if err := entity.DB().Raw("SELECT * FROM patient_registers").
 		Preload("Employee").
-		Preload("Gender").
+		Preload("PatientRegisterGender").
 		Preload("Prefix").
 		Preload("Nationality").
 		Preload("Religion").

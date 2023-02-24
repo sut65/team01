@@ -142,7 +142,7 @@ function PatientRegisters() {
     { field: "Occupation", headerName: "อาชีพ", width: 96 },
     { field: "Address", headerName: "ที่อยู่", width: 96 },
     { field: "BirthDay", headerName: "วันเกิด", width: 96 },
-    { field: "Gender ID", headerName: "เพศ", width: 96, valueGetter: (params) => { return params.row.Gender.Name } },
+    { field: "Gender ID", headerName: "เพศ", width: 96, valueGetter: (params) => { return params.row.PatientRegisterGender.Name } },
     { field: "IdentificationNumber", headerName: "เลขประจำตัวประชาชน", width: 96 },
     { field: "Mobile", headerName: "มือถือ", width: 96 },
     { field: "PostCode ID", headerName: "รหัสไปรษณีย์", width: 96, valueGetter: (params) => { return params.row.SubDistrict.PostCode } },

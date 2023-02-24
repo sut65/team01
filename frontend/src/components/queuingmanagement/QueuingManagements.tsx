@@ -13,7 +13,7 @@ import MuiAlert, { AlertProps } from "@mui/material/Alert";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { QueuingManagementsInterface } from "../models/IQueuingManagements";
+import { QueuingManagementsInterface } from "../../models/IQueuingManagement/IQueuingManagements";
 
 const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;

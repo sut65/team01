@@ -56,12 +56,12 @@ func CreatePayment(c *gin.Context) {
 
 	// : สร้าง Payment
 	pm := entity.Payment{
-		PatientRight:   patientright,        // โยงความสัมพันธ์กับ Entity PatientRight
-		PaymentType:    paymenttype,         // โยงความสัมพันธ์ Entity PaymentType
-		Employee:       employee,            // โยงความสัมพันธ์กับ Entity cashier
-		MedicineRecord: medicinerecord,      // โยงความสัมพันธ์กับ Entity MedicineRecord
-		PaymentTime:    payment.PaymentTime, // ตั้งค่าฟิลด์ PaymentTime
-		Total:          payment.Total,       //ตั้งค่าฟิลด์ Total
+		PatientRight:     patientright,        // โยงความสัมพันธ์กับ Entity PatientRight
+		PaymentType:      paymenttype,         // โยงความสัมพันธ์ Entity PaymentType
+		Employee:         employee,            // โยงความสัมพันธ์กับ Entity cashier
+		MedicineRecordID: &medicinerecord.ID,  // โยงความสัมพันธ์กับ Entity MedicineRecord
+		PaymentTime:      payment.PaymentTime, // ตั้งค่าฟิลด์ PaymentTime
+		Total:            payment.Total,       //ตั้งค่าฟิลด์ Total
 
 	}
 
@@ -159,18 +159,18 @@ func UpdatePayment(c *gin.Context) {
 		return
 	}
 
-	newpayload.PatientRight = payload.PatientRight
-	newpayload.PaymentType = payload.PaymentType
-	newpayload.MedicineRecord = payload.MedicineRecord
+	newpayload.PatientRightID = payload.PatientRightID
+	newpayload.PaymentTypeID = payload.PaymentTypeID
+	newpayload.MedicineRecordID = payload.MedicineRecordID
 	newpayload.PaymentTime = payload.PaymentTime
 	newpayload.Total = payload.Total
 
 	updatepm := entity.Payment{
-		PatientRight:   newpayload.PatientRight,   // โยงความสัมพันธ์กับ Entity PatientRight
-		PaymentType:    newpayload.PaymentType,    // โยงความสัมพันธ์ Entity PaymentType
-		MedicineRecord: newpayload.MedicineRecord, // โยงความสัมพันธ์กับ Entity MedicineRecord
-		PaymentTime:    newpayload.PaymentTime,    // ตั้งค่าฟิลด์ PaymentTime
-		Total:          newpayload.Total,          //ตั้งค่าฟิลด์ Total
+		PatientRightID:   newpayload.PatientRightID,   // โยงความสัมพันธ์กับ Entity PatientRight
+		PaymentTypeID:    newpayload.PaymentTypeID,    // โยงความสัมพันธ์ Entity PaymentType
+		MedicineRecordID: newpayload.MedicineRecordID, // โยงความสัมพันธ์กับ Entity MedicineRecord
+		PaymentTime:      newpayload.PaymentTime,      // ตั้งค่าฟิลด์ PaymentTime
+		Total:            newpayload.Total,            //ตั้งค่าฟิลด์ Total
 
 	}
 	if _, err := govalidator.ValidateStruct(updatepm); err != nil {

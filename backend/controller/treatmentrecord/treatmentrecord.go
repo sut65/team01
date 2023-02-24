@@ -99,6 +99,20 @@ func GetTreatmentRecord(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"data": treatmentrecord})
 }
 
+// GET: /treatmentrecord/medicineorder/:id
+func GetTreatmentRecordforMed(c *gin.Context) {
+	id := c.Param("id")
+	var medicineorder []entity.MedicineOrder
+	if err := entity.DB().Raw("SELECT * FROM medicine_orders WHERE treatment_record_id = ?", id).
+		Preload("Medicine").
+		Find(&medicineorder).Error; err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"data": medicineorder})
+}
+
 // GET /treatmentrecords/
 func ListTreatmentRecords(c *gin.Context) {
 	var treatmentrecords []entity.TreatmentRecord

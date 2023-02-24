@@ -1,3 +1,4 @@
+import { Link as RouterLink } from "react-router-dom";
 import { Alert, Avatar, Box, Button, Container, CssBaseline, Grid, Paper, Snackbar, Tab, TextField, Typography } from "@mui/material";
 import { error } from "console";
 import React from "react";
@@ -5,7 +6,7 @@ import AccountCircleSharpIcon from '@mui/icons-material/AccountCircleSharp';
 import Navbar from "./Navbar";
 import { useState } from "react";
 
-export default function LogIn() {
+export default function Home() {
 
   // ประกาศตัวแปร login และ setlogin สำหรับเก็บค่า email และ password
   // setlogin เป็นตัว set ค่า email และ password เข้าไปที่ตัวแปร login
@@ -113,7 +114,10 @@ export default function LogIn() {
 
   return (
     <Container component="main" maxWidth="xs">
-      <Paper><img src={require('A3337-07_Bendigo-Hospital_©www.batessmart.com_')} /></Paper>
+      <Button component={RouterLink} to="/login">ลงชื่อเข้าใช้</Button>
+      <p>
+        Alan Turing
+      </p>
     </Container>
   );
 }

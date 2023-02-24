@@ -20,14 +20,13 @@ import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import Link from '@mui/material/Link';
 
-import { EmployeesInterface } from "../models/IEmployee";
-import { HistorySheetsInterface } from "../models/IHistorySheet";
-import { EmergencyLevelsInterface } from "../models/IEmergencyLevel";
-import { HighBloodPressureLevelsInterface } from "../models/IHighBloodPressureLevel";
-import { DiabetesLevelsInterface } from "../models/IDiabetesLevel";
-import { ObesityLevelsInterface } from "../models/IObesityLevel";
-import { OutpatientScreeningsInterface } from "../models/IOutpatientScreenings";
-import { time } from "console";
+// interfaces
+import { HistorySheetsInterface } from "../../models/IHistorySheet/IHistorySheet";
+import { EmergencyLevelsInterface } from "../../models/IOutpatientScreening/IEmergencyLevel";
+import { HighBloodPressureLevelsInterface } from "../../models/IOutpatientScreening/IHighBloodPressureLevel";
+import { DiabetesLevelsInterface } from "../../models/IOutpatientScreening/IDiabetesLevel";
+import { ObesityLevelsInterface } from "../../models/IOutpatientScreening/IObesityLevel";
+import { OutpatientScreeningsInterface } from "../../models/IOutpatientScreening/IOutpatientScreenings";
 
 
 const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
@@ -121,8 +120,9 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
 
   //Get Function
   const getHistorySheet = async () => {
-    // const apiUrl = `http://localhost:8080/HistorySheet/${HistorySheetId}`;
-    const apiUrl = `http://localhost:8080/HistorySheet/1`;  
+    
+    const apiUrl = `http://localhost:8080/HistorySheet/${HistorySheetId}`;
+    // const apiUrl = `http://localhost:8080/HistorySheet/1`;  
     const requestOptions = {
       method: "GET",                                       
       headers: {

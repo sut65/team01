@@ -20,7 +20,7 @@ import DateFnsUtils from "@date-io/date-fns";
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import MuiAlert, { AlertProps } from "@mui/material/Alert";
 
-import '../App.css';
+// import '../App.css';
 import { EmployeesInterface } from "../../models/IEmployee/IEmployee";
 import { PatientRegistersInterface } from "../../models/IPatientRegister/IPatientRegister";
 import { DiagnosisRecordsInterface } from "../../models/IDiagnosisRecord/IDiagnosisRecord";

@@ -75,7 +75,7 @@ func TestPaymentTimeNotPast(t *testing.T) {
 	g.Expect(err).ToNot(BeNil())
 
 	// err.Error ต้องมี error message แสดงออกมา
-	g.Expect(err.Error()).To(Equal("Payment incorrect"))
+	g.Expect(err.Error()).To(Equal("PaymentTime incorrect"))
 }
 func TestPaymentTimeNotFuture(t *testing.T) {
 	g := NewGomegaWithT(t)
@@ -96,5 +96,5 @@ func TestPaymentTimeNotFuture(t *testing.T) {
 	g.Expect(err).ToNot(BeNil())
 
 	// err.Error ต้องมี error message แสดงออกมา
-	g.Expect(err.Error()).To(Equal("Payment incorrect"))
+	g.Expect(err.Error()).To(Equal("PaymentTime incorrect"))
 }

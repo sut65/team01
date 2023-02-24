@@ -1,4 +1,5 @@
 import React from "react";
+import { MedicineRecordsInterface } from "../models/IMedicineRecord/IMedicineRecord";
 
 
 const apiUrl = "http://localhost:8080";
