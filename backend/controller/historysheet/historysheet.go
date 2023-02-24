@@ -38,7 +38,7 @@ func CreateHistorySheet(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "patientregister not found"})
 		return
 	}
-	if tx := entity.DB().Table("employees").Where("id = ?", employee.RoleID).First(&employee); tx.RowsAffected == 0 {
+	if tx := entity.DB().Table("employees").Where("id = ?", historysheet.EmployeeID).First(&employee); tx.RowsAffected == 0 {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "nurse not found"})
 		return
 	}

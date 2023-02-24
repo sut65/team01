@@ -226,7 +226,7 @@ export default function PaymentCreate() {
   useEffect(() => {
     setPayment (payment => {
       let MedPrice = medicineorder.reduce((a, b) => a + Number(b!.OrderAmount! * b!.Medicine!.Price!) , 0) ?? 0;
-      let PatientRightPrice = selectedPatientRight?.Discount ?? 0;
+      let PatientRightPrice = selectedPatientRight?.RightType?.Discount ?? 0;
       return { ...payment, Total: MedPrice - PatientRightPrice }
     });
       

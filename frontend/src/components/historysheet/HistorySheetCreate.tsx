@@ -38,7 +38,7 @@ function HistorySheetCreate() {
     // ประกาศตัวแปร prefixes และ setPrefixes สำหรับเก็บค่าจาก PrefixesInterface
     // setPrefixes เป็นตัว set ค่าจาก PrefixesInterface เข้าไปที่ตัวแปร prefixes
 
-    const [nurses, setNurses] = React.useState<Partial<EmployeesInterface>>({ FirstName: "", LastName: "" })
+    const [nurses, setNurses] = React.useState<Partial<EmployeesInterface>>({ ID: 0, FirstName: "", LastName: "" })
     const [drugallergies, setDrugAllergies] = React.useState<DrugAllergiesInterface[]>([])
     const [patientregisters, setPatientRegisters] = React.useState<PatientRegistersInterface[]>([])
     // setUser จะเป็นตัว check ข้อมูลให้ตัวแปร user ว่าได้รับข้อมูลที่ต้องการมาแล้วหรือยัง
@@ -226,7 +226,7 @@ function HistorySheetCreate() {
             PatientSymtom: historysheets.PatientSymtom ?? "",
 
             PatientRegisterID: typeof historysheets.PatientRegisterID === "string" ? parseInt(historysheets.PatientRegisterID) : historysheets.PatientRegisterID,
-            NurseID: nurses.ID,
+            EmployeeID: nurses.ID,
             DrugAllergyID: typeof historysheets.DrugAllergyID === "string" ? parseInt(historysheets.DrugAllergyID) : historysheets.DrugAllergyID,
         };
 
