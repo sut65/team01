@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-d
 import Navbar from "./components/Navbar";
 // import PatientRegisters from "./components/PatientRegister";
 // import PatientRegisterCreate from "./components/PatientRegisterCreate";
-import Home from "./components/Home";
+// import Home from "./components/Home";
 import Login from "./components/Login";
 import HistorySheetCreate from "./components/historysheet/HistorySheetCreate";
 import HistorySheets from "./components/historysheet/HistorySheet";
@@ -13,6 +13,7 @@ import WorkloadCreate from "./components/workload/WorkloadCreate";
 import Workloads from "./components/workload/Workloads";
 import PatientRegisterCreate from "./components/patientregister/PatientRegisterCreate";
 import PatientRegisters from "./components/patientregister/PatientRegister";
+import Home from "./components/Home";
 
 export default function App() {
   // const [token, setToken] = React.useState<string | null>();
@@ -51,11 +52,12 @@ export default function App() {
     <div>
     <Navbar />
       <Routes>
-        <Route path="/" element={<Home />} />
         <Route path="/historysheet" element={<HistorySheets />} />
         <Route path="/patient" element={<PatientRegisters />} />
-        <Route path="/patientcreate/:id?" element={<PatientRegisterCreate />} />
-        <Route path="/historysheetcreate/:id?" element={<HistorySheetCreate />} />
+        <Route path="/patientcreate" element={<PatientRegisterCreate />} />
+        <Route path="/patientcreate/:id" element={<PatientRegisterCreate />} />
+        <Route path="/historysheetcreate" element={<HistorySheetCreate />} />
+        <Route path="/historysheetcreate/:id" element={<HistorySheetCreate />} />
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </div>

@@ -100,21 +100,58 @@ func DeletePatientRights(c *gin.Context) {
 
 // PATCH /patientrights
 func UpdatePatientRights(c *gin.Context) {
+	var updatepatientright entity.PatientRight
 	var patientright entity.PatientRight
-	if err := c.ShouldBindJSON(&patientright); err != nil {
+	var righttype entity.RightType
+	var hospital entity.Hospital
+	var employee entity.Employee
+
+	// bind เข้าตัวแปร patientright
+	if err := c.ShouldBindJSON(&updatepatientright); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	if tx := entity.DB().Where("id = ?", patientright.ID).First(&patientright); tx.RowsAffected == 0 {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "patientright not found"})
+	// : ค้นหา righttype ด้วย id
+	if tx := entity.DB().Where("id = ?", updatepatientright.RightTypeID).First(&righttype); tx.RowsAffected == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "righttype not found"})
 		return
 	}
 
-	if err := entity.DB().Save(&patientright).Error; err != nil {
+	// : ค้นหา hospital ด้วย id
+	if tx := entity.DB().Where("id = ?", updatepatientright.HospitalID).First(&hospital); tx.RowsAffected == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Hospital not found"})
+		return
+	}
+
+	// : ค้นหา Employee ด้วย id
+	if tx := entity.DB().Where("id = ?", updatepatientright.EmployeeID).First(&employee); tx.RowsAffected == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "employee not found"})
+		return
+	}
+
+	// :   update patient
+	uppt := entity.PatientRight{
+		RightType:    righttype, // โยงความสัมพันธ์กับ Entity PatientType
+		Hospital:     hospital,  // โยงความสัมพันธ์กับ Entity PatientRight
+		Employee:     employee,
+		DateRocrcord: updatepatientright.DateRocrcord, // ตั่งค่าของ HN ให้เท่ากับค่าที่รับมา
+		Note:         updatepatientright.Note,         // ตั่งค่าของ Note ให้เท่ากับค่าที่รับมา
+	}
+
+	//ขั้นตอนการ validate ที่นำมาจาก  unit test
+	if _, err := govalidator.ValidateStruct(uppt); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"data": patientright})
+	if err := entity.DB().Where("id = ?", patientright.ID).Updates(&uppt).Error; err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	// if err := entity.DB().Save(&historysheet).Error; err != nil {
+	// 	c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	// 	return
+	// }
+	c.JSON(http.StatusOK, gin.H{"status": "Updating Success!", "data": patientright})
 }

@@ -17,7 +17,7 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { EmployeesInterface } from "../../models/IEmployee/IEmployee";
 import { RoomsInterface } from "../../models/IWorkload/IWorkload";
 import { PatientRegistersInterface } from "../../models/IPatientRegister/IPatientRegister";
-import { AppointmentInterface } from "../../models/IAppointment/IAppointment";
+import { AppointmentsInterface } from "../../models/IAppointment/IAppointment";
 import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import TextField, { TextFieldProps } from "@mui/material/TextField";
@@ -44,12 +44,12 @@ function AppointmentCreate() {
   const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
   const [rooms, setRooms] = useState<RoomsInterface[]>([]);
   const [patientRegisters, setPatientRegisters] = useState<PatientRegistersInterface[]>([]);
-  const [appointment, setAppointment] = useState<Partial<AppointmentInterface>>({});
+  const [appointment, setAppointment] = useState<Partial<AppointmentsInterface>>({});
   const [doctors, setDoctors] = useState<EmployeesInterface[]>([]);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-  const { register, handleSubmit, watch, formState: { errors }, } = useForm<AppointmentInterface>();
+  const { register, handleSubmit, watch, formState: { errors }, } = useForm<AppointmentsInterface>();
 
 
   const handleClose = (event?:Event| React.SyntheticEvent, reason?: string) => {

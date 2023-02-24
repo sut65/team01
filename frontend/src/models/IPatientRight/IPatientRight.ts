@@ -1,8 +1,8 @@
 import {EmployeesInterface} from "../IEmployee/IEmployee"
-import { RightTypeInterface } from './IRighttype';
-import { HospitalInterface } from './IHospital';
-import { PatientRegistersInterface } from "../IHistorySheet/IHistorySheet";
-export interface PatientRightInterface{
+import { RightTypesInterface } from './IRighttype';
+import { HospitalsInterface } from './IHospital';
+import { PatientRegistersInterface } from "../IPatientRegister/IPatientRegister";
+export interface PatientRightsInterface{
     ID: number,
     Name: string,
 
@@ -10,10 +10,10 @@ export interface PatientRightInterface{
     PatientRegister: PatientRegistersInterface,
 
     RightTypeID?: number,
-    RightType: RightTypeInterface,
+    RightType: RightTypesInterface,
 
     HospitalID?: number,
-    Hospital: HospitalInterface,
+    Hospital: HospitalsInterface,
     
     EmployeeID?: number,
     Employee: EmployeesInterface,

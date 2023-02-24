@@ -12,8 +12,7 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import moment from "moment";
-
-import { OutpatientScreeningsInterface } from "../models/IOutpatientScreenings";
+import { OutpatientScreeningsInterface } from "../../models/IOutpatientScreening/IOutpatientScreenings";
 
 
 function OutpatientScreenings() {

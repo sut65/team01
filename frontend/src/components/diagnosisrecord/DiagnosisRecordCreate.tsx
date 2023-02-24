@@ -19,10 +19,10 @@ import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import MuiAlert, { AlertProps } from "@mui/material/Alert";
 
 import '../App.css';
-import { EmployeeInterface, GenderInterface } from "../models/IEmployee";
-import { PatientRegisterInterface } from "../models/IPatientRegister";
-import { DiagnosisRecordInterface, DiseaseInterface, MedicalCertificateInterface } from "../models/IDiagnosisRecord";
-import { HistorySheetInterface } from "../models/IHistorySheet";
+import { EmployeesInterface } from "../../models/IEmployee/IEmployee";
+import { PatientRegistersInterface } from "../../models/IPatientRegister/IPatientRegister";
+import { DiagnosisRecordsInterface,  DiseasesInterface } from "../../models/IDiagnosisRecord/IDiagnosisRecord";
+import { HistorySheetsInterface } from "../../models/IHistorySheet/IHistorySheet";
 
 import {
   GetEmployee,
@@ -32,7 +32,7 @@ import {
   GetDisease,
   CreateDiagnosisRecord,
   // GetMedicalCertificate,
-} from "../services/HttpClientService";
+} from "../../services/HttpClientService";
 
 const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
   props,
@@ -42,13 +42,13 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
 });
 
 function DiagnosisRecordCreate() {
-  const [employee, setEmployee] = useState<EmployeeInterface[]>([]);
+  const [employee, setEmployee] = useState<EmployeesInterface[]>([]);
   // const [employeeUID, setEmployeeUID] = useState<EmployeeInterface>();
-  const [patient, setPatient] = useState<PatientRegisterInterface[]>([]);
-  const [disease, setDisease] = useState<DiseaseInterface[]>([]);
-  const [historySheet, setHistorySheet] = useState<HistorySheetInterface[]>([]);
+  const [patient, setPatient] = useState<PatientRegistersInterface[]>([]);
+  const [disease, setDisease] = useState<DiseasesInterface[]>([]);
+  const [historySheet, setHistorySheet] = useState<HistorySheetsInterface[]>([]);
   // const [medicalCertificate, setMedicalCertificate] = useState<MedicalCertificateInterface[]>([]);
-  const [diagnosisRecord, setDiagnosisRecord] = useState<Partial<DiagnosisRecordInterface>>({
+  const [diagnosisRecord, setDiagnosisRecord] = useState<Partial<DiagnosisRecordsInterface>>({
     Examination: "",
     MedicalCertificate: undefined,
     Date: new Date(),
@@ -237,7 +237,7 @@ function DiagnosisRecordCreate() {
                 <option key={0} value={0}>
                   เลือกข้อมูล
                 </option>
-                {patient.map((item: PatientRegisterInterface) => (
+                {patient.map((item: PatientRegistersInterface) => (
                   <option value={item.ID} key={item.ID}>
                     {item.FirstName} {item.LastName}
                   </option>
@@ -257,7 +257,7 @@ function DiagnosisRecordCreate() {
                   <em>None</em>
                 </MenuItem>
                 <option key={0} value={0}></option>
-                {patient.map((item: PatientRegisterInterface) => (
+                {patient.map((item: PatientRegistersInterface) => (
                   <option value={item.ID} key={item.ID}>
                     {item.Age}
                   </option>
@@ -274,9 +274,9 @@ function DiagnosisRecordCreate() {
                 inputProps={{ readOnly: true, native: true, autoFocus: true }}
               >
                 <option key={0} value={0}></option>
-                {patient.map((item: PatientRegisterInterface) => (
+                {patient.map((item: PatientRegistersInterface) => (
                   <option value={item.ID} key={item.ID}>
-                    {item.Gender.Name}
+                    {item.PatientRegisterGender.Name}
                   </option>
                 ))}
               </Select>
@@ -310,7 +310,7 @@ function DiagnosisRecordCreate() {
                 <option key={0} value={0}>
                   <em>เลือกผลวินิฉัยโรค</em>
                 </option>
-                {disease.map((item: DiseaseInterface) => (
+                {disease.map((item: DiseasesInterface) => (
                   <option value={item.ID} key={item.ID}>
                   {item.Name}
                 </option>
@@ -371,7 +371,7 @@ function DiagnosisRecordCreate() {
                 inputProps={{ readOnly: true, native: true, autoFocus: true }} 
               >
                 <option key={0} value={0}></option>
-                {historySheet.map((item: HistorySheetInterface) => (
+                {historySheet.map((item: HistorySheetsInterface) => (
                   <option value={item.ID} key={item.ID}>
                     {item.Weight} กก.
                   </option>
@@ -388,7 +388,7 @@ function DiagnosisRecordCreate() {
                 inputProps={{ readOnly: true, native: true, autoFocus: true }} 
               >
                 <option key={0} value={0}></option>
-                {historySheet.map((item: HistorySheetInterface) => (
+                {historySheet.map((item: HistorySheetsInterface) => (
                   <option value={item.ID} key={item.ID}>
                     {item.Height} ซม.
                   </option>
@@ -405,7 +405,7 @@ function DiagnosisRecordCreate() {
                 inputProps={{ readOnly: true, native: true, autoFocus: true }} 
               >
                 <option key={0} value={0}></option>
-                {historySheet.map((item: HistorySheetInterface) => (
+                {historySheet.map((item: HistorySheetsInterface) => (
                   <option value={item.ID} key={item.ID}>
                     {item.Temperature} °C
                   </option>
@@ -422,7 +422,7 @@ function DiagnosisRecordCreate() {
                 inputProps={{ readOnly: true, native: true, autoFocus: true }} 
               >
                 <option key={0} value={0}></option>
-                {historySheet.map((item: HistorySheetInterface) => (
+                {historySheet.map((item: HistorySheetsInterface) => (
                   <option value={item.ID} key={item.ID}>
                     {item.HeartRate} ครั้ง/นาที
                   </option>
@@ -439,7 +439,7 @@ function DiagnosisRecordCreate() {
                 inputProps={{ readOnly: true, native: true, autoFocus: true }} 
               >
                 <option key={0} value={0}></option>
-                {historySheet.map((item: HistorySheetInterface) => (
+                {historySheet.map((item: HistorySheetsInterface) => (
                   <option value={item.ID} key={item.ID}>
                     {item.OxygenSaturation} %
                   </option>
@@ -460,7 +460,7 @@ function DiagnosisRecordCreate() {
                 //onChange={handleChange}
                 inputProps={{ readOnly: true }}
               >
-                {employee.map((item: EmployeeInterface) => (
+                {employee.map((item: EmployeesInterface) => (
                   <option value={item.ID} key={item.ID}>
                     {item.FirstName}
                   </option>

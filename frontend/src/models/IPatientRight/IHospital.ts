@@ -1,4 +1,4 @@
-export interface HospitalInterface{
+export interface HospitalsInterface{
     ID: number,
     Name: string,
 }

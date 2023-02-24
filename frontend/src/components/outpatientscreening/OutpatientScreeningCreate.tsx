@@ -26,13 +26,14 @@ import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import Link from '@mui/material/Link';
 
-import { EmployeesInterface } from "../models/IEmployee";
-import { HistorySheetsInterface } from "../models/IHistorySheet";
-import { EmergencyLevelsInterface } from "../models/IEmergencyLevel";
-import { HighBloodPressureLevelsInterface } from "../models/IHighBloodPressureLevel";
-import { DiabetesLevelsInterface } from "../models/IDiabetesLevel";
-import { ObesityLevelsInterface } from "../models/IObesityLevel";
-import { OutpatientScreeningsInterface } from "../models/IOutpatientScreenings";
+// interfaces
+import { EmployeesInterface } from "../../models/IEmployee/IEmployee";
+import { HistorySheetsInterface } from "../../models/IHistorySheet/IHistorySheet";
+import { EmergencyLevelsInterface } from "../../models/IOutpatientScreening/IEmergencyLevel";
+import { HighBloodPressureLevelsInterface } from "../../models/IOutpatientScreening/IHighBloodPressureLevel";
+import { DiabetesLevelsInterface } from "../../models/IOutpatientScreening/IDiabetesLevel";
+import { ObesityLevelsInterface } from "../../models/IOutpatientScreening/IObesityLevel";
+import { OutpatientScreeningsInterface } from "../../models/IOutpatientScreening/IOutpatientScreenings";
 
 
 const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(

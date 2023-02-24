@@ -1,6 +1,6 @@
 import React from "react";
 import { DiagnosisRecordsInterface } from "../models/IDiagnosisRecord/IDiagnosisRecord";
-import { SigninInterface } from "../models/ISignin/ISignin";
+import { SigninInterface } from "../models/ISignin";
 import { TreatmentRecordsInterface } from "../models/ITreatmentRecord/ITreatmentRecord";
 
 const apiUrl = "http://localhost:8080";

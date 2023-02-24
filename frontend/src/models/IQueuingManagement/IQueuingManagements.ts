@@ -1,5 +1,5 @@
-import { EmployeesInterface } from "./IEmployees";
-import { HistorySheetsInterface } from "./IHistorySheets";
+import { EmployeesInterface } from "../IEmployee/IEmployee";
+import { HistorySheetsInterface } from "../IHistorySheet/IHistorySheet";
 import { ServicePointsInterface } from "./IServicePoints";
 import { ServiceChannelsInterface } from "./IServiceChannels";
 import { MedicalActionsInterface } from "./IMedicalActions";
