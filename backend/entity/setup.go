@@ -38,6 +38,7 @@ func SetupDatabase() {
 		&HistorySheet{},
 		&Disease{},
 		&Medicine{},
+		&MedicineOrder{},
 		&MedicineRecord{},
 		&Payment{},
 		&PaymentType{},
