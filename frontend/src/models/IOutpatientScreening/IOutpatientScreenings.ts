@@ -11,7 +11,9 @@ ex. DiabetesLevelsInterface  */
 
 export interface OutpatientScreeningsInterface {
     ID: number;
-    Time: Date;
+    Date: Date;
+    TimeStart: Date;
+    TimeEnd: Date;
 
     EmployeeID: number;
     Employee: EmployeesInterface;
@@ -33,4 +35,3 @@ export interface OutpatientScreeningsInterface {
 
     Note: string;
 }
-

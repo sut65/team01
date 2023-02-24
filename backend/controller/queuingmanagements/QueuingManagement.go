@@ -91,6 +91,16 @@ func ListQueuingManagements(c *gin.Context) {
 
 }
 
+// DELETE /queuingManagements/:id
+func DeleteQueuingManagement(c *gin.Context) {
+	id := c.Param("id")
+	if tx := entity.DB().Exec("DELETE FROM queuing_managements WHERE id = ?", id); tx.RowsAffected == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Queuing Managements not found"})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"data": id})
+}
+
 // GET /queuingManagement/:id
 func GetQueuingManagement(c *gin.Context) {
 	var queuingManagement entity.QueuingManagement //GET จะ​ get มาแค่ก้อนเดียวเลยไม่ใช้ array (เก็ทไอดีของตัวที่เคยบันทึก) [ex. เก็ทเอาไปคิดราคา(ของระบบอื่น)]

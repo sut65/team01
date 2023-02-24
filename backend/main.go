@@ -172,6 +172,28 @@ func main() {
 			protected.PATCH("/obesitylevels", controller_outpatientscreening.UpdateObesityLevel)
 			protected.DELETE("/obesitylevels/:id", controller_outpatientscreening.DeleteObesityLevel)
 
+			// QueuingMangement Routes ------------------------------------------------------------------------------------------------------------------------------------------------
+			// ServicePoint Routes
+			protected.GET("/ServicePoint", controller.ListServicePoint)
+			protected.GET("ServicePoint/:id", controller.GetServicePoint)
+			protected.POST("/ServicePoints", controller.CreateServicePoint)
+
+			// ServiceChannel Routes
+			protected.GET("/ServiceChannel", controller.ListServiceChannel)
+			protected.GET("/ServiceChannel/:id", controller.GetServiceChannel)
+			protected.POST("/ServiceChannels", controller.CreateServiceChannel)
+
+			// MedicalAction Routes
+			protected.GET("/MedicalAction", controller.ListMedicalAction)
+			protected.GET("/MedicalAction/:id", controller.GetMedicaAction)
+			protected.POST("/MedicalActions", controller.CreateMedicalAction)
+
+			// Queu Routes
+			protected.GET("/queuingManagement", controller.ListQueuingManagements)
+			protected.GET("/queuingManagement/:id", controller.GetQueuingManagement)
+			protected.GET("/queuingManagements/count", controller.GetCountQueuingManagements)
+			protected.DELETE("/queuingManagements/:id", controller.DeleteQueuingManagement)
+			protected.POST("/queuingManagements", controller.CreateQueuingManagements)
 			// Appointment Routes ------------------------------------------------------------------------------------------------------------------------------------------------
 			protected.GET("/appointments", controller_appointment.ListAppointments)
 			protected.GET("/appointment/:id", controller_appointment.GetAppointment)

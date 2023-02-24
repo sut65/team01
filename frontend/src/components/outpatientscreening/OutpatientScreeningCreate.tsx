@@ -64,6 +64,7 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
    
   // ดึง HistorySheetId มาจาก url ตอนกดเลือกใบการซักประวัติ ex. "localhost:3000/OutpatienScreeningCreate/2" จะได้ HistorySheetId = 2
   const { HistorySheetId } = useParams();
+  const [selectedDate, setSelectedDate] = React.useState<Date | null>(new Date());
 
   const [HistorySheet, setHistorySheet] = React.useState<HistorySheetsInterface>();
   const [EmergencyLevel, setEmergencyLevel] = React.useState<EmergencyLevelsInterface[]>([]);
@@ -82,7 +83,9 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
     HighBloodPressureLevelID: 0,
     DiabetesLevelID: 0,
     ObesityLevelID: 0,  
-    Time: new Date(),
+    Date: new Date(),
+    TimeStart: new Date(),
+    TimeEnd: new Date(),
   });
 
   const [errorMessage, setErrorMessage] = React.useState("");
@@ -117,6 +120,10 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
     setSuccess(false);
     setError(false);
   };
+  const handleDateChange = (date: Date | null) => {
+    console.log(date);
+    setSelectedDate(date);
+};
 
   //Get Function
   const getHistorySheet = async () => {
@@ -246,8 +253,10 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
       HighBloodPressureLevelID: convertType(OutpatientScreenings.HighBloodPressureLevelID),
       DiabetesLevelID: convertType(OutpatientScreenings.DiabetesLevelID),
       ObesityLevelID: convertType(OutpatientScreenings.ObesityLevelID),
-      //Time: selectedDate,
       Note: OutpatientScreenings.Note ?? "",
+      Date: selectedDate,
+      TimeStart: AddedTime,
+      TimeEnd: AddedTime1,
     };
     console.log(data)
 
@@ -276,7 +285,13 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
           setError(true);
           if(res.error.includes("Note cannot be blank")){
             setErrorMessage("กรุณากรอกการซักประวัติเพิ่มเติม")
-          }
+          }else if (res.error.includes("Date must be present")){
+            setErrorMessage("กรุณาเลือกวันที่ที่เป็นปัจจุบันหรืออนาคต")
+          } else if (res.error.includes("Start Time must be future")) {
+            setErrorMessage("เวลาเริ่มต้นต้องเป็นอนาคต")
+          } else if (res.error.includes("End Time must be future")) {
+            setErrorMessage("เวลาสิ้นสุดต้องเป็นอนาคต")
+          }         
         }
   });
   }const ClearForm = () => {
@@ -355,6 +370,7 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
               <p>คัดกรองตามความเร่งด่วน</p>
               <Select
                 value={OutpatientScreenings?.EmergencyLevelID}
+                //size="small"
                 onChange={handleChange}
                 inputProps={{
                   name: "EmergencyLevelID",
@@ -522,7 +538,21 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
            </FormControl>
          </Grid>
           
-         <Grid item xs={6}>
+         {/* <Grid item xs={6}>
+           <FormControl fullWidth variant="outlined">
+             <p>วันที่และเวลาที่เริ่มคัดกรอง</p>
+             <LocalizationProvider dateAdapter={AdapterDateFns}>
+                <DateTimePicker
+                 value={AddedTime}
+                 onChange={(newValue) => handleAddedTime(newValue)}
+                 minDate={new Date("2018-01-01T00:00")}
+                 renderInput={(params) => <TextField {...params} />}
+                 ampm = {false}
+               />
+             </LocalizationProvider>
+           </FormControl>
+         </Grid> */}
+         <Grid item xs={3}>
            <FormControl fullWidth variant="outlined">
              <p>วันที่และเวลาที่เริ่มคัดกรอง</p>
              <LocalizationProvider dateAdapter={AdapterDateFns}>
@@ -537,19 +567,33 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
            </FormControl>
          </Grid>
          <Grid item xs={3}>
+           <FormControl fullWidth variant="outlined">
+             <p>วันที่และเวลาที่จบคัดกรอง</p>
+             <LocalizationProvider dateAdapter={AdapterDateFns}>
+                <DateTimePicker
+                 value={AddedTime1}
+                 onChange={(newValue) => handleAddedTime1(newValue)}
+                 minDate={new Date("2018-01-01T00:00")}
+                 renderInput={(params) => <TextField {...params} />}
+                 ampm = {false}
+               />
+             </LocalizationProvider>
+           </FormControl>
+         </Grid>
+         <Grid item xs={3}>
          <Card sx={{ maxWidth: 850 }}>
           <CardActionArea>
             <CardMedia
               component="img"
               height="140"
-              image='https://images.unsplash.com/photo-1588543385566-413e13a51a24?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2070&q=80'
+              image='https://images.unsplash.com/photo-1513224502586-d1e602410265?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2831&q=80'
             />
             <CardContent>
               <Typography gutterBottom variant="h5" component="div">
                 Emergency Form
               </Typography>
               <Typography variant="body2" color="text.secondary">
-                <Link href="https://elearning2.sut.ac.th/pluginfile.php/7096524/mod_resource/content/3/523332%20Module%20Descriptions%20and%20Syllabus.pdf">แบบการคัดกรองตามความเร่งด่วน</Link>
+                <Link href="https://1drv.ms/b/s!ApGmKhGto_SHgX7rIiRINDm387FM?e=jzdeT4">แบบการคัดกรองตามความเร่งด่วน</Link>
               </Typography>
             </CardContent>
           </CardActionArea>
@@ -561,7 +605,7 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
             <CardMedia
               component="img"
               height="140"
-              image='https://images.unsplash.com/photo-1588543385566-413e13a51a24?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2070&q=80'
+              image='https://images.unsplash.com/photo-1621525434111-87a99d170b0e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2070&q=80'
             />
             <CardContent>
               <Typography gutterBottom variant="h5" component="div">
@@ -569,7 +613,7 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
               </Typography>
               <Typography variant="body2" color="text.secondary">
 
-                <Link href="https://elearning2.sut.ac.th/pluginfile.php/7096524/mod_resource/content/3/523332%20Module%20Descriptions%20and%20Syllabus.pdf">แบบการคัดกรองผู้เสี่ยงความดันโลหิตสูง</Link>
+                <Link href="https://1drv.ms/b/s!ApGmKhGto_SHiiIVEH4qgpqj6RsR?e=TVJjAb">แบบการคัดกรองผู้เสี่ยงความดันโลหิตสูง</Link>
               </Typography>
             </CardContent>
           </CardActionArea>
@@ -581,14 +625,14 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
             <CardMedia
               component="img"
               height="140"
-              image='https://images.unsplash.com/photo-1588543385566-413e13a51a24?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2070&q=80'
+              image='https://images.unsplash.com/photo-1624625021542-41a4ff97c025?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2070&q=80'
             />
             <CardContent>
               <Typography gutterBottom variant="h5" component="div">
               Diabetes Level Form
               </Typography>
               <Typography variant="body2" color="text.secondary">
-                <Link href="https://elearning2.sut.ac.th/pluginfile.php/7096524/mod_resource/content/3/523332%20Module%20Descriptions%20and%20Syllabus.pdf">แบบการคัดกรองผู้เสี่ยงโรคเบาหวาน</Link>
+                <Link href="https://1drv.ms/b/s!ApGmKhGto_SHiiEmgDIkrVWbS54c?e=1VLrgP">แบบการคัดกรองผู้เสี่ยงโรคเบาหวาน</Link>
               </Typography>
             </CardContent>
           </CardActionArea>
@@ -600,14 +644,14 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
             <CardMedia
               component="img"
               height="140"
-              image='https://images.unsplash.com/photo-1588543385566-413e13a51a24?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2070&q=80'
+              image='https://images.unsplash.com/photo-1634463278803-f9f71890e67d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2070&q=80'
             />
             <CardContent>
               <Typography gutterBottom variant="h5" component="div">
               Obesity Level Form
               </Typography>
               <Typography variant="body2" color="text.secondary">
-                <Link href="https://elearning2.sut.ac.th/pluginfile.php/7096524/mod_resource/content/3/523332%20Module%20Descriptions%20and%20Syllabus.pdf">แบบการคัดกรองผู้เสี่ยงโรคอ้วน</Link>
+                <Link href="https://1drv.ms/b/s!ApGmKhGto_SHiiP2-ly557XPk3F0?e=RKYqno">แบบการคัดกรองผู้เสี่ยงโรคอ้วน</Link>
               </Typography>
             </CardContent>
           </CardActionArea>

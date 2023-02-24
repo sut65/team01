@@ -117,7 +117,7 @@ function QueuingManagements() {
                     <TableCell align="center">{QueuingManagementsItem.ServiceChannel.Name}</TableCell>
                     <TableCell align="center">{QueuingManagementsItem.MedicalAction.Action}</TableCell>
                     <TableCell align="center">
-                      {moment(QueuingManagementsItem.Time).format("DD/MM/YYYY HH:mm")}
+                      {moment(QueuingManagementsItem.TimeEnd).format("DD/MM/YYYY HH:mm")}
                     </TableCell>
                   </TableRow>
                   <TableRow>
@@ -126,16 +126,6 @@ function QueuingManagements() {
                         <TableHead>
                           
                         </TableHead>
-                        {/* <TableBody>
-                          {QueuingManagementsItem.QueuingManagements.map((item: QueuingManagementsInterface) => (
-                            <TableRow key={item.ID}>
-                              <TableCell align="left">{item.QueuingManagementset.Name}</TableCell>
-                              <TableCell align="left">{item.Quantity}</TableCell>
-                              <TableCell align="left">{item.QueuingManagementset.Price}</TableCell>
-                              <TableCell align="left">{item.Quantity * item.QueuingManagementset.Price}</TableCell>
-                            </TableRow>
-                          ))}
-                        </TableBody> */}
                       </Table>
                     </TableCell>
                   </TableRow>
