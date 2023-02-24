@@ -340,7 +340,7 @@ func SetupDatabase() {
 	})
 
 	medicine1 := Medicine{
-		Name:        "ยาแก้ไข้",
+		Name:        "Paracetamol",
 		Description: "บรรเทาอาการปวดลดไข้",
 		Price:       120.00,
 	}
@@ -375,6 +375,11 @@ func SetupDatabase() {
 		Price:       125.45,
 	})
 
+	db.Model(&Medicine{}).Create(&Medicine{
+		Name:	"Bromhexine",
+		Description: "ยาแก้ไอละลายเสมหะ",
+		Price: 85,
+	})
 	//=================OutpatientScreening Data======================================================================================
 	//EmergencyLevel Data
 	EmergencyLevel1 := EmergencyLevel{
