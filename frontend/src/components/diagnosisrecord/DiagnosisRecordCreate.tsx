@@ -1,20 +1,17 @@
 import React, { useEffect, useState } from "react";
-import { Link as RouterLink } from "react-router-dom";
+import { Link as RouterLink, useParams } from "react-router-dom";
 import {
-  Checkbox, Divider, FormControl,
-  FormControlLabel, FormGroup,
-  FormLabel, InputLabel, MenuItem, Snackbar
+  Divider, FormControl,
+  InputLabel, MenuItem, Snackbar
 } from "@mui/material";
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
 import Paper from "@mui/material/Paper";
-import Grid from '@mui/material/Grid';
 import TextField from '@mui/material/TextField';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import MuiAlert, { AlertProps } from "@mui/material/Alert";
 
@@ -24,15 +21,16 @@ import { PatientRegistersInterface } from "../../models/IPatientRegister/IPatien
 import { DiagnosisRecordsInterface,  DiseasesInterface } from "../../models/IDiagnosisRecord/IDiagnosisRecord";
 import { HistorySheetsInterface } from "../../models/IHistorySheet/IHistorySheet";
 
+
 import {
   GetEmployee,
-  GetEmployeeByUID,
   GetPatient,
   GetHistorysheet,
   GetDisease,
   CreateDiagnosisRecord,
-  // GetMedicalCertificate,
+  UpdateDiagnosisRecord,
 } from "../../services/HttpClientService";
+import { DatePicker } from "@mui/x-date-pickers";
 
 const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
   props,
@@ -42,13 +40,11 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
 });
 
 function DiagnosisRecordCreate() {
-  const [employee, setEmployee] = useState<EmployeesInterface[]>([]);
-  // const [employeeUID, setEmployeeUID] = useState<EmployeeInterface>();
+  const [employee, setEmployee] = useState<Partial<EmployeesInterface>>({ FirstName: "", LastName: "" });
   const [patient, setPatient] = useState<PatientRegistersInterface[]>([]);
   const [disease, setDisease] = useState<DiseasesInterface[]>([]);
   const [historySheet, setHistorySheet] = useState<HistorySheetsInterface[]>([]);
-  // const [medicalCertificate, setMedicalCertificate] = useState<MedicalCertificateInterface[]>([]);
-  const [diagnosisRecord, setDiagnosisRecord] = useState<Partial<DiagnosisRecordsInterface>>({
+  const [diagnosisRecords, setDiagnosisRecord] = useState<Partial<DiagnosisRecordsInterface>>({
     Examination: "",
     MedicalCertificate: undefined,
     Date: new Date(),
@@ -58,6 +54,7 @@ function DiagnosisRecordCreate() {
   const [success, setSuccess] = React.useState(false);
   const [error, setError] = React.useState(false);
   const [messages, setMessages] = React.useState("");
+  const params = useParams();
 
   // สำหรับ combobox boolean
   const menuItems = [
@@ -77,11 +74,11 @@ function DiagnosisRecordCreate() {
   };
 
   const handleChange = (event: SelectChangeEvent) => {
-    const name = event.target.name as keyof typeof diagnosisRecord;
+    const name = event.target.name as keyof typeof diagnosisRecords;
     console.log("handleChage")
     console.log(event.target.value)
     setDiagnosisRecord({
-      ...diagnosisRecord,
+      ...diagnosisRecords,
       [name]: event.target.value,
     });
   };
@@ -89,20 +86,20 @@ function DiagnosisRecordCreate() {
   const handleInputChange = (
     event: React.ChangeEvent<{ id?: string; value: any }>
   ) => {
-    const id = event.target.id as keyof typeof diagnosisRecord;
+    const id = event.target.id as keyof typeof diagnosisRecords;
     const { value } = event.target;
-    setDiagnosisRecord({ ...diagnosisRecord, [id]: value });
+    setDiagnosisRecord({ ...diagnosisRecords, [id]: value });
   };
 
   const handleSeclectChange = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    const name = event.target.name as keyof typeof diagnosisRecord;
+    const name = event.target.name as keyof typeof diagnosisRecords;
     const { value } = event.target;
     console.log(name)
     console.log(event.target.value)
     setDiagnosisRecord({
-      ...diagnosisRecord,
+      ...diagnosisRecords,
       [name]: value === "true" ? true : false
     })
   }
@@ -113,13 +110,6 @@ function DiagnosisRecordCreate() {
       setEmployee(res);
     }
   };
-
-  // const getEmployeeUID = async () => {
-  //   let res = await GetEmployeeByUID();
-  //   if (res) {
-  //     setEmployeeUID(res);
-  //   }
-  // };
 
   const getPatient = async () => {
     let res = await GetPatient();
@@ -136,6 +126,7 @@ function DiagnosisRecordCreate() {
     }
   };
 
+
   const getDisease = async () => {
     let res = await GetDisease();
     if (res) {
@@ -143,21 +134,26 @@ function DiagnosisRecordCreate() {
     }
   };
 
-  // const getMedicalCertificate = async () => {
-  //   let res = await GetMedicalCertificate();
-  //   if (res) {
-  //     setMedicalCertificate(res);
-  //   }
-  // };
+  const getDiagnosisRecord = async (id: string) => {
+    const apiUrl = `http://localhost:8080/diagnosisrecord/${id}`;
+    const requestOptions = {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`
+        }
+    };
 
-  useEffect(() => {
-    // getEmployeeUID();
-    getEmployee();
-    getPatient();
-    getHistorySheet();
-    getDisease();
-    // getMedicalCertificate();
-  }, []);
+    fetch(apiUrl, requestOptions)
+        .then((response) => response.json())
+        .then((res) => {
+            if (res.data) {
+                setDiagnosisRecord(res.data);
+            } else {
+                console.log(res.error);
+            }
+        });
+  }
 
   const convertType = (data: string | number | undefined) => {
     let val = typeof data === "string" ? parseInt(data) : data;
@@ -165,27 +161,62 @@ function DiagnosisRecordCreate() {
   };
 
   async function submit() {
-    let data = {
-      // PatientRegisterID: diagnosisRecord.HistorySheet?.PatientRegisterID,
-      DoctorID: convertType(diagnosisRecord.DoctorID),
-      HistorySheetID: convertType(diagnosisRecord.HistorySheetID),
-      DiseaseID: convertType(diagnosisRecord.DiseaseID),
-      // MedicalCertificateID: convertType(diagnosisRecord.MedicalCertificateID),
-      MedicalCertificate: diagnosisRecord.MedicalCertificate,
-      Examination: diagnosisRecord.Examination,
-      Date: diagnosisRecord.Date,
-    };
-
-    //console.log(data);
-    let res = await CreateDiagnosisRecord(data);
-    if (res.status) {
-      setSuccess(true);
-      setMessages("Successfully!!");
+    if (diagnosisRecords.HistorySheetID == null) {
+      setError(true)
+      setMessages("กรุณาเลือกชื่อผู้ป่วย")
+    } else if (diagnosisRecords.DiseaseID == null) {
+      setError(true)
+      setMessages("กรุณาเลือกชื่อโรค")
     } else {
-      setError(true);
-      setMessages("Fail!! " + res.message);
+      setError(false)
+      let data: any = {
+        DoctorID: convertType(employee.ID),
+        HistorySheetID: convertType(diagnosisRecords.HistorySheetID),
+        DiseaseID: convertType(diagnosisRecords.DiseaseID),
+        MedicalCertificate: diagnosisRecords.MedicalCertificate,
+        Examination: diagnosisRecords.Examination,
+        Date: diagnosisRecords.Date,
+      };
+
+      let res : any 
+      console.log(params.id);
+      if (params.id) {
+        data["ID"] = parseInt(params.id);
+        res = await UpdateDiagnosisRecord(data);
+      } else {
+        res = await CreateDiagnosisRecord(data);
+      }
+      
+      console.log(data);
+      if (res.status) {
+        setSuccess(true);
+        setMessages("บันทึกข้อมูลสำเร็จ");
+        window.location.href="/diagnosis_records";
+      } else {
+        setError(true);
+        if (res.message === "Examination cannot be Blank") {
+          setMessages("กรุณากรอกผลการตรวจร่างกาย");
+        } else if (res.message === "Date must be present") {
+          setMessages("วันที่ต้องเป็นปัจจุบัน");
+        } else if (res.message === "MedicalCertificate cannot be Null") {
+          setMessages("กรุณาเลือกใบรับรองแพทย์");
+        } else  { 
+          setMessages(res.message);
+        }
+      }
+    };
+  }
+
+  useEffect(() => {
+    getEmployee();
+    getPatient();
+    getHistorySheet();
+    getDisease();
+    if (params.id) {
+      getDiagnosisRecord(params.id)
     }
-  };
+  }, []);
+  console.log(diagnosisRecords)
 
   return (
     <Container maxWidth="md">
@@ -229,7 +260,7 @@ function DiagnosisRecordCreate() {
                 id="select-patient"
                 label="ชื่อ"
                 inputProps={{ name: "HistorySheetID", native: true, autoFocus: true  }}
-                value={diagnosisRecord.HistorySheetID + ""}
+                value={diagnosisRecords.HistorySheetID + ""}
                 onChange={handleChange}
                 native
                 autoFocus
@@ -248,7 +279,7 @@ function DiagnosisRecordCreate() {
               <InputLabel id="select-patient">อายุ</InputLabel>
               <Select
                 id="select-patient"
-                value={diagnosisRecord.HistorySheetID + ""}
+                value={diagnosisRecords.HistorySheetID + ""}
                 label="อายุ"
                 // onChange={handleChange}
                 inputProps={{ readOnly: true, native: true, autoFocus: true }}
@@ -268,7 +299,7 @@ function DiagnosisRecordCreate() {
               <InputLabel id="select-patient">เพศ</InputLabel>
               <Select
                 id="select-patient"
-                value={diagnosisRecord.HistorySheetID + ""}
+                value={diagnosisRecords.HistorySheetID + ""}
                 label="เพศ"
                 onChange={handleChange}
                 inputProps={{ readOnly: true, native: true, autoFocus: true }}
@@ -292,7 +323,7 @@ function DiagnosisRecordCreate() {
                 id="Examination"
                 label="การตรวจร่างกาย"
                 variant="outlined"
-                value={diagnosisRecord.Examination ?? ""}
+                value={diagnosisRecords.Examination ?? ""}
                 onChange={handleInputChange}
               />
             </FormControl>
@@ -300,7 +331,7 @@ function DiagnosisRecordCreate() {
               <InputLabel id="select-disease-label">วินิฉัยโรค</InputLabel>
               <Select
                 id="select-disease-label"
-                value={diagnosisRecord.DiseaseID + ""}
+                value={diagnosisRecords.DiseaseID + ""}
                 label="วินิฉัยโรค"
                 onChange={handleChange}
                 inputProps={{ name: "DiseaseID" }}
@@ -317,29 +348,12 @@ function DiagnosisRecordCreate() {
                 ))}
               </Select>
             </FormControl>
-            <FormControl sx={{ m: 1, minWidth: 200 }}>        
-            {/* <InputLabel id="select-medicalcertificate-label">รับใบรับรองแพทย์</InputLabel>      
-              <Select
-                id="select-medicalcertificate-label"
-                label="รับใบรับรองแพทย์"
-                value={diagnosisRecord.MedicalCertificateID + ""}
-                inputProps={{ name: "MedicalCertificateID",}}
-                onChange={handleChange}
-              >
-                <MenuItem aria-label="None" value="">
-                  <em>เลือก</em>
-                </MenuItem>
-                {medicalCertificate.map((item: MedicalCertificateInterface) => (
-                  <MenuItem key={item.ID} value={item.ID}>
-                    {item.Label}
-                  </MenuItem>
-                ))}
-              </Select> */}
+            <FormControl sx={{ m: 1, maxWidth: 150 }}>        
               <TextField
                 select
                 id="select-medicalcertificate-label"
                 label="รับใบรับรองแพทย์"
-                value={diagnosisRecord.MedicalCertificate + ""}
+                value={diagnosisRecords.MedicalCertificate + ""}
                 inputProps={{ name: "MedicalCertificate", }}
                 SelectProps={{ 
                   native: true, 
@@ -365,7 +379,7 @@ function DiagnosisRecordCreate() {
               <InputLabel id="select-sheet-label">น้ำหนัก</InputLabel>
               <Select
                 id="select-sheet-label"
-                value={diagnosisRecord.HistorySheetID + ""}
+                value={diagnosisRecords.HistorySheetID + ""}
                 label="น้ำหนัก"
                 // onChange={handleChange}
                 inputProps={{ readOnly: true, native: true, autoFocus: true }} 
@@ -382,7 +396,7 @@ function DiagnosisRecordCreate() {
               <InputLabel id="select-sheet-label">ส่วนสูง</InputLabel>
               <Select
                 id="select-sheet-label"
-                value={diagnosisRecord.HistorySheetID + ""}
+                value={diagnosisRecords.HistorySheetID + ""}
                 label="ส่วนสูง"
                 // onChange={handleChange}
                 inputProps={{ readOnly: true, native: true, autoFocus: true }} 
@@ -399,7 +413,7 @@ function DiagnosisRecordCreate() {
               <InputLabel id="select-sheet-label">อุณหภูมิ</InputLabel>
               <Select
                 id="select-sheet-label"
-                value={diagnosisRecord.HistorySheetID + ""}
+                value={diagnosisRecords.HistorySheetID + ""}
                 label="อุณหภูมิ"
                 // onChange={handleChange}
                 inputProps={{ readOnly: true, native: true, autoFocus: true }} 
@@ -416,7 +430,7 @@ function DiagnosisRecordCreate() {
               <InputLabel id="select-sheet-label">ชีพจร</InputLabel>
               <Select
                 id="select-sheet-label"
-                value={diagnosisRecord.HistorySheetID + ""}
+                value={diagnosisRecords.HistorySheetID + ""}
                 label="ชีพจร"
                 // onChange={handleChange}
                 inputProps={{ readOnly: true, native: true, autoFocus: true }} 
@@ -429,11 +443,28 @@ function DiagnosisRecordCreate() {
                 ))}
               </Select>
             </FormControl>
+            <FormControl sx={{ m: 1, minWidth: 180 }}>
+              <InputLabel id="select-sheet-label">ความดันโลหิต</InputLabel>
+              <Select
+                id="select-sheetlabel"
+                value={diagnosisRecords.HistorySheetID + ""}
+                label="ค่าออกซิเจน"
+                // onChange={handleChange}
+                inputProps={{ readOnly: true, native: true, autoFocus: true }} 
+              >
+                <option key={0} value={0}></option>
+                {historySheet.map((item: HistorySheetsInterface) => (
+                  <option value={item.ID} key={item.ID}>
+                    {item.SystolicBloodPressure}/{item.DiastolicBloodPressure} มม./ปรอท
+                  </option>
+                ))}
+              </Select>
+            </FormControl>
             <FormControl sx={{ m: 1, minWidth: 120 }}>
               <InputLabel id="select-sheet-label">ค่าออกซิเจน</InputLabel>
               <Select
                 id="select-sheetlabel"
-                value={diagnosisRecord.HistorySheetID + ""}
+                value={diagnosisRecords.HistorySheetID + ""}
                 label="ค่าออกซิเจน"
                 // onChange={handleChange}
                 inputProps={{ readOnly: true, native: true, autoFocus: true }} 
@@ -446,40 +477,42 @@ function DiagnosisRecordCreate() {
                 ))}
               </Select>
             </FormControl>
+            <FormControl sx={{ m: 1, minWidth: 200 }}>
+              <InputLabel id="select-sheet-label">การแพ้ยา</InputLabel>
+              <Select
+                id="select-sheetlabel"
+                value={diagnosisRecords.HistorySheetID + ""}
+                label="การแพ้ยา"
+                // onChange={handleChange}
+                inputProps={{ readOnly: true, native: true, autoFocus: true }} 
+              >
+                <option key={0} value={0}></option>
+                {historySheet.map((item: HistorySheetsInterface) => (
+                  <option value={item.ID} key={item.ID}>
+                    {item.DrugAllergySymtom}
+                  </option>
+                ))}
+              </Select>
+            </FormControl>
 
           </Box>
 {/* ========================== Doctor ==================================== */}
           <Box sx={{ paddingX: 3, paddingY: 2 }}>
             <FormControl sx={{ m: 1, minWidth: 120 }}>
-              <InputLabel id="select-Doctor-label">แพทย์ผู้ตรวจ</InputLabel>
-              <Select
-                id="select-Doctor-label"
-                value={localStorage.getItem('uid')}
-                name="DoctorID"
-                label="แพทย์ผู้ตรวจ"
-                //onChange={handleChange}
-                inputProps={{ readOnly: true }}
-              >
-                {employee.map((item: EmployeesInterface) => (
-                  <option value={item.ID} key={item.ID}>
-                    {item.FirstName}
-                  </option>
-                ))}
-              </Select>
+               <TextField disabled label="แพทย์ผู้ตรวจ" value={`${employee?.Title?.Name}${employee?.FirstName}`} />
             </FormControl>
             <FormControl sx={{ m: 1, minWidth: 120 }}>
               <LocalizationProvider dateAdapter={AdapterDateFns}>
-                <DateTimePicker
+                <DatePicker
                   label="วันที่ตรวจ"
-                  value={diagnosisRecord?.Date || new Date()}
+                  value={diagnosisRecords?.Date || new Date()}
                   onChange={(newValue) => {
                     setDiagnosisRecord({
-                      ...diagnosisRecord,
+                      ...diagnosisRecords,
                       Date: newValue,
                     });
                   }}
                   renderInput={(params) => <TextField {...params} />}
-                  ampm={false}
                 />
               </LocalizationProvider>
             </FormControl>
@@ -488,7 +521,7 @@ function DiagnosisRecordCreate() {
           <Box sx={{ paddingX: 3, paddingY: 2 }}>
             <Button
               component={RouterLink}
-              to="/"
+              to="/diagnosis_records"
               variant="contained"
               sx={{ p: 1, m: 2, mx: 'auto' }}
               color="inherit">

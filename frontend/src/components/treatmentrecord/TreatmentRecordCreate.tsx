@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { Link as RouterLink } from "react-router-dom";
+import { Link as RouterLink, useParams } from "react-router-dom";
 import {
-  Checkbox, Divider, FormControl,
+  Checkbox, Dialog, DialogActions, DialogContent, DialogTitle, Divider, FormControl,
   FormControlLabel, FormGroup,
   FormLabel, IconButton, InputLabel, MenuItem, Snackbar
 } from "@mui/material";
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
+import DeleteIcon from '@mui/icons-material/Delete';
 import Container from '@mui/material/Container';
 import Paper from "@mui/material/Paper";
 import Grid from '@mui/material/Grid';
@@ -22,7 +23,7 @@ import MuiAlert, { AlertProps } from "@mui/material/Alert";
 import '../App.css';
 import { EmployeesInterface } from "../../models/IEmployee/IEmployee";
 import { PatientRegistersInterface } from "../../models/IPatientRegister/IPatientRegister";
-import { DiagnosisRecordsInterface, DiseasesInterface } from "../../models/IDiagnosisRecord/IDiagnosisRecord";
+import { DiagnosisRecordsInterface } from "../../models/IDiagnosisRecord/IDiagnosisRecord";
 import { MedicinesInterface, MedicineOrdersInterface, TreatmentRecordsInterface } from "../../models/ITreatmentRecord/ITreatmentRecord";
 
 import {
@@ -31,9 +32,10 @@ import {
   GetDiagnosisRecord,
   GetMedicine,
   CreateTreatmentRecord,
+  UpdateTreatmentRecord,
 } from "../../services/HttpClientService";
 import { DatePicker } from "@mui/x-date-pickers";
-import { DataGrid, GridColDef } from "@mui/x-data-grid";
+import { DataGrid, GridColDef, GridRowId } from "@mui/x-data-grid";
 import moment from "moment";
 
 const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
@@ -44,11 +46,11 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
 });
 
 function TreatmentRecordCreate() {
-  const [employee, setEmployee] = useState<EmployeesInterface[]>([]);
+  const [employee, setEmployee] = useState<Partial<EmployeesInterface>>({ FirstName: "", LastName: "" });
   const [patient, setPatient] = useState<PatientRegistersInterface[]>([]);
   const [medicine, setMedicine] = useState<MedicinesInterface[]>([]);
-  const [diagnosisRecord, setDiagnosisRecord] = useState<DiagnosisRecordsInterface[]>([]);
-  const [treatmentRecord, setTreatmentRecord] = useState<Partial<TreatmentRecordsInterface>>({
+  const [diagnosisRecords, setDiagnosisRecord] = useState<DiagnosisRecordsInterface[]>([]);
+  const [treatmentRecords, setTreatmentRecord] = useState<Partial<TreatmentRecordsInterface>>({
     Treatment: "",
     Note: "",
     Appointment: undefined,
@@ -62,6 +64,7 @@ function TreatmentRecordCreate() {
   const [success, setSuccess] = React.useState(false);
   const [error, setError] = React.useState(false);
   const [messages, setMessages] = React.useState("");
+  const params = useParams();
 
   // สำหรับ combobox boolean
   const menuItems = [
@@ -81,11 +84,11 @@ function TreatmentRecordCreate() {
   };
 
   const handleChange = (event: SelectChangeEvent) => {
-    const name = event.target.name as keyof typeof treatmentRecord;
+    const name = event.target.name as keyof typeof treatmentRecords;
     console.log("handleChage")
     console.log(event.target.value)
     setTreatmentRecord({
-      ...treatmentRecord,
+      ...treatmentRecords,
       [name]: event.target.value,
     });
   };
@@ -93,20 +96,20 @@ function TreatmentRecordCreate() {
   const handleInputChange = (
     event: React.ChangeEvent<{ id?: string; value: any }>
   ) => {
-    const id = event.target.id as keyof typeof treatmentRecord;
+    const id = event.target.id as keyof typeof treatmentRecords;
     const { value } = event.target;
-    setTreatmentRecord({ ...treatmentRecord, [id]: value });
+    setTreatmentRecord({ ...treatmentRecords, [id]: value });
   };
 
   const handleSeclectChange = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    const name = event.target.name as keyof typeof treatmentRecord;
+    const name = event.target.name as keyof typeof treatmentRecords;
     const { value } = event.target;
     console.log(name)
     console.log(event.target.value)
     setTreatmentRecord({
-      ...treatmentRecord,
+      ...treatmentRecords,
       [name]: value === "true" ? true : false
     })
   }
@@ -117,7 +120,11 @@ function TreatmentRecordCreate() {
     console.log(event.target.value)
     if (name === 'MedicineID') {
       let findMedicine = medicine.find(m => m.ID === Number(event.target.value));
-      setSelected({...selected, MedicineID: findMedicine!.ID, Medicine: findMedicine });
+      setSelected({
+        ...selected, 
+        MedicineID: findMedicine!.ID, 
+        Medicine: findMedicine 
+      });
     }
   }
 
@@ -131,7 +138,11 @@ function TreatmentRecordCreate() {
 
   function AddToTable() {
     let newMedicineOrder = [...medicineOreder]
-    newMedicineOrder.push({ ...selected, ID: medicineOreder.length+1, OrderAmount: convertType(selected.OrderAmount)});
+    newMedicineOrder.push({ 
+      ...selected, 
+      ID: medicineOreder.length+1, 
+      OrderAmount: convertType(selected.OrderAmount)
+    });
     setMedicineOreder(newMedicineOrder);
   }
 
@@ -163,8 +174,35 @@ function TreatmentRecordCreate() {
     }
   };
 
+  const getTreatmentRecord = async (id: string) => {
+    const apiUrl = `http://localhost:8080/treatmentrecord/${id}`;
+    const requestOptions = {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`
+        }
+    };
+
+    fetch(apiUrl, requestOptions)
+        .then((response) => response.json())
+        .then((res) => {
+            if (res.data) {
+                setTreatmentRecord(res.data);
+            } else {
+                console.log(res.error);
+            }
+        });
+  }
+
+
   function getMedicineToOrder(params: { row: { Medicine: { Name: any; }; }; }) {
     return `${params.row.Medicine.Name || ''}`
+  }
+
+  const removeFromOrder = (index: number) => {
+    let updatedOrderItem = medicineOreder.filter((_, i) => i !== index);
+    setMedicineOreder(updatedOrderItem);
   }
 
   const columns: GridColDef[] = [
@@ -172,21 +210,29 @@ function TreatmentRecordCreate() {
     {
         field: "Medicine",
         headerName: "รายการยา",
-        width: 200,
+        width: 250,
         valueGetter: getMedicineToOrder,
     },
     {
         field: "OrderAmount",
         headerName: "จำนวน",
-        width: 150,
+        width: 100,
         valueGetter: (params) => params.row.OrderAmount,
     },
     {
-      field: "Price",
-      headerName: "ราคา",
-      width: 150,
-      valueGetter: (params) => params.row.Medicine.Price,
-  },
+      field: "Actions",
+      type: "action",
+      width: 100,
+      renderCell: (params) => {
+        return (
+          <React.Fragment>
+            <IconButton size="small" onClick={() => removeFromOrder(params.row.ID)}>
+              <DeleteIcon color="error" fontSize="small"></DeleteIcon>
+            </IconButton>
+          </React.Fragment>
+        )
+      }
+    },
   ];
 
 
@@ -195,6 +241,10 @@ function TreatmentRecordCreate() {
     getPatient();
     getMedicine();
     getDiagnosisRecord();
+
+    if (params.id) {
+      getTreatmentRecord(params.id);
+    }
   }, []);
 
   const convertType = (data: string | number | undefined) => {
@@ -203,30 +253,54 @@ function TreatmentRecordCreate() {
   };
 
   async function submit() {
-    let data = {
-      // PatientRegisterID: convertType(treatmentRecord.DiagnosisRecord?.HistorySheet?.PatientRegisterID),
-      DoctorID: convertType(treatmentRecord.DoctorID),
-      DiagnosisRecordID: convertType(treatmentRecord.DiagnosisRecordID),
-      Treatment: treatmentRecord.Treatment,
-      Note: treatmentRecord.Note,
-      Appointment: treatmentRecord.Appointment,
-      MedicineOrders: medicineOreder as MedicineOrdersInterface[],
-      Date: treatmentRecord.Date,
-    };
-
-    // console.log(data);
-    let res = await CreateTreatmentRecord(data);
-    if (res.status) {
-      setSuccess(true);
-      setMessages("Successfully!!");
+    if (treatmentRecords.DiagnosisRecordID == null) {
+      setError(true)
+      setMessages("กรุณาเลือกชื่อผู้ป่วย")
+    } else if (selected.MedicineID == null) {
+      setError(true)
+      setMessages("กรุณาสร้างรายการยา")
     } else {
-      setError(true);
-      setMessages("Fail!! " + res.message);
-    }
-  };
+      setError(false)
+      let data: any = {
+        DoctorID: convertType(employee.ID),
+        DiagnosisRecordID: convertType(treatmentRecords.DiagnosisRecordID),
+        Treatment: treatmentRecords.Treatment,
+        Note: treatmentRecords.Note,
+        Appointment: treatmentRecords.Appointment,
+        MedicineOrders: medicineOreder as MedicineOrdersInterface[],
+        Date: treatmentRecords.Date,
+      };
+
+      // console.log(data);
+      let res : any
+      if  (params.id) {
+        data["ID"] = parseInt(params.id);
+        res = await UpdateTreatmentRecord(data);
+      } else {
+        res = await CreateTreatmentRecord(data);
+      }
+ 
+      if (res.status) {
+        setSuccess(true);
+        setMessages("บันทึกข้อมูลสำเร็จ");
+        window.location.href="/treatment_records";
+      } else {
+        setError(true);
+        if (res.message === "Treatment cannot be blank") {
+          setMessages("กรุณากรอกรายละเอียดการรักษา");
+        } else if (res.message === "Date must be present") {
+          setMessages("วันที่ต้องเป็นปัจจุบัน");
+        } else if (res.message === "Appointment cannot be Null") {
+          setMessages("กรุณาเลือกการนัดหมาย");
+        } else  { 
+          setMessages(res.message);
+        }
+      }
+    };
+  }
 
   return (
-    <Container maxWidth="md">
+    <Container maxWidth="lg">
       <Snackbar open={success}
         autoHideDuration={6000}
         onClose={handleClose}
@@ -269,7 +343,7 @@ function TreatmentRecordCreate() {
                 id="select-patient"
                 label="ชื่อ"
                 inputProps={{ name: "DiagnosisRecordID" }}
-                value={treatmentRecord.DiagnosisRecordID + ""}
+                value={treatmentRecords.DiagnosisRecordID + ""}
                 onChange={handleChange}
                 native
                 autoFocus
@@ -277,9 +351,9 @@ function TreatmentRecordCreate() {
                 <option key={0} value={0}>
                   เลือกข้อมูล
                 </option>
-                {patient.map((item: PatientRegistersInterface) => (
+                {diagnosisRecords.map((item: DiagnosisRecordsInterface) => (
                   <option value={item.ID} key={item.ID}>
-                    {item.FirstName} {item.LastName}
+                    {item.HistorySheet?.PatientRegister.FirstName} {item.HistorySheet?.PatientRegister?.LastName}
                   </option>
                 ))}
               </Select>
@@ -288,7 +362,7 @@ function TreatmentRecordCreate() {
               <InputLabel id="select-patient">อายุ</InputLabel>
               <Select
                 id="select-patient"
-                value={treatmentRecord.DiagnosisRecordID + ""}
+                value={treatmentRecords.DiagnosisRecordID + ""}
                 label="อายุ"
                 // onChange={handleChange}
                 inputProps={{ readOnly: true, native: true, autoFocus: true }}
@@ -305,7 +379,7 @@ function TreatmentRecordCreate() {
               <InputLabel id="select-patient">เพศ</InputLabel>
               <Select
                 id="select-patient"
-                value={treatmentRecord.DiagnosisRecordID + ""}
+                value={treatmentRecords.DiagnosisRecordID + ""}
                 label="เพศ"
                 // onChange={handleChange}
                 inputProps={{ readOnly: true, native: true, autoFocus: true }}
@@ -322,37 +396,17 @@ function TreatmentRecordCreate() {
 {/* ========================== Diagnosis ==================================== */}
           <Box sx={{ paddingX: 3, paddingY: 2 }}>
             <p>รายละเอียดการวินิจฉัย</p>
-            {/* <FormControl required sx={{ m: 1, minWidth: 100 }}>
-              <InputLabel id="No">ครั้งที่</InputLabel>
-              <Select
-                id="No"
-                label="ครั้งที่"
-                variant="outlined"
-                value={treatmentRecord.DiagnosisRecordID + ""}
-                inputProps={{ name: "DiagnosisID" }}
-                onChange={handleChange}
-                native
-                autoFocus
-              >
-                <option key={0} value={0}></option>
-                {diagnosisRecord.map((item: DiagnosisRecordInterface) => (
-                  <option value={item.ID} key={item.ID}>
-                    ครั้งที่ {item.ID}
-                  </option>
-                ))}
-              </Select>
-            </FormControl> */}
             <FormControl required sx={{ m: 1, minWidth: 300 }}>
               <InputLabel id="Examination">การตรวจร่างกาย</InputLabel>
               <Select
                 id="Examination"
                 label="การตรวจร่างกาย"
                 variant="outlined"
-                value={treatmentRecord.DiagnosisRecordID + ""}
+                value={treatmentRecords.DiagnosisRecordID + ""}
                 inputProps={{ readOnly: true, native: true, autoFocus: true }}
               >
                 <option key={0} value={0}></option>
-                {diagnosisRecord.map((item: DiagnosisRecordsInterface) => (
+                {diagnosisRecords.map((item: DiagnosisRecordsInterface) => (
                   <option value={item.ID} key={item.ID}>
                     {item.Examination}
                   </option>
@@ -363,13 +417,13 @@ function TreatmentRecordCreate() {
               <InputLabel id="Disease">วินิฉัยโรค</InputLabel>
               <Select
                 id="Disease"
-                value={treatmentRecord.DiagnosisRecordID + ""}
+                value={treatmentRecords.DiagnosisRecordID + ""}
                 label="วินิฉัยโรค"
                 onChange={handleChange}
                 inputProps={{ readOnly: true, native: true, autoFocus: true }} 
               >
                 <option key={0} value={0}></option>
-                {diagnosisRecord.map((item: DiagnosisRecordsInterface) => (
+                {diagnosisRecords.map((item: DiagnosisRecordsInterface) => (
                   <option value={item.ID} key={item.ID}>
                     {item.Disease?.Name}
                   </option>
@@ -387,7 +441,7 @@ function TreatmentRecordCreate() {
                 id="Treatment"
                 label="การรักษา"
                 variant="outlined"
-                value={treatmentRecord.Treatment + ""}
+                value={treatmentRecords.Treatment + ""}
                 onChange={handleInputChange}
               />
             </FormControl>
@@ -397,7 +451,7 @@ function TreatmentRecordCreate() {
                 id="Note"
                 label="หมายเหตุ"
                 variant="outlined"
-                value={treatmentRecord.Note + ""}
+                value={treatmentRecords.Note + ""}
                 onChange={handleInputChange}
               />
             </FormControl>
@@ -406,7 +460,7 @@ function TreatmentRecordCreate() {
                 select
                 id="Appointment"
                 label="นัดตรวจครั้งต่อไป"
-                value={treatmentRecord.Appointment + ""}
+                value={treatmentRecords.Appointment + ""}
                 inputProps={{ name: "Appointment", }}
                 SelectProps={{ 
                   native: true, 
@@ -414,8 +468,9 @@ function TreatmentRecordCreate() {
                 }}
                 onChange={handleSeclectChange}
               >
-                {/* <option key={0} value={0}>
-                </option> */}
+                <option key={0} value={0}>
+                  เลือกข้อมูล
+                </option>
                 {menuItems.map((item) => (
                   <option key={item.id} value={item.value}>
                     {item.label}
@@ -427,7 +482,7 @@ function TreatmentRecordCreate() {
 {/* ========================== Medicine ==================================== */}
           <Box sx={{ paddingX: 3, paddingY: 2 }}>
             <p>สั่งจ่ายยา</p>
-            <FormControl required sx={{ m: 1, minWidth: 300 }}>
+            <FormControl required sx={{ m: 1, minWidth: 250 }}>
               <InputLabel id="select-medicinet-label">ชนิดยา</InputLabel>
               <Select
                 id="select-medicine-label"
@@ -460,55 +515,40 @@ function TreatmentRecordCreate() {
                 onChange={handleInputAmount}
               />
             </FormControl>
-            <FormControl sx={{ m: 1, maxWidth: 100 }}>
+            <FormControl sx={{ maxWidth: 100 }}>
               <Button
                 variant="contained"
-                color='success'
+                color='info'
                 sx={{ p: 1, m: 2, mx: 'auto', float: "right" }}
                 onClick={AddToTable}>
-                Submit
+                เลือก
               </Button>
             </FormControl>
-
-            <div style={{ height: 400 , width: "100%", marginTop: "20px"}}>
-                    <DataGrid
-                        rows={medicineOreder}
-                        getRowId={(row) => row.ID}
-                        columns={columns}
-                        pageSize={5}
-                        rowsPerPageOptions={[5]}
-                    />
-                </div>
+            <FormControl sx={{ m: 1, minWidth: 505 }}>
+              <div style={{ height: 300 , width: "100%", marginTop: "20px"}}>
+                <DataGrid
+                  rows={medicineOreder}
+                  getRowId={(row) => row.ID}
+                  columns={columns}
+                  pageSize={5}
+                  rowsPerPageOptions={[5]}
+                />
+              </div>
+            </FormControl>
           </Box>
           {/* ========================== Doctor ==================================== */}
           <Box sx={{ paddingX: 3, paddingY: 2 }}>
-            <FormControl sx={{ m: 1, minWidth: 120 }}>
-              <InputLabel id="select-Doctor-label">แพทย์ผู้ตรวจ</InputLabel>
-              <Select
-                id="select-Doctor-label"
-                value={localStorage.getItem('uid')}
-                name="DoctorID"
-                label="แพทย์ผู้ตรวจ"
-                //onChange={handleChange}
-                inputProps={{ readOnly: true }}
-                native
-                autoFocus
-              >
-                {employee.map((item: EmployeesInterface) => (
-                  <option value={item.ID} key={item.ID}>
-                    {item.FirstName}
-                  </option>
-                ))}
-              </Select>
+            <FormControl sx={{ m: 1, minWidth: 200 }}>
+              <TextField disabled label="แพทย์ผู้บันทึก" value={`${employee?.Title?.Name}${employee?.FirstName}`} />
             </FormControl>
             <FormControl sx={{ m: 1, minWidth: 120 }}>
               <LocalizationProvider dateAdapter={AdapterDateFns}>
                 <DatePicker
                   label="วันที่ตรวจ"
-                  value={treatmentRecord.Date || new Date()}
+                  value={treatmentRecords.Date || new Date()}
                   onChange={(newValue) => {
                     setTreatmentRecord({
-                      ...treatmentRecord,
+                      ...treatmentRecords,
                       Date: newValue,
                     });
                   }}
@@ -521,7 +561,7 @@ function TreatmentRecordCreate() {
           <Box sx={{ paddingX: 3, paddingY: 2 }}>
             <Button
               component={RouterLink}
-              to="/"
+              to="/treatment_records"
               variant="contained"
               sx={{ p: 1, m: 2, mx: 'auto' }}
               color="inherit">

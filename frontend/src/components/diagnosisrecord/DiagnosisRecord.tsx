@@ -8,8 +8,8 @@ import { IconButton, Dialog, DialogTitle, DialogContent, DialogActions } from "@
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { DataGrid, GridColDef, GridValueGetterParams } from "@mui/x-data-grid";
-import { DiagnosisRecordsInterface } from "../models/IDiagnosisRecord";
-import { GetDiagnosisRecord } from "../services/HttpClientService";
+import { DiagnosisRecordsInterface } from "../../models/IDiagnosisRecord/IDiagnosisRecord";
+import { GetDiagnosisRecord } from "../../services/HttpClientService";
 import moment from "moment";
 
 
