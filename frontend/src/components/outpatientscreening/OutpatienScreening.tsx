@@ -123,7 +123,7 @@ function OutpatientScreenings() {
                     <TableCell align="center">{OutpatienScreeningsItem.Note }</TableCell>
                     {/* <TableCell align="center">{OutpatienScreeningsItem.Time }</TableCell> */}
                     <TableCell align="center">
-                      {moment(OutpatienScreeningsItem.Time).format("DD/MM/YYYY HH:mm")}
+                      {moment(OutpatienScreeningsItem.TimeEnd).format("DD/MM/YYYY HH:mm")}
                     </TableCell>
                   </TableRow>
                   <TableRow>

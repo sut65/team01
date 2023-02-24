@@ -215,12 +215,12 @@ type Appointment struct {
 type ServiceChannel struct {
 	gorm.Model
 	Name string
-	//IPDSequenceNumber int
 
 	// 1 Sequence สามารถจัดลำดับคิวคนไข้ได้หลายคน
 	QueuingManagement []QueuingManagement `gorm:"foreignKey:ServiceChannelID"`
 }
 
+// จุดบริการ
 type ServicePoint struct {
 	gorm.Model
 	Name   string
@@ -240,8 +240,10 @@ type MedicalAction struct {
 
 type QueuingManagement struct {
 	gorm.Model
-	Time time.Time
-	Note string
+	Note      string    `valid:"required~กรุณากรอกการซักประวัติเพิ่มเติม"`
+	Date      time.Time `valid:"present~Date must be present"`
+	TimeStart time.Time `valid:"future~Start Time must be future"`
+	TimeEnd   time.Time `valid:"future~End Time must be future"`
 
 	// 1 QueuingManagement สามารถจัดลำดับคิวคนไข้ได้หลายคน (PatientRegister)
 	EmployeeID *uint
@@ -251,13 +253,13 @@ type QueuingManagement struct {
 	HistorySheet   HistorySheet `gorm:"references:ID"`
 
 	ServicePointID *uint
-	ServicePoint   ServicePoint `gorm:"references:ID"`
+	ServicePoint   ServicePoint `gorm:"references:ID" valid:"-"`
 
 	ServiceChannelID *uint
-	ServiceChannel   ServiceChannel `gorm:"references:ID"`
+	ServiceChannel   ServiceChannel `gorm:"references:ID" valid:"-"`
 
 	MedicalActionID *uint
-	MedicalAction   MedicalAction `gorm:"references:ID"`
+	MedicalAction   MedicalAction `gorm:"references:ID" valid:"-"`
 }
 
 // ===========================Outpatient Screenings============================//
@@ -286,9 +288,8 @@ type HighBloodPressureLevel struct {
 type DiabetesLevel struct {
 	gorm.Model
 
-	Level                     string
-	DiabetesAssessmentForms   string
-	DiabetesHistoryTakingForm string
+	Level           string
+	AssessmentForms string
 
 	OutpatientScreenings []OutpatientScreening `gorm:"foreignKey:DiabetesLevelID"`
 }
@@ -297,9 +298,8 @@ type DiabetesLevel struct {
 type ObesityLevel struct {
 	gorm.Model
 
-	Level                    string
-	ObesityAssessmentForms   string
-	ObesityHistoryTakingForm string
+	Level           string
+	AssessmentForms string
 
 	OutpatientScreenings []OutpatientScreening `gorm:"foreignKey:ObesityLevelID"`
 }
@@ -307,26 +307,25 @@ type ObesityLevel struct {
 // OutpatientScreening
 type OutpatientScreening struct {
 	gorm.Model
-	Note string `valid:"required~Note cannot be blank"`
-	Time time.Time
-
-	EmployeeID *uint
-	Employee   Employee `gorm:"references:ID"`
+	Note      string    `valid:"required~กรุณากรอกการซักประวัติเพิ่มเติม"`
+	Date      time.Time `valid:"present~Date must be present"`
+	TimeStart time.Time `valid:"future~Start Time must be future"`
+	TimeEnd   time.Time `valid:"future~End Time must be future"`
 
 	HistorySheetID *uint
 	HistorySheet   HistorySheet `gorm:"references:ID"`
 
 	EmergencyLevelID *uint
-	EmergencyLevel   EmergencyLevel `gorm:"references:ID"`
+	EmergencyLevel   EmergencyLevel `gorm:"references:ID" valid:"-"`
 
 	HighBloodPressureLevelID *uint
-	HighBloodPressureLevel   HighBloodPressureLevel `gorm:"references:ID"`
+	HighBloodPressureLevel   HighBloodPressureLevel `gorm:"references:ID" valid:"-"`
 
 	DiabetesLevelID *uint
-	DiabetesLevel   DiabetesLevel `gorm:"references:ID"`
+	DiabetesLevel   DiabetesLevel `gorm:"references:ID" valid:"-"`
 
 	ObesityLevelID *uint
-	ObesityLevel   ObesityLevel `gorm:"references:ID"`
+	ObesityLevel   ObesityLevel `gorm:"references:ID" valid:"-"`
 }
 
 // ===========================Structure Workload============================//

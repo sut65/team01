@@ -10,8 +10,10 @@ ex. DiabetesLevelsInterface  */
 
 export interface QueuingManagementsInterface {
     ID: number;
-    Time: Date;
     Note: string;
+    Date: Date;
+    TimeStart: Date;
+    TimeEnd: Date;
 
     EmployeeID: number;
     Employee: EmployeesInterface;
@@ -29,4 +31,5 @@ export interface QueuingManagementsInterface {
     MedicalAction: MedicalActionsInterface;
 
 }
+
 
