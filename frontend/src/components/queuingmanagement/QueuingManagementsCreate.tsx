@@ -35,7 +35,7 @@ import { QueuingManagementsInterface } from "../../models/IQueuingManagement/IQu
 import { Note } from "@mui/icons-material";
 
 
-const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
+cconst Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
   props,
   ref
 ) {
@@ -63,6 +63,7 @@ function QueuingManagementsCreate() {
 
   const { HistorySheetId } = useParams();
   const [Count ,setCount] = React.useState(0);
+  const [selectedDate, setSelectedDate] = React.useState<Date | null>(new Date());
   
   //const [PatientRegister, setPatientRegister] = React.useState<PatientRegistersInterface>();
   const [HistorySheet, setHistorySheet] = React.useState<HistorySheetsInterface>();
@@ -233,9 +234,10 @@ function QueuingManagementsCreate() {
       ServicePointID: convertType(QueuingManagements.ServicePointID),
       ServiceChannelID: convertType(QueuingManagements.ServiceChannelID),
       MedicalActionID: convertType(QueuingManagements.MedicalActionID),
-      
-      //Time: selectedDate,
-      //Note: QueuingManagements.Note ?? "",
+      Date: selectedDate,
+      TimeStart: AddedTime,
+      TimeEnd: AddedTime1,
+      Note: QueuingManagements.Note ?? "",
     };
     console.log(data)
 
@@ -257,19 +259,25 @@ function QueuingManagementsCreate() {
         if (res.data) {
           console.log("บันทึกได้")
           setSuccess(true);
-          //setErrorMessage("")
+          setErrorMessage("")
           ClearForm();
         } else {
           console.log("ไม่สามารถบันทึกได้")
           setError(true);
-          if (res.error.includes("Note cannot be blank")) {
-            setErrorMessage("กรุณากรอกการจัดการคิวเพิ่มเติม")
-          }
+          if(res.error.includes("Note cannot be blank")){
+            setErrorMessage("กรุณากรอกการซักประวัติเพิ่มเติม")
+          }else if (res.error.includes("Date must be present")){
+            setErrorMessage("กรุณาเลือกวันที่ที่เป็นปัจจุบันหรืออนาคต")
+          } else if (res.error.includes("Start Time must be future")) {
+            setErrorMessage("เวลาเริ่มต้นต้องเป็นอนาคต")
+          } else if (res.error.includes("End Time must be future")) {
+            setErrorMessage("เวลาสิ้นสุดต้องเป็นอนาคต")
+          }         
         }
       });
   } const ClearForm = () => {
     setQueuingManagements({
-      //Note: "",
+      Note: "",
       HistorySheetID: 0,
       ServicePointID: 0,
       ServiceChannelID: 0,
@@ -407,42 +415,6 @@ function QueuingManagementsCreate() {
               </Select>
             </FormControl>
           </Grid>
-          {/* <Grid item xs={6}>
-         <FormControl fullWidth variant="outlined">
-              <p>ลำดับมารับบริการแผนกอื่นๆ</p>
-              <Select
-                value={QueuingManagements?.SequenceID}
-                onChange={handleChange}
-                inputProps={{
-                  name: "Sequence",
-                }}
-              >
-                {Sequence.map((item: SequencesInterface) => (
-                  <MenuItem value={item.ID} key={item.ID}>
-                    {item.IPDSequenceNumber}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-         </Grid> */}
-          {/* <Grid item xs={6} >
-         <FormControl fullWidth variant="outlined">
-              <p>คิวรวม</p>
-              <Select
-                value={QueuingManagements?.SequenceID}
-                onChange={handleChange}
-                inputProps={{
-                  name: "Sequence",
-                }}
-              >
-                {Sequence.map((item: SequencesInterface) => (
-                  <MenuItem value={item.ID} key={item.ID}>
-                    {item.TotalSequenceNumber}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-         </Grid> */}
          <Grid item xs={6}>
            <p>บันทึกรายละเอียดเพิ่มเติม</p>
            <FormControl fullWidth variant="outlined" >
@@ -456,20 +428,34 @@ function QueuingManagementsCreate() {
              />
            </FormControl>
          </Grid>
-          <Grid item xs={6}>
-            <FormControl fullWidth variant="outlined">
-              <p>วันที่และเวลาที่จัดลำดับ</p>
-              <LocalizationProvider dateAdapter={AdapterDateFns}>
+          <Grid item xs={3}>
+           <FormControl fullWidth variant="outlined">
+             <p>วันที่และเวลาที่เริ่มคัดกรอง</p>
+             <LocalizationProvider dateAdapter={AdapterDateFns}>
                 <DateTimePicker
-                  value={AddedTime}
-                  onChange={(newValue) => handleAddedTime(newValue)}
-                  minDate={new Date("2018-01-01T00:00")}
-                  renderInput={(params) => <TextField {...params} />}
-                  ampm={false}
-                />
-              </LocalizationProvider>
-            </FormControl>
-          </Grid>
+                 value={AddedTime}
+                 onChange={(newValue) => handleAddedTime(newValue)}
+                 minDate={new Date("2018-01-01T00:00")}
+                 renderInput={(params) => <TextField {...params} />}
+                 ampm = {false}
+               />
+             </LocalizationProvider>
+           </FormControl>
+         </Grid>
+         <Grid item xs={3}>
+           <FormControl fullWidth variant="outlined">
+             <p>วันที่และเวลาที่จบคัดกรอง</p>
+             <LocalizationProvider dateAdapter={AdapterDateFns}>
+                <DateTimePicker
+                 value={AddedTime1}
+                 onChange={(newValue) => handleAddedTime1(newValue)}
+                 minDate={new Date("2018-01-01T00:00")}
+                 renderInput={(params) => <TextField {...params} />}
+                 ampm = {false}
+               />
+             </LocalizationProvider>
+           </FormControl>
+         </Grid>
           <Grid item xs={12}>
             <Button component={RouterLink} to="/history" variant="contained">
               Back
@@ -490,7 +476,6 @@ function QueuingManagementsCreate() {
   );
 }
 export default QueuingManagementsCreate;
-
 
 
 

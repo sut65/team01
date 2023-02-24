@@ -374,7 +374,7 @@ func SetupDatabase() {
 		Price:       125.45,
 	})
 
-	//=================OutpatientScreening Data====================
+	//=================OutpatientScreening Data======================================================================================
 	//EmergencyLevel Data
 	EmergencyLevel1 := EmergencyLevel{
 		Level:           "ภาวะฉุกเฉิน",
@@ -418,49 +418,104 @@ func SetupDatabase() {
 
 	// DiabetesLevel Data
 	DiabetesLevel1 := DiabetesLevel{
-		Level:                     "กลุ่มเสี่ยงสูงมาก",
-		DiabetesAssessmentForms:   "Diabetes risk score มากกว่า 8",
-		DiabetesHistoryTakingForm: "Text Field",
+		Level:           "กลุ่มเสี่ยงสูงมาก",
+		AssessmentForms: "Diabetes risk score มากกว่า 8",
 	}
 	db.Model(&DiabetesLevel{}).Create(&DiabetesLevel1)
 
 	DiabetesLevel2 := DiabetesLevel{
-		Level:                     "กลุ่มเสี่ยงสูง",
-		DiabetesAssessmentForms:   "Diabetes risk score 6-8 คะแนน",
-		DiabetesHistoryTakingForm: "Text Field",
+		Level:           "กลุ่มเสี่ยงสูง",
+		AssessmentForms: "Diabetes risk score 6-8 คะแนน",
 	}
 	db.Model(&DiabetesLevel{}).Create(&DiabetesLevel2)
 
 	DiabetesLevel3 := DiabetesLevel{
-		Level:                     "กลุ่มเสี่ยงปานกลาง",
-		DiabetesAssessmentForms:   "Diabetes risk score 3-5 คะแนน",
-		DiabetesHistoryTakingForm: "Text Field",
+		Level:           "กลุ่มเสี่ยงปานกลาง",
+		AssessmentForms: "Diabetes risk score 3-5 คะแนน",
 	}
 	db.Model(&DiabetesLevel{}).Create(&DiabetesLevel3)
 
 	DiabetesLevel4 := DiabetesLevel{
-		Level:                     "กลุ่มปกติ",
-		DiabetesAssessmentForms:   "Diabetes risk score น้อยกว่า 3 คะแนน",
-		DiabetesHistoryTakingForm: "Text Field",
+		Level:           "กลุ่มปกติ",
+		AssessmentForms: "Diabetes risk score น้อยกว่า 3 คะแนน",
 	}
 	db.Model(&DiabetesLevel{}).Create(&DiabetesLevel4)
 
 	// ObesityLevel Data
 	ObesityLevel1 := ObesityLevel{
-		Level:                    "กลุ่มผิดปกติ",
-		ObesityAssessmentForms:   "BMI > 35, มีความผิดปกติมากกว่าเท่ากับ 3 ข้อจาก 5 ข้อในการซักประวัติ",
-		ObesityHistoryTakingForm: "Text Field",
+		Level:           "กลุ่มผิดปกติ",
+		AssessmentForms: "BMI > 35, มีความผิดปกติมากกว่าเท่ากับ 3 ข้อจาก 5 ข้อในการซักประวัติ",
 	}
 	db.Model(&ObesityLevel{}).Create(&ObesityLevel1)
 
 	ObesityLevel2 := ObesityLevel{
-		Level:                    "กลุ่มปกติ",
-		ObesityAssessmentForms:   "BMI < 35, มีความผิดปกติน้อยกว่า 3 ข้อจาก 5 ข้อในการซักประวัติ",
-		ObesityHistoryTakingForm: "Text Field",
+		Level:           "กลุ่มปกติ",
+		AssessmentForms: "BMI < 35, มีความผิดปกติน้อยกว่า 3 ข้อจาก 5 ข้อในการซักประวัติ",
 	}
 	db.Model(&ObesityLevel{}).Create(&ObesityLevel2)
 
-	//==============================================
+	//=================QueuingManagement Data=====================================================================================
+	//ServeiceChannel Data
+	ServiceChannel1 := ServiceChannel{
+		Name: "ช่องบริการที่ 1",
+	}
+	db.Model(&ServiceChannel{}).Create(&ServiceChannel1)
+
+	ServiceChannel2 := ServiceChannel{
+		Name: "ช่องบริการที่ 2",
+	}
+	db.Model(&ServiceChannel{}).Create(&ServiceChannel2)
+
+	//ServicePoint Data
+	ServicePoint1 := ServicePoint{
+		Name:   "ห้องบัตร",
+		Detail: "จุดที่คนไข้นอกทำการรับบัตร",
+	}
+	db.Model(&ServicePoint{}).Create(&ServicePoint1)
+
+	ServicePoint2 := ServicePoint{
+		Name:   "ห้องรับยา",
+		Detail: "จุดที่คนไข้นอกรับคิวรอรับยา",
+	}
+	db.Model(&ServicePoint{}).Create(&ServicePoint2)
+
+	ServicePoint3 := ServicePoint{
+		Name:   "ห้องชำระค่าบริการ",
+		Detail: "จุดที่คนไข้นอกรับคิวรอชำระค่าบริการ",
+	}
+	db.Model(&ServicePoint{}).Create(&ServicePoint3)
+
+	MedicalAction1 := MedicalAction{
+		Action: "ตรวจรักษาที่แผนก OPD",
+		Detail: "คนไข้นอกมีลักษณะอาการโดยทั่วไปที่ต้องรักษาแผนกผู้ป่วยนอก",
+	}
+	db.Model(&MedicalAction{}).Create(&MedicalAction1)
+
+	MedicalAction2 := MedicalAction{
+		Action: "ส่งต่อเพื่อรักษาที่แผนก IPD",
+		Detail: "คนไข้นอกมีลักษณะอาการที่ต้องรักษาแผนกผู้ป่วยใน",
+	}
+	db.Model(&MedicalAction{}).Create(&MedicalAction2)
+
+	MedicalAction3 := MedicalAction{
+		Action: "ส่งต่อเพื่อรักษาห้องอุบัติเหตุและฉุกเฉิน",
+		Detail: "คนไข้นอกอยู่ในภาวะฉุกเฉิน",
+	}
+	db.Model(&MedicalAction{}).Create(&MedicalAction3)
+
+	MedicalAction4 := MedicalAction{
+		Action: "เรียกรับยา",
+		Detail: "คนไข้นอกมีการสั่งยาจึงต้องรับยาที่ห้องรับยา",
+	}
+	db.Model(&MedicalAction{}).Create(&MedicalAction4)
+
+	MedicalAction5 := MedicalAction{
+		Action: "เรียกเพื่อชำระค่าบริการ",
+		Detail: "คนไข้นอกมารับบริการจึงต้องชำระค่าบริการที่ห้องชำระค่าบริการ",
+	}
+	db.Model(&MedicalAction{}).Create(&MedicalAction5)
+
+	//==============================================================================================================
 	// medicinerecord1 := MedicineRecord{
 	// 	Pharmacist:      Employee2,
 	// 	TreatmentRecord: treatmentrecord1,
