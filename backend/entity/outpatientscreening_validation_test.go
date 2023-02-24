@@ -31,7 +31,7 @@ func TestOutpatientScreeningCorrect(t *testing.T) {
 
 }
 
-func TestOutpatientScreeningNoteNotblank(t *testing.T) {
+func TestNotesNotblank(t *testing.T) {
 	g := NewGomegaWithT(t)
 
 	outpatientScreening := OutpatientScreening{
@@ -115,37 +115,3 @@ func TestTimeEndMustbeFuture(t *testing.T) {
 	g.Expect(err.Error()).To(Equal("End Time must be future"))
 }
 
-// // ตรวจสอบวันเวลาบันทึกข้อมูลต้องเป็นปัจจุบันและไม่เป็นอนาคต
-// func TestTimeBePresent(t *testing.T) {
-// 	g := NewGomegaWithT(t)
-
-// 	fixture := []time.Time{
-// 		time.Now().Add(+24 * time.Hour),
-// 		time.Now().Add(-24 * time.Hour),
-// 	}
-
-// 	for _, datetime := range fixture {
-// 		TimeOutpatientScreening := OutpatientScreening{
-// 			Note: "ซักประวัติเพิ่มเติม",
-// 			Time: datetime,
-// 		}
-
-// 		// ตรวจสอบด้วย govalidator
-// 		ok, err := govalidator.ValidateStruct(TimeOutpatientScreening)
-
-// 		// ok ต้องไม่เป็นค่า true แปลว่าต้องจับ error ได้
-// 		g.Expect(ok).ToNot(BeTrue())
-
-// 		// err ต้องไม่เป็นค่า nil แปลว่าต้องจับ error ได้
-// 		g.Expect(err).ToNot(BeNil())
-
-// 		// err.Error ต้องมี error message แสดงออกมา
-// 		g.Expect(err.Error()).To(Equal("วันเวลาที่ทำการคัดกรองต้องเป็นปัจจุบัน กรุณาลองใหม่อีกครั้ง"))
-
-// 	}
-// }
-
-// ตรวจสอบวันเวลาบันทึกข้อมูลต้องเป็นปัจจุบันและไม่เป็นอดีต
-// func TestTimeBeAfter(t *testing.T) {
-
-// }

@@ -6,11 +6,10 @@ import (
 	"github.com/sut65/team01/entity"
 	//"github.com/ChatreeDev/sa-65-example/entity"
 	"github.com/gin-gonic/gin"
+	"github.com/asaskevich/govalidator"
 )
 
-//commit again
-
-// POST /outpatientscreenings
+// POST /outpatientScreenings
 func CreateOutpatientScreenings(c *gin.Context) {
 
 	var outpatient_screenings entity.OutpatientScreening
@@ -64,6 +63,14 @@ func CreateOutpatientScreenings(c *gin.Context) {
 		DiabetesLevel:          diabetes_levels,            // โยงความสัมพันธ์กับ Entity DiabetesLevel
 		ObesityLevel:           obesity_levels,             // โยงความสัมพันธ์กับ Entity ObesityLevel
 		Note:                   outpatient_screenings.Note,
+		TimeStart:              outpatient_screenings.TimeStart,
+		TimeEnd:                outpatient_screenings.TimeEnd,
+	}
+
+	//ขั้นตอนการ validate
+	if _, err := govalidator.ValidateStruct(wv); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
 	}
 
 	// 17: บันทึก
@@ -74,7 +81,7 @@ func CreateOutpatientScreenings(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"data": wv})
 }
 
-// GET /outpatientscreenings
+// GET /outpatientScreening
 func ListOutpatientScreenings(c *gin.Context) {
 	var outpatientScreenings []entity.OutpatientScreening
 	// id := c.Param("id") //เก็บค่า id ที่ส่งมาจาก path ไว้ในตัวแปร id
@@ -92,7 +99,17 @@ func ListOutpatientScreenings(c *gin.Context) {
 
 }
 
-// GET /outpatientscreening/:id
+// DELETE /outpatientScreenings/:id
+func DeleteOutpatientScreening(c *gin.Context) {
+	id := c.Param("id")
+	if tx := entity.DB().Exec("DELETE FROM outpatient_screenings WHERE id = ?", id); tx.RowsAffected == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Outpatient Screenings not found"})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"data": id})
+}
+
+// GET /outpatientScreening/:id
 func GetOutpatientScreening(c *gin.Context) {
 	var outpatientScreening entity.OutpatientScreening //GET จะ​ get มาแค่ก้อนเดียวเลยไม่ใช้ array (เก็ทไอดีของตัวที่เคยบันทึก) [ex. เก็ทเอาไปคิดราคา(ของระบบอื่น)]
 
@@ -108,35 +125,4 @@ func GetOutpatientScreening(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"data": outpatientScreening})
-}
-
-// DELETE /outpatientscreenings/:id
-func DeleteOutpatientScreening(c *gin.Context) {
-	id := c.Param("id")
-	if tx := entity.DB().Exec("DELETE FROM outpatient_screenings WHERE id = ?", id); tx.RowsAffected == 0 {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "outpatientscreening not found"})
-		return
-	}
-	c.JSON(http.StatusOK, gin.H{"data": id})
-}
-
-// PATCH /outpatientscreenings
-func UpdateOutpatientScreening(c *gin.Context) {
-	var outpatientscreening entity.OutpatientScreening
-	if err := c.ShouldBindJSON(&outpatientscreening); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-
-	if tx := entity.DB().Where("id = ?", outpatientscreening.ID).First(&outpatientscreening); tx.RowsAffected == 0 {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "outpatientscreening not found"})
-		return
-	}
-
-	if err := entity.DB().Save(&outpatientscreening).Error; err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-
-	c.JSON(http.StatusOK, gin.H{"data": outpatientscreening})
 }
