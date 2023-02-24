@@ -54,7 +54,7 @@ func TestNoteNotblank(t *testing.T) {
 	g.Expect(err.Error()).To(Equal("กรุณากรอกการซักประวัติเพิ่มเติม"))
 }
 
-func TestDateMustbePresent(t *testing.T) {
+func TestDatesMustbePresent(t *testing.T) {
 	g := NewGomegaWithT(t)
 
 	fixtures := []time.Time{
@@ -82,7 +82,7 @@ func TestDateMustbePresent(t *testing.T) {
 	}
 }
 
-func TestTimeStartMustbeFuture(t *testing.T) {
+func TestTimeStartsMustbeFuture(t *testing.T) {
 	g := NewGomegaWithT(t)
 
 	queuingmanagement := QueuingManagement{
@@ -98,7 +98,7 @@ func TestTimeStartMustbeFuture(t *testing.T) {
 	g.Expect(err.Error()).To(Equal("Start Time must be future"))
 }
 
-func TestTimeEndMustbeFuture(t *testing.T) {
+func TestTimeEndsMustbeFuture(t *testing.T) {
 
 	g := NewGomegaWithT(t)
 
