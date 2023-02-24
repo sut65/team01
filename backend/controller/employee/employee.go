@@ -77,7 +77,11 @@ func CreateEmployee(c *gin.Context) {
 // GET /employees
 func ListEmployee(c *gin.Context) {
 	var employee []entity.Employee
-	if err := entity.DB().Preload("Admin").Preload("Title").Preload("Role").Preload("Gender").Raw("SELECT * FROM employees").Find(&employee).Error; err != nil {
+	if err := entity.DB().Preload("Admin").
+		Preload("Title").
+		Preload("Role").
+		Preload("Gender").
+		Raw("SELECT * FROM employees").Find(&employee).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
@@ -88,7 +92,12 @@ func ListEmployee(c *gin.Context) {
 func GetEmployee(c *gin.Context) {
 	var employee entity.Employee
 	id := c.Param("id")
-	if err := entity.DB().Preload("Admin").Preload("Title").Preload("Role").Preload("Gender").Raw("SELECT * FROM employees WHERE id = ?", id).Find(&employee).Error; err != nil {
+	if err := entity.DB().
+		Preload("Admin").
+		Preload("Title").
+		Preload("Role").
+		Preload("Gender").
+		Raw("SELECT * FROM employees WHERE id = ?", id).Find(&employee).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
@@ -115,10 +124,7 @@ func DeleteEmployee(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "employee not found"})
 		return
 	}
-	// if err := entity.DB().Preload("Admin").Preload("Title").Preload("Role").Preload("Gender").Raw("SELECT * FROM employees").Find(&employee).Error; err != nil {
-	// 	c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-	// 	return
-	// }
+
 	c.JSON(http.StatusOK, gin.H{"data": id})
 }
 
@@ -131,7 +137,7 @@ func UpdateEmployee(c *gin.Context) {
 	var role entity.Role
 	var gender entity.Gender
 
-	if err := c.ShouldBindJSON(&employee); err != nil {
+	if err := c.ShouldBindJSON(&payload); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
@@ -145,20 +151,24 @@ func UpdateEmployee(c *gin.Context) {
 		return
 	}
 
+	// 11: ค้นหา title ด้วย id
 	if tx := entity.DB().Where("id = ?", payload.TitleID).First(&title); tx.RowsAffected == 0 {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Title not found"})
 		return
 	}
 
+	// 12: ค้นหา role ด้วย id
 	if tx := entity.DB().Where("id = ?", payload.RoleID).First(&role); tx.RowsAffected == 0 {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Role not found"})
 		return
 	}
 
+	// 13: ค้นหา gender ด้วย id
 	if tx := entity.DB().Where("id = ?", payload.GenderID).First(&gender); tx.RowsAffected == 0 {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Gender not found"})
 		return
 	}
+	
 	updateEmployee := entity.Employee{
 		Admin:       admin,
 		IDCard:      payload.IDCard,    // ตั้งค่าฟิลด์ IDCard
@@ -173,11 +183,12 @@ func UpdateEmployee(c *gin.Context) {
 		Salary:      payload.Salary,      // ตั้งค่าฟิลด์ Salary
 		Birthday:    payload.Birthday,    // ตั้งค่าฟิลด์ BirthDay
 	}
-
+	
 	if _, err := govalidator.ValidateStruct(updateEmployee); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
+
 	if err := entity.DB().Where("id = ?", employee.ID).Updates(&updateEmployee).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
