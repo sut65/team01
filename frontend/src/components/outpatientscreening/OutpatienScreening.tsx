@@ -157,7 +157,22 @@ function OutpatientScreenings() {
     // { field: "QueuingManagements.Note", headerName: "บันทึกเพิ่มเติม", width: 150, valueGetter: (params) => { return params.row.Note} },
     { field: "OutpatientScreenings.TimeEnd", headerName: "เวลา", width: 180, valueGetter: (params) => { return params.row.TimeEnd}},
 
-    
+    // { field: "ID", headerName: "ID", width: 96, },
+    // { field: "Weight", headerName: "Weight", width: 96 },
+    // { field: "Height", headerName: "Height", width: 96 },
+    // { field: "BMI", headerName: "BMI", width: 96, valueFormatter: params => (params.value.toFixed(2)) },
+    // { field: "Temperature", headerName: "Temperature", width: 96 },
+    // { field: "SystolicBloodPressure", headerName: "SystolicBloodPressure", width: 96 },
+    // { field: "DiastolicBloodPressure", headerName: "DiastolicBloodPressure", width: 96 },
+    // { field: "HeartRate", headerName: "HeartRate", width: 96 },
+    // { field: "RespiratoryRate", headerName: "RespiratoryRate", width: 96 },
+    // { field: "OxygenSaturation", headerName: "OxygenSaturation", width: 96 },
+    // { field: "DrugAllergySymtom", headerName: "DrugAllergySymtom", width: 96 },
+    // { field: "PatientSymtom", headerName: "PatientSymtom", width: 96 },
+    // { field: "PatientRegister ID", headerName: "Patient", width: 96, valueGetter: (params) => { return params.row.PatientRegister.FirstName + " " + params.row.PatientRegister.LastName } },
+    // { field: "Nurse ID", headerName: "Nurse", width: 96, valueGetter: (params) => { return params.row.Nurse.FirstName + " " + params.row.Nurse.LastName } },
+    // { field: "DrugAllergy ID", headerName: "Drug Allergy", width: 96, valueGetter: (params) => { return params.row.DrugAllergy.Name } },
+
   ];
 
   // เมื่อมีการ log out ฟังก์ชันนี้จะทำการ clear token ใน local storage และเปลี่ยน path ไปที่หน้า log in
