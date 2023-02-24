@@ -9,8 +9,8 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import SearchIcon from '@mui/icons-material/Search';
 import { DataGrid, GridColDef, GridValueGetterParams } from "@mui/x-data-grid";
-import { TreatmentRecordsInterface } from "../models/ITreatmentRecord";
-import { GetTreatmentRecord } from "../services/HttpClientService";
+import { TreatmentRecordsInterface } from "../../models/ITreatmentRecord/ITreatmentRecord";
+import { GetTreatmentRecord } from "../../services/HttpClientService";
 import moment from "moment";
 
 
@@ -128,7 +128,7 @@ function TreatmentRecord() {
         },
         { field: "ID", headerName: "No.", width: 50 },
         {   field: "Doctor",
-            headerName: "แพทย์ผู้ตรวจ",
+            headerName: "แพทย์ผู้บันทึก",
             width: 190,
             valueGetter: getDoctorFullName,
         },
@@ -174,7 +174,6 @@ function TreatmentRecord() {
                 } return <div>ไม่</div>
             },
         },
-        
         {   field: "Date", headerName: "Date", width: 140,
             valueGetter: (params) => moment(params.row.Date).format("DD/MM/YYYY") 
         },

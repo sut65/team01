@@ -85,7 +85,7 @@ async function GetEmployee() {
     },
   };
 
-  let res = await fetch(`${apiUrl}/employees`, requestOptions)
+  let res = await fetch(`${apiUrl}/employee/${localStorage.getItem('uid')}`, requestOptions)
     .then((response) => response.json())
     .then((res) => {
       if (res.data) {
@@ -167,30 +167,28 @@ async function GetHistorysheet() {
   return res;
 }
 
-//Get MedicalCertificate
-// async function GetMedicalCertificate() {
-//   const requestOptions = {
-//     method: "GET",
-//     headers: {
-//       Authorization: `Bearer ${localStorage.getItem("token")}`,
-//       "Content-Type": "application/json",
-//     },
-//   };
+//Get DrugAllergy
+async function GetDrugAllergy() {
+  const requestOptions = {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+      "Content-Type": "application/json",
+    },
+  };
 
-//   let res = await fetch(`${apiUrl}/medicalcertificates`, requestOptions)
-//     .then((response) => response.json())
-//     .then((res) => {
-//       console.log(res.data);
-//       if (res.data) {
-//         return res.data;
-//       } else {
-//         return false;
-//       }
-//     });
+  let res = await fetch(`${apiUrl}/drugallergys`, requestOptions)
+    .then((response) => response.json())
+    .then((res) => {
+      if (res.data) {
+        return res.data;
+      } else {
+        return false;
+      }
+    });
 
-//   return res;
-// }
-
+  return res;
+}
 
 //================================================================================================
 
@@ -206,6 +204,31 @@ async function CreateDiagnosisRecord(data: DiagnosisRecordsInterface) {
   };
 
   let res = await fetch(`${apiUrl}/diagnosisrecords`, requestOption)
+    .then((response) => response.json())
+    .then((res) => {
+      if (res.data) {
+        return { status: true, message: res.data };
+      } else {
+        console.log(res.error);
+        return { status: false, message: res.error };
+      }
+    });
+
+  return res;
+}
+
+//Update DiagnosisRecord
+async function UpdateDiagnosisRecord(data: DiagnosisRecordsInterface) {
+  const requestOptions = {
+    method: "PATCH",
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  };
+
+  let res = await fetch(`${apiUrl}/diagnosisrecords`, requestOptions)
     .then((response) => response.json())
     .then((res) => {
       if (res.data) {
@@ -241,6 +264,7 @@ async function GetDiagnosisRecord() {
 
   return res;
 }
+
 
 //Create Treatment
 async function CreateTreatmentRecord(data: TreatmentRecordsInterface) {
@@ -289,6 +313,31 @@ async function GetTreatmentRecord() {
   return res;
 }
 
+//Update TreatmentRecord
+async function UpdateTreatmentRecord(data: TreatmentRecordsInterface) {
+  const requestOptions = {
+    method: "PATCH",
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  };
+
+  let res = await fetch(`${apiUrl}/treatmentrecords`, requestOptions)
+    .then((response) => response.json())
+    .then((res) => {
+      if (res.data) {
+        return { status: true, message: res.data };
+      } else {
+        console.log(res.error);
+        return { status: false, message: res.error };
+      }
+    });
+
+  return res;
+}
+
 export {
   Login,
   GetDisease,
@@ -297,7 +346,7 @@ export {
   GetEmployeeByUID,
   GetPatient,
   GetHistorysheet,
-  // GetMedicalCertificate,
-  CreateDiagnosisRecord, GetDiagnosisRecord,
-  CreateTreatmentRecord, GetTreatmentRecord,
+  GetDrugAllergy,
+  CreateDiagnosisRecord, GetDiagnosisRecord, UpdateDiagnosisRecord, 
+  CreateTreatmentRecord, GetTreatmentRecord, UpdateTreatmentRecord,
 };
