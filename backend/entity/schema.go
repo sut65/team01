@@ -414,11 +414,11 @@ type Employee struct {
 	PatientRegisters []PatientRegister `gorm:"foreignKey:EmployeeID"`
 	HistorySheets    []HistorySheet    `gorm:"foreignKey:EmployeeID"`
 	//Outpatient Screening System
-	OutpatientScreening []OutpatientScreening `gorm:"foreignKey:EmployeeID"`
-	Appointment         []Appointment         `gorm:"foreignKey:EmployeeID"`
-	PatientRight        []PatientRight        `gorm:"foreignKey:EmployeeID"`
-	Payments            []Payment             `gorm:"foreignKey:EmployeeID"`
-	MedicineRecords     []MedicineRecord      `gorm:"foreignKey:EmployeeID" `
+	// OutpatientScreening []OutpatientScreening `gorm:"foreignKey:EmployeeID"`
+	Appointment     []Appointment    `gorm:"foreignKey:EmployeeID"`
+	PatientRight    []PatientRight   `gorm:"foreignKey:EmployeeID"`
+	Payments        []Payment        `gorm:"foreignKey:EmployeeID"`
+	MedicineRecords []MedicineRecord `gorm:"foreignKey:EmployeeID" `
 }
 
 //=================MedicineRecord=========================
