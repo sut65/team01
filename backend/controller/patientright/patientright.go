@@ -79,9 +79,14 @@ func GetPatientRights(c *gin.Context) {
 // GET /patientrights
 func ListPatientRights(c *gin.Context) {
 	var patientrights []entity.PatientRight
-	if err := entity.DB().Raw("SELECT * FROM patient_rights").Scan(&patientrights).Error; err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
+	if err := entity.DB().Raw("SELECT * FROM patient_rights").
+	Preload("PatientRegister").
+	Preload("Employee").
+	Preload("Hospital").
+	Preload("RightType").
+	Find(&patientrights).Error; err != nil {
+	c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	return
 	}
 
 	c.JSON(http.StatusOK, gin.H{"data": patientrights})
@@ -94,7 +99,6 @@ func DeletePatientRights(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "patientright not found"})
 		return
 	}
-
 	c.JSON(http.StatusOK, gin.H{"data": id})
 }
 
