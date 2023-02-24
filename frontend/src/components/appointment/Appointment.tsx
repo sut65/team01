@@ -40,7 +40,7 @@ function Appointments() {
   const [open, setOpen] = React.useState<boolean[]>([]);
 
   const getAppointments = async () => {
-    const apiUrl = "http://localhost:8080/historysheets";
+    const apiUrl = "http://localhost:8080/appointments";
     const requestOptions = {
       method: "GET",
       headers: {
