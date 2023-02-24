@@ -77,10 +77,10 @@ func GetAppointment(c *gin.Context) {
 func ListAppointments(c *gin.Context) {
 	var appointments []entity.Appointment
 	if err := entity.DB().
-	Preload("Patient").
-	Preload("Employee").
-	Preload("Clinic").
-	Raw("SELECT * FROM appointments").Find(&appointments).Error; err != nil {
+		Preload("Patient").
+		Preload("Employee").
+		Preload("Clinic").
+		Raw("SELECT * FROM appointments").Find(&appointments).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}

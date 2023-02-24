@@ -3,9 +3,9 @@ package controller
 import (
 	"net/http"
 
-	"github.com/sut65/team01/entity"
 	"github.com/asaskevich/govalidator"
 	"github.com/gin-gonic/gin"
+	"github.com/sut65/team01/entity"
 )
 
 // POST /treatmentrecords
@@ -34,27 +34,27 @@ func CreateTreatmentRecord(c *gin.Context) {
 	}
 
 	var items []entity.MedicineOrder
-		for _, orderItem := range treatmentrecord.MedicineOrders{
-			var medicine entity.Medicine
-			// 14: ค้นหา medicine ด้วย id
-			if tx := entity.DB().Where("id = ?", orderItem.MedicineID).First(&medicine); tx.RowsAffected == 0 {
-				c.JSON(http.StatusBadRequest, gin.H{"error": "medicine not found"})
-				return
-			}
-
-			// 15: สร้าง MedicineOrderItem
-			it := entity.MedicineOrder{
-				Medicine: medicine,
-				OrderAmount:  orderItem.OrderAmount,
-			}
-
-			if _, err := govalidator.ValidateStruct(it); err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-				return
-			}
-
-			items = append(items, it)
+	for _, orderItem := range treatmentrecord.MedicineOrders {
+		var medicine entity.Medicine
+		// 14: ค้นหา medicine ด้วย id
+		if tx := entity.DB().Where("id = ?", orderItem.MedicineID).First(&medicine); tx.RowsAffected == 0 {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "medicine not found"})
+			return
 		}
+
+		// 15: สร้าง MedicineOrderItem
+		it := entity.MedicineOrder{
+			Medicine:    medicine,
+			OrderAmount: orderItem.OrderAmount,
+		}
+
+		if _, err := govalidator.ValidateStruct(it); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+
+		items = append(items, it)
+	}
 
 	//สร้าง TreamentRecord
 	tr := entity.TreatmentRecord{
@@ -62,9 +62,9 @@ func CreateTreatmentRecord(c *gin.Context) {
 		Doctor:          employee,
 		DiagnosisRecord: diagnosisrecord,
 		Treatment:       treatmentrecord.Treatment,
-		Note:			 treatmentrecord.Note,
-		Appointment:	 treatmentrecord.Appointment,
-		MedicineOrders:	 items,
+		Note:            treatmentrecord.Note,
+		Appointment:     treatmentrecord.Appointment,
+		MedicineOrders:  items,
 		Date:            treatmentrecord.Date,
 	}
 
@@ -93,7 +93,7 @@ func CreateTreatmentRecord(c *gin.Context) {
 func GetTreatmentRecord(c *gin.Context) {
 	var treatmentrecord entity.TreatmentRecord
 	id := c.Param("id")
-	if err := entity.DB().Raw("SELECT * FROM treatment_records WHERE id = ?", id). 
+	if err := entity.DB().Raw("SELECT * FROM treatment_records WHERE id = ?", id).
 		// Preload("Doctor").
 		Preload("DiagnosisRecord").
 		Preload("DiagnosisRecord.HistorySheet").
@@ -104,6 +104,20 @@ func GetTreatmentRecord(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"data": treatmentrecord})
+}
+
+// GET: /treatmentrecord/medicineorder/:id
+func GetTreatmentRecordforMed(c *gin.Context) {
+	id := c.Param("id")
+	var medicineorder []entity.MedicineOrder
+	if err := entity.DB().Raw("SELECT * FROM medicine_orders WHERE treatment_record_id = ?", id).
+		Preload("Medicine").
+		Find(&medicineorder).Error; err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"data": medicineorder})
 }
 
 // GET /treatmentrecords/
@@ -132,7 +146,7 @@ func DeleteTreatmentRecord(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"data": id})
 }
 
-//PATCH /treatmentrecords
+// PATCH /treatmentrecords
 func UpdateTreatmentRecord(c *gin.Context) {
 	// var patient entity.PatientRegister
 	// var employee entity.Employee
@@ -161,4 +175,3 @@ func UpdateTreatmentRecord(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"data": treatmentrecord})
 }
-

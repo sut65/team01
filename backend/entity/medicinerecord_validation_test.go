@@ -50,11 +50,11 @@ func TestAdvicetext(t *testing.T) {
 }
 
 // Not now
-func TestMedTimeMustBeNotNow(t *testing.T) {
+func TestMedTimeMustBePast(t *testing.T) {
 	g := NewGomegaWithT(t)
 
 	medicinerecord := MedicineRecord{
-		MedTime:    time.Date(2022, 1, 1, 12, 00, 00, 00, time.UTC), //ผิด
+		MedTime:    time.Date(2002, 1, 1, 12, 00, 00, 00, time.UTC), //ผิด
 		Advicetext: "ok",
 	}
 
@@ -68,6 +68,29 @@ func TestMedTimeMustBeNotNow(t *testing.T) {
 	g.Expect(err).ToNot(BeNil())
 
 	// err.Error ต้องมี error message แสดงออกมา
-	g.Expect(err.Error()).To(Equal("MedTime must be in the present"))
+	g.Expect(err.Error()).To(Equal("MedTime incorrect"))
+
+}
+
+// Not now
+func TestMedTimeMustBeNotFuture(t *testing.T) {
+	g := NewGomegaWithT(t)
+
+	medicinerecord := MedicineRecord{
+		MedTime:    time.Date(2027, 1, 1, 12, 00, 00, 00, time.UTC), //ผิด
+		Advicetext: "ok",
+	}
+
+	ok, err := govalidator.ValidateStruct(medicinerecord)
+	fmt.Printf("%v\n", err)
+
+	// ok ต้องไม่เป็น true แปลว่าต้องจับ error ได้
+	g.Expect(ok).ToNot(BeTrue())
+
+	// err ต้องไม่เป็น nil แปลว่าต้องจับ error ได้
+	g.Expect(err).ToNot(BeNil())
+
+	// err.Error ต้องมี error message แสดงออกมา
+	g.Expect(err.Error()).To(Equal("MedTime incorrect"))
 
 }

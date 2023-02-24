@@ -21,34 +21,34 @@ type PatientRegister struct {
 	Address              string
 
 	EmployeeID *uint
-	Employee   Employee `gorm:"references:ID"`
+	Employee   Employee `gorm:"references:id" valid:"-"`
 
 	PatientRegisterGenderID *uint
-	PatientRegisterGender   PatientRegisterGender `gorm:"references:ID"`
+	PatientRegisterGender   PatientRegisterGender `gorm:"references:id" valid:"-"`
 
 	PrefixID *uint
-	Prefix   Prefix `gorm:"references:ID"`
+	Prefix   Prefix `gorm:"references:id" valid:"-"`
 
 	NationalityID *uint
-	Nationality   Nationality `gorm:"references:ID"`
+	Nationality   Nationality `gorm:"references:id" valid:"-"`
 
 	ReligionID *uint
-	Religion   Religion `gorm:"references:ID"`
+	Religion   Religion `gorm:"references:id" valid:"-"`
 
 	BloodTypeID *uint
-	BloodType   BloodType `gorm:"references:ID"`
+	BloodType   BloodType `gorm:"references:id" valid:"-"`
 
 	MaritalStatusID *uint
-	MaritalStatus   MaritalStatus `gorm:"references:ID"`
+	MaritalStatus   MaritalStatus `gorm:"references:id" valid:"-"`
 
 	SubDistrictID *uint
-	SubDistrict   SubDistrict `gorm:"references:ID"`
+	SubDistrict   SubDistrict `gorm:"references:id" valid:"-"`
 
 	DistrictID *uint
-	District   District `gorm:"references:ID"`
+	District   District `gorm:"references:id" valid:"-"`
 
 	ProvinceID *uint
-	Province   Province `gorm:"references:ID"`
+	Province   Province `gorm:"references:id" valid:"-"`
 
 	Patientrights []PatientRight `gorm:"foreignKey:PatientRegisterID"`
 	HistorySheets []HistorySheet `gorm:"foreignKey:PatientRegisterID"`
@@ -96,7 +96,7 @@ type SubDistrict struct {
 	Name string
 
 	DistrictID uint
-	District   District `gorm:"references:ID"`
+	District   District `gorm:"references:id" valid:"-"`
 
 	PostCode uint
 
@@ -108,7 +108,7 @@ type District struct {
 	Name string
 
 	ProvinceID uint
-	Province   Province `gorm:"references:ID"`
+	Province   Province `gorm:"references:id" valid:"-"`
 
 	PatientRegisters []PatientRegister `gorm:"foreignKey:DistrictID"`
 	SubDistricts     []SubDistrict     `gorm:"foreignKey:DistrictID"`
@@ -136,13 +136,13 @@ type HistorySheet struct {
 	PatientSymtom          string `valid:"required~Symtom of Patient Invalids"`
 
 	PatientRegisterID *uint
-	PatientRegister   PatientRegister `gorm:"references:ID"`
+	PatientRegister   PatientRegister `gorm:"references:id" valid:"-"`
 
 	EmployeeID *uint
-	Employee   Employee `gorm:"references:ID"`
+	Employee   Employee `gorm:"references:id" valid:"-"`
 
 	DrugAllergyID        *uint
-	DrugAllergy          DrugAllergy           `gorm:"references:ID"`
+	DrugAllergy          DrugAllergy           `gorm:"references:id" valid:"-"`
 	OutpatientScreenings []OutpatientScreening `gorm:"foreignKey:HistorySheetID"`
 }
 
@@ -155,9 +155,8 @@ type DrugAllergy struct {
 // ===========================Structure PatientRight============================//
 type PatientRight struct {
 	gorm.Model
-	Name        string
 	RightTypeID *uint
-	RightType   RightType `gorm:"references:id"`
+	RightType   RightType `gorm:"references:id" valid:"-"`
 
 	HospitalID *uint
 	Hospital   Hospital `gorm:"references:id" valid:"-"`
@@ -247,10 +246,10 @@ type QueuingManagement struct {
 
 	// 1 QueuingManagement สามารถจัดลำดับคิวคนไข้ได้หลายคน (PatientRegister)
 	EmployeeID *uint
-	Employee   Employee `gorm:"references:ID"`
+	Employee   Employee `gorm:"references:id" valid:"-"`
 
 	HistorySheetID *uint
-	HistorySheet   HistorySheet `gorm:"references:ID"`
+	HistorySheet   HistorySheet `gorm:"references:id" valid:"-"`
 
 	ServicePointID *uint
 	ServicePoint   ServicePoint `gorm:"references:ID" valid:"-"`
@@ -313,7 +312,7 @@ type OutpatientScreening struct {
 	TimeEnd   time.Time `valid:"future~End Time must be future"`
 
 	HistorySheetID *uint
-	HistorySheet   HistorySheet `gorm:"references:ID"`
+	HistorySheet   HistorySheet `gorm:"references:id" valid:"-"`
 
 	EmergencyLevelID *uint
 	EmergencyLevel   EmergencyLevel `gorm:"references:ID" valid:"-"`
@@ -427,7 +426,7 @@ type Employee struct {
 type MedicineRecord struct {
 	gorm.Model
 
-	MedTime    time.Time `valid:"present~MedTime must be in the present"`
+	MedTime    time.Time `valid:"present~MedTime incorrect"`
 	Advicetext string    `valid:"required~Advicetext cannot be blank"`
 	// EmployeeID ทำหน้าที่เป็น FK
 	EmployeeID *uint
@@ -456,7 +455,7 @@ type StatusMed struct {
 type Payment struct {
 	gorm.Model
 
-	PaymentTime time.Time `valid:"present~PaymentTime must be in the present"`
+	PaymentTime time.Time `valid:"present~Payment incorrect"`
 	Total       int       `valid:"Total~The value must be in range 1-9999"`
 
 	PatientRightID *uint
@@ -466,7 +465,7 @@ type Payment struct {
 	PaymentType   PaymentType `gorm:"references:ID" valid:"-"`
 
 	EmployeeID *uint
-	Employee   Employee `gorm:"references:ID" valid:"-`
+	Employee   Employee `gorm:"references:ID" valid:"-"`
 
 	//MedicineRecordID ทำหน้าที่เป็น ForeignKey
 	MedicineRecordID *uint
