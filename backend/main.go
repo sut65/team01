@@ -31,37 +31,22 @@ func main() {
 			// Employee Routes ------------------------------------------------------------------------------------------------------------------------------------------------
 			protected.GET("/employees", controller_employee.ListEmployee)
 			protected.GET("/employee/:id", controller_employee.GetEmployee)
-			protected.POST("/employees", controller_employee.CreateEmployee)
-			protected.PATCH("/employees", controller_employee.UpdateEmployee)
+			protected.GET("/employeerole/:roleid", controller_employee.GetEmployeerole)
+			protected.POST("/employee", controller_employee.CreateEmployee)
+			protected.PATCH("/employee", controller_employee.UpdateEmployee)
 			protected.DELETE("/employees/:id", controller_employee.DeleteEmployee)
-
 			// Admin Routes
-			protected.GET("/admins", controller_employee.ListAdmin)
-			protected.GET("/admin/:id", controller_employee.GetAdmin)
-			protected.POST("/admins", controller_employee.CreateAdmin)
-			protected.PATCH("/admins", controller_employee.UpdateAdmin)
-			protected.DELETE("/admins/:id", controller_employee.DeleteAdmin)
-
-			// Gender Routes
-			protected.GET("/genders", controller_employee.ListGender)
-			protected.GET("/gender/:id", controller_employee.GetGender)
-			protected.POST("/genders", controller_employee.CreateGender)
-			protected.PATCH("/genders", controller_employee.UpdateGender)
-			protected.DELETE("/genders/:id", controller_employee.DeleteGender)
-
-			// Role Routes
-			protected.GET("/roles", controller_employee.ListRole)
-			protected.GET("/role/:id", controller_employee.GetRole)
-			protected.POST("/roles", controller_employee.CreateRole)
-			protected.PATCH("/roles", controller_employee.UpdateRole)
-			protected.DELETE("/roles/:id", controller_employee.DeleteRole)
-
-			// Title Routes
-			protected.GET("/titles", controller_employee.ListTitle)
+			protected.GET("/admin/:id", controller_employee.GetAdmin) //ดึง Admin ด้วย id
+			protected.GET("/admins", controller_employee.ListAdmin)   //ดึง Admin
+			//Title Routes
 			protected.GET("/title/:id", controller_employee.GetTitle)
-			protected.POST("/titles", controller_employee.CreateTitle)
-			protected.PATCH("/titles", controller_employee.UpdateTitle)
-			protected.DELETE("/title/:id", controller_employee.DeleteTitle)
+			protected.GET("/titles", controller_employee.ListTitle) //ดึง Title
+			//Role Routes
+			protected.GET("/role/:id", controller_employee.GetRole)
+			protected.GET("/roles", controller_employee.ListRole) //ดึง Role
+			//Gender Routes
+			protected.GET("/gender/:id", controller_employee.GetGender)
+			protected.GET("/genders", controller_employee.ListGender) //ดึง Gender
 
 			// PatientRegister Routes ------------------------------------------------------------------------------------------------------------------------------------------------
 			protected.GET("/patientregisters", controller_patientregister.ListPatientRegisters)
