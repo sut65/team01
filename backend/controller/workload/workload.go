@@ -114,7 +114,7 @@ func UpdateWorkload(c *gin.Context) {
 	var status entity.Status
 	var room entity.Room
 
-	if err := c.ShouldBindJSON(&workload); err != nil {
+	if err := c.ShouldBindJSON(&payload); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
@@ -129,34 +129,38 @@ func UpdateWorkload(c *gin.Context) {
 	}
 
 	if tx := entity.DB().Where("id = ?", payload.EmployeeID).First(&employee); tx.RowsAffected == 0 {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Title not found"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "EmployeeID not found"})
 		return
 	}
 
 	if tx := entity.DB().Where("id = ?", payload.RoomID).First(&room); tx.RowsAffected == 0 {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Role not found"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Room not found"})
 		return
 	}
 
 	if tx := entity.DB().Where("id = ?", payload.StatusID).First(&status); tx.RowsAffected == 0 {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Gender not found"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Status not found"})
 		return
 	}
-	updateEmployee := entity.Workload{
+	updateWorkload := entity.Workload{
 		Admin:       admin,// โยงความสัมพันธ์กับ Entity Admin
 		Employee:    employee,   // โยงความสัมพันธ์กับ Entity Employee
 		Room:        room,             // โยงความสัมพันธ์กับ Entity Room
 		Status:   	 status, // โยงความสัมพันธ์กับ Entity Status
 		Date:    	 payload.Date,// ตั้งค่าฟิลด์ Date
 		StartTime:   payload.StartTime,  // ตั้งค่าฟิลด์ StartTime
-		EndTime: 	payload.EndTime, // ตั้งค่าฟิลด์ EndTime
+		EndTime: 	 payload.EndTime, // ตั้งค่าฟิลด์ EndTime
 	}
 
-	if _, err := govalidator.ValidateStruct(updateEmployee); err != nil {
+	if _, err := govalidator.ValidateStruct(updateWorkload); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	if err := entity.DB().Where("id = ?", workload.ID).Updates(&updateEmployee).Error; err != nil {
+	if _, err := entity.CheckTimeEnd(workload.EndTime, workload.StartTime); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	if err := entity.DB().Where("id = ?", workload.ID).Updates(&updateWorkload).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}

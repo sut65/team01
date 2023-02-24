@@ -75,6 +75,7 @@ const handleClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
       .then((res) => {
         console.log(res);
         if (res.data) {
+          setWorkloads(res.data)
           setSuccess(true);
           setMessage("Delete Success");
           console.log(res.data);
@@ -106,6 +107,11 @@ const handleClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
     setOpen(openArr);
   };
 
+  
+  useEffect(() => {
+    getWorkloads();
+  }, []);
+
   const columns: GridColDef[] = [
     { field: "Doctor", headerName: "แพทย์", width: 150, valueGetter: (params) => { return params.row.Employee.FirstName+ " " + params.row.Employee.LastName} },
     { field: "Room", headerName: "ห้องตรวจ", width: 130, valueGetter: (params) => { return params.row.Room.Name}},
@@ -124,7 +130,7 @@ const handleClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
           return (
             <React.Fragment>
               <Tooltip title="แก้ไข">
-              <IconButton size="small" component={RouterLink} to={`/createemployee/${params.row.ID}`}>
+              <IconButton size="small" component={RouterLink} to={`/createworkload/${params.row.ID}`}>
                 <EditIcon color="success" fontSize="small"></EditIcon>
               </IconButton>
             </Tooltip>
@@ -135,7 +141,7 @@ const handleClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
             </Tooltip>
               <Dialog open={checkOpen(params.row.ID)} onClose={() => handleCloseDialog(params.row.ID)}>
                 <DialogTitle>Confirm Delete</DialogTitle>
-                <DialogContent>Do you want to delete data of '{ params.row.Admin.FirstName + " " + params.row.Admin.LastName }' ?</DialogContent>
+                <DialogContent>คุณต้องการลบข้อมูลของ { params.row.Employee.FirstName + " " + params.row.Employee.LastName } ?</DialogContent>
                 <DialogActions>
                   <Button onClick={() => handleCloseDialog(params.row.ID)}>Cancel</Button>
                   <Button onClick={() => deleteWorkload(params.row.ID)}>OK</Button>
@@ -149,14 +155,7 @@ const handleClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
   ];
 
   // เมื่อมีการ log out ฟังก์ชันนี้จะทำการ clear token ใน local storage และเปลี่ยน path ไปที่หน้า log in
-  const logOut = () => {
-    localStorage.clear();
-    window.location.href = "/login";
-  }
 
-  useEffect(() => {
-    getWorkloads();
-  }, []);
 
   return (
     <div>
