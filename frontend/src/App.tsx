@@ -26,14 +26,20 @@ import MedicineRecords from "./components/medicinerecord/MedicineRecords";
 import MedicineRecordCreate from "./components/medicinerecord/MedicineRecordCreate";
 import Payments from "./components/payment/Payments";
 import PaymentCreate from "./components/payment/PaymentCreate";
+import DiagnosisRecord from "./components/diagnosisrecord/DiagnosisRecord";
+import DiagnosisRecordCreate from "./components/diagnosisrecord/DiagnosisRecordCreate";
+import TreatmentRecord from "./components/treatmentrecord/TreatmentRecord";
+import TreatmentRecordCreate from "./components/treatmentrecord/TreatmentRecordCreate";
 
 export default function App() {
-  // const [token, setToken] = React.useState<string | null>();
-  const token: string | null = localStorage.getItem("token"); // ตัวแปร token จะดึงค่า token ที่อยู่ใน local storage
-
-  // useEffect(() => {
-  //   setToken();
-  // }, []);
+  const [token, setToken] = React.useState<string | null>(null);
+  
+  useEffect(() => {
+    const getToken: string | null = localStorage.getItem("token"); // ตัวแปร token จะดึงค่า token ที่อยู่ใน local storage
+    if (getToken) {
+      setToken(getToken);
+    }
+  }, []);
 
 
   // ถ้า local storage ไม่มี token หรือ ตัวแปร token เป็น null จะสามารถเข้าถึง path Home, Log in และ UserCreate ได้
@@ -41,26 +47,23 @@ export default function App() {
     return (
       <Router>
         <div>
-          <Navbar />
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
-
             <Route path="*" element={<Navigate to="/" />} />
           </Routes>
         </div>
-
       </Router>
     );
   }
 
-
   // ถ้า local storage มี token หรือ ตัวแปร token ไม่เป็น null จะสามารถเข้าถึง path Home, Users
   return (
     <Router>
-      <div>
+      <>
         <Navbar />
         <Routes>
+          <Route path="/" element={<Home />} />
           <Route path="/employees" element={<Employees />} />
           <Route path="/employeecreate" element={<EmployeeCreate />} />
           <Route path="/employeecreate/:id" element={<EmployeeCreate />} />
@@ -89,13 +92,13 @@ export default function App() {
           <Route path="/queuingcreate" element={<QueuingManagementsCreate />} />
           <Route path="/queuingcreate/:id" element={<QueuingManagementsCreate />} />
           
-          {/* <Route path="/diagnosisrecords" element={<HistorySheets />} />
-          <Route path="/diagnosisrecordcreate" element={<HistorySheetCreate />} />
-          <Route path="/diagnosisrecordcreate/:id" element={<HistorySheetCreate />} /> */}
+          <Route path="/diagnosisrecords" element={<DiagnosisRecord />} />
+          <Route path="/diagnosisrecordcreate" element={<DiagnosisRecordCreate />} />
+          <Route path="/diagnosisrecordcreate/:id" element={<DiagnosisRecordCreate />} />
           
-          {/* <Route path="/treatmentrecords" element={<HistorySheets />} />
-          <Route path="/treatmentrecordcreate" element={<HistorySheetCreate />} />
-          <Route path="/treatmentrecordcreate/:id" element={<HistorySheetCreate />} /> */}
+          <Route path="/treatmentrecords" element={<TreatmentRecord />} />
+          <Route path="/treatmentrecordcreate" element={<TreatmentRecordCreate />} />
+          <Route path="/treatmentrecordcreate/:id" element={<TreatmentRecordCreate />} />
           
           <Route path="/appointments" element={<Appointments />} />
           <Route path="/appointmentcreate" element={<AppointmentCreate />} />
@@ -110,7 +113,7 @@ export default function App() {
           <Route path="/paymentcreate/:id" element={<PaymentCreate />} />
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
-      </div>
+      </>
     </Router>
   );
 }

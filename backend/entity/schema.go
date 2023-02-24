@@ -456,7 +456,7 @@ type StatusMed struct {
 type Payment struct {
 	gorm.Model
 
-	PaymentTime time.Time `valid:"present~Payment incorrect"`
+	PaymentTime time.Time `valid:"present~PaymentTime incorrect"`
 	Total       int       `valid:"Total~The value must be in range 1-9999"`
 
 	PatientRightID *uint

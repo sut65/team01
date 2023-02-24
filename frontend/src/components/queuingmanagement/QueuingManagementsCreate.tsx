@@ -35,7 +35,7 @@ import { QueuingManagementsInterface } from "../../models/IQueuingManagement/IQu
 import { Note } from "@mui/icons-material";
 
 
-cconst Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
+const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
   props,
   ref
 ) {

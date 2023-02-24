@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { Link as RouterLink } from "react-router-dom";
-import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import Container from "@mui/material/Container";
 import Box from "@mui/material/Box";
-import { IconButton, Dialog, DialogTitle, DialogContent, DialogActions } from "@mui/material";
+import MuiAlert  from "@mui/material/Alert";
+import { IconButton, Dialog, DialogTitle, DialogContent, DialogActions, Typography, AlertProps } from "@mui/material";
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { DataGrid, GridColDef, GridValueGetterParams } from "@mui/x-data-grid";
@@ -12,7 +12,10 @@ import { DiagnosisRecordsInterface } from "../../models/IDiagnosisRecord/IDiagno
 import { GetDiagnosisRecord } from "../../services/HttpClientService";
 import moment from "moment";
 
-
+const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(props, ref) {
+    return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+  });
+  
 function DiagnosisRecord() {
     const [diagnosisRecord, setDiagnosisRecord] = useState<DiagnosisRecordsInterface[]>([])
     const [open, setOpen] = React.useState<boolean[]>([]);
@@ -150,9 +153,9 @@ function DiagnosisRecord() {
                 } return <div>ไม่รับ</div>
             },
         },
-        {   field: "Date", headerName: "Date", width: 140,
-            valueGetter: (params) => moment(params.row.Date).format("DD/MM/YYYY") 
-        },
+        // {   field: "Date", headerName: "Date", width: 140,
+        //     valueFormatter: (params) => moment(params?.value).format("DD/MM/YYYY hh:mm A"),
+        // },
     ];
 
     return (

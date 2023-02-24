@@ -67,7 +67,7 @@ export default function LogIn() {
   // หน้าบ้าน จะใช้ JSON สื่อสารกันกับ หลังบ้าน
   // หน้าบ้านจะแนบ header(content-type) และ body(app-json) เพื่อติดต่อไปยังหลังงบ้านที่ method POST
   function Submit() {
-    const apiUrl = "http://localhost:8080/login";
+    const apiUrl = "http://localhost:8080/login/admin";
     const requestOptions = {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -83,37 +83,41 @@ export default function LogIn() {
           setSuccess(true); // ข้อมูลถูกต้อง แสดง pop up การทำงานสำเร็จ
           localStorage.setItem("token", res.data.token);  // setItem จะ set ค่า token ไปที่ Local storage
           localStorage.setItem("id", res.data.id);    // setItem จะ set ค่า id ไปที่ Local storage
-          window.location.href = "/historysheetcreate";   // เปลี่ยน path ไปที่หน้า create
+          localStorage.setItem("role", res.data.role);    // setItem จะ set ค่า role ไปที่ Local storage
+          window.location.href = "/employees";   // เปลี่ยน path ไปที่หน้า employee
         } else {
           setError(true); // ถ้า login ไม่สำเร็จ จะแสดง pop up กรณีทำงานไม่สำเร็จ
         }
       });
   }
-  // function SubmitUser() {
-  //   const apiUrl = "http://localhost:8080/login/user";
-  //   const requestOptions = {
-  //     method: "POST",
-  //     headers: { "Content-Type": "application/json" },
-  //     body: JSON.stringify(loginUser),
-  //   };
 
-  //   // หลังบ้านรับ request มา
-  //   // หลังบ้าน check data
-  //   fetch(apiUrl, requestOptions)
-  //     .then((response) => response.json())
-  //     .then((res) => {
-  //       if (res.data) {
-  //         setSuccess(true); // ข้อมูลถูกต้อง แสดง pop up การทำงานสำเร็จ
-  //         localStorage.setItem("token", res.data.token);  // setItem จะ set ค่า token ไปที่ Local storage
-  //         localStorage.setItem("id", res.data.id);    // setItem จะ set ค่า id ไปที่ Local storage
-  //         window.location.href = "/user_user";   // เปลี่ยน path ไปที่หน้า create
-  //       } else {
-  //         setError(true); // ถ้า login ไม่สำเร็จ จะแสดง pop up กรณีทำงานไม่สำเร็จ
-  //       }
-  //     });
-  // }
+  function SubmitUser() {
+    const apiUrl = "http://localhost:8080/login/employee";
+    const requestOptions = {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(loginUser),
+    };
 
-  console.log(login);   // แสดงข้อมูลการ Login
+    // หลังบ้านรับ request มา
+    // หลังบ้าน check data
+    fetch(apiUrl, requestOptions)
+      .then((response) => response.json())
+      .then((res) => {
+        if (res.data) {
+          setSuccess(true); // ข้อมูลถูกต้อง แสดง pop up การทำงานสำเร็จ
+          localStorage.setItem("token", res.data.token);  // setItem จะ set ค่า token ไปที่ Local storage
+          localStorage.setItem("id", res.data.id);    // setItem จะ set ค่า id ไปที่ Local storage
+          localStorage.setItem("role", res.data.role);    // setItem จะ set ค่า role ไปที่ Local storage
+          window.location.href = "/patients";   // เปลี่ยน path ไปที่หน้า create
+        } else {
+          setError(true); // ถ้า login ไม่สำเร็จ จะแสดง pop up กรณีทำงานไม่สำเร็จ
+        }
+      });
+  }
+
+  console.log("admin:", login);   // แสดงข้อมูลการ Login
+  console.log("employee:", loginUser);
 
   return (
     <Container component="main" maxWidth="xs">
@@ -193,6 +197,54 @@ export default function LogIn() {
         <Grid item xs={6}><p>email1 : Jariyaporn24@gmail.com</p></Grid>
         <Grid item xs={6}><p>password1 : JKNurse24</p></Grid>
       </Grid>
+
+      <Grid container spacing={2} sx={{ padding: 2 }}>
+        <Grid item xs={3}><p>Username</p></Grid>
+        <Grid item xs={9}>
+          <TextField
+            variant="outlined"
+            margin="normal"
+            required
+            fullWidth
+            id="Email"
+            label="Email Address"
+            name="Email"
+            autoComplete="email"
+            autoFocus
+            value={loginUser.Email || ""}
+            onChange={handleInputUserChange}
+          />
+        </Grid>
+      </Grid>
+      <Grid container spacing={2} sx={{ padding: 2 }}>
+        <Grid item xs={3}><p>Password</p></Grid>
+        <Grid item xs={9}>
+          <TextField
+            variant="outlined"
+            margin="normal"
+            required
+            fullWidth
+            name="Password"
+            label="Password"
+            type="password"
+            id="Password"
+            autoComplete="current-password"
+            value={loginUser.Password || ""}
+            onChange={handleInputUserChange}
+          />
+        </Grid>
+      </Grid>
+      <Box display="flex" sx={{ marginTop: 2, paddingX: 14 }}>
+        <Box>
+          <Button
+            onClick={SubmitUser}
+            variant="contained"
+            color="primary"
+          >
+            Log in
+          </Button>
+        </Box>
+      </Box>
     </Container>
   );
 }

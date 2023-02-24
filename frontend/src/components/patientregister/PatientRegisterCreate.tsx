@@ -381,7 +381,7 @@ function PatientRegisterCreate() {
 
             EmployeeID: employees.ID,
             PrefixID: typeof patientregisters.PrefixID === "string" ? parseInt(patientregisters.PrefixID) : patientregisters.PrefixID,
-            GenderID: typeof patientregisters.PatientRegisterGenderID === "string" ? parseInt(patientregisters.PatientRegisterGenderID) : patientregisters.PatientRegisterGenderID,
+            PatientRegisterGenderID: typeof patientregisters.PatientRegisterGenderID === "string" ? parseInt(patientregisters.PatientRegisterGenderID) : patientregisters.PatientRegisterGenderID,
             NationalityID: typeof patientregisters.NationalityID === "string" ? parseInt(patientregisters.NationalityID) : patientregisters.NationalityID,
             ReligionID: typeof patientregisters.ReligionID === "string" ? parseInt(patientregisters.ReligionID) : patientregisters.ReligionID,
             BloodTypeID: typeof patientregisters.BloodTypeID === "string" ? parseInt(patientregisters.BloodTypeID) : patientregisters.BloodTypeID,
@@ -550,10 +550,10 @@ function PatientRegisterCreate() {
                         <FormControl fullWidth>
                             <InputLabel>เพศ</InputLabel>
                             <Select
-                                id="GenderID"
-                                title="GenderID"
+                                id="PatientRegisterGenderID"
+                                title="PatientRegisterGenderID"
                                 inputProps={{
-                                    name: "GenderID"
+                                    name: "PatientRegisterGenderID"
                                 }}
                                 value={patientregisters.PatientRegisterGenderID || 0}
                                 onChange={handleSelectChange}

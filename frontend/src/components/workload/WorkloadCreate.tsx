@@ -21,7 +21,7 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { Select } from '@mui/material';
 import { SelectChangeEvent } from '@mui/material';
 import { DesktopTimePicker } from '@mui/x-date-pickers';
-import moment from 'moment';
+import moment from "moment";
 
 const theme = createTheme({
     palette: {

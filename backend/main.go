@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/sut65/team01/controller"
 	controller_appointment "github.com/sut65/team01/controller/appointment"
 	controller_diagnosisrecord "github.com/sut65/team01/controller/diagnosisrecord"
 	controller_employee "github.com/sut65/team01/controller/employee"
@@ -142,7 +143,6 @@ func main() {
 			protected.GET("/outpatientscreenings", controller_outpatientscreening.ListOutpatientScreenings)
 			protected.GET("/outpatientscreening/:id", controller_outpatientscreening.GetOutpatientScreening)
 			protected.POST("/outpatientscreenings", controller_outpatientscreening.CreateOutpatientScreenings)
-			protected.PATCH("/outpatientscreenings", controller_outpatientscreening.UpdateOutpatientScreening)
 			protected.DELETE("/outpatientscreenings/:id", controller_outpatientscreening.DeleteOutpatientScreening)
 
 			// DiabetesLevel Routes
@@ -295,8 +295,8 @@ func main() {
 	}
 
 	// Run the server
-	// r.POST("/login", controller.Login)
-	// r.POST("/login/employee", controller.LoginEmployee)
+	r.POST("/login/admin", controller.LoginAdmin)
+	r.POST("/login/employee", controller.LoginEmployee)
 	r.Run()
 }
 func CORSMiddleware() gin.HandlerFunc {

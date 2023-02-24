@@ -15,7 +15,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import MuiAlert, { AlertProps } from "@mui/material/Alert";
 
-import '../App.css';
+// import 'App.css';
 import { EmployeesInterface } from "../../models/IEmployee/IEmployee";
 import { PatientRegistersInterface } from "../../models/IPatientRegister/IPatientRegister";
 import { DiagnosisRecordsInterface,  DiseasesInterface } from "../../models/IDiagnosisRecord/IDiagnosisRecord";

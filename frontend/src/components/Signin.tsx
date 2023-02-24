@@ -1,198 +1,175 @@
-
-import { Alert, Avatar, Box, Button, Container, CssBaseline, Grid, Snackbar, Tab, TextField, Typography } from "@mui/material";
-import { error } from "console";
-import React from "react";
-import AccountCircleSharpIcon from '@mui/icons-material/AccountCircleSharp';
-import { useState } from "react";
+import React, { useState } from "react";
+import Avatar from "@mui/material/Avatar";
+import Button from "@mui/material/Button";
+import CssBaseline from "@mui/material/CssBaseline";
+import TextField from "@mui/material/TextField";
+import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
+import Typography from "@mui/material/Typography";
+import Snackbar from "@mui/material/Snackbar";
+import MuiAlert, { AlertProps } from "@mui/material/Alert";
+import Container from "@mui/material/Container";
+import Tab from '@mui/material/Tab';
+import Box from '@mui/material/Box';
+import TabContext from '@mui/lab/TabContext';
+import TabList from '@mui/lab/TabList';
+import TabPanel from '@mui/lab/TabPanel';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { SigninInterface } from "../models/ISignin";
-// import { LoginInterface } from "../models/ILogin";
 
+const theme = createTheme({
+  palette: {
+    primary: {
+      light: '#80cbc4',
+      main: '#4db6ac',
+      dark: '#26a69a',
+      contrastText: '#fff',
+    },
+  },
+});
 
+const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
+  props,
+  ref
+) {
+  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
 
-export default function LogIn() {
+function SignIn() {
+  const [signin, setSignin] = useState<Partial<SigninInterface>>({});
+  const [success, setSuccess] = useState(false);
+  const [error, setError] = useState(false);
+  const [value, setValue] = React.useState("0");
+  const handleChange = (event: React.ChangeEvent<{}>, newValue: string) => {
+    setValue(newValue);
+    setSignin({});
+  }
 
-  // ประกาศตัวแปร login และ setlogin สำหรับเก็บค่า email และ password
-  // setlogin เป็นตัว set ค่า email และ password เข้าไปที่ตัวแปร login
-  const [login, setLogin] = useState<Partial<SigninInterface>>({
-    Email: "", Password: ""
-  });
-  const [loginUser, setLoginUser] = useState<Partial<SigninInterface>>({
-    Email: "", Password: ""
-  });
+  const loginadmin = () => {
+    const apiUrl = "http://localhost:8080/login";
+    const requestOptions = {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(signin),
+    };
+    fetch(apiUrl, requestOptions)
+      .then((response) => response.json())
+      .then((res) => {
+        if (res.data) {
+          setSuccess(true);
+          localStorage.setItem("token", res.data.token);
+          localStorage.setItem("id", res.data.id);
+          localStorage.setItem("role", "admin");
+          window.location.href = "/";
+        } else {
+          setError(true);
+        }
+      });
+  };
 
-  // ประกาศตัวแปร value สำหรับการเปลี่ยนค่าใน tab
-  const [value, setValue] = useState("1");
+  const handleInputChange = (
+    event: React.ChangeEvent<{ id?: string; value: any }>
+  ) => {
+    const id = event.target.id as keyof typeof signin;
+    const { value } = event.target;
+    setSignin({ ...signin, [id]: value });
+  };
 
-  // ควบคุม pop up snackbar
-  // success เป็น true จะแสดง pop up กรณีทำงานสำเร็จ
-  // error เป็น true จะแสดง pop up กรณีทำงานไม่สำเร็จ
-  const [success, setSuccess] = React.useState(false);
-  const [error, setError] = React.useState(false);
-
-  // handleclose จะเป็นตัวจัดการ pop up ให้หยุดการทำงานหลังจากที่แสดง pop up ในแต่ละกรณี 
   const handleClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
     if (reason === "clickaway") {
       return;
-    }
-    if (success === true) {
-      window.location.href = "/create"; // เมื่อ success เป็น true จะทำการเปลี่ยน path ไปที่หน้า create
     }
     setSuccess(false);
     setError(false);
   };
 
-
-  // setlogin ทำการเก็บ email และ password จาก textfield ไปเก็บที่ตัวแปร login
-  const handleInputChange = (
-    event: React.ChangeEvent<{ id?: string; value: any }>
-  ) => {
-    const id = event.target.id as keyof typeof login;
-    const { value } = event.target;
-    setLogin({ ...login, [id]: value });
-  };
-  const handleInputUserChange = (
-    event: React.ChangeEvent<{ id?: string; value: any }>
-  ) => {
-    const id = event.target.id as keyof typeof loginUser;
-    const { value } = event.target;
-    setLoginUser({ ...loginUser, [id]: value });
-  };
-
-  const handleTabChange = (event: React.ChangeEvent<{}>, newValue: string) => {
-    setValue(newValue);
-  }
-
-
-  // ที่หน้า Login
-  // หน้าบ้าน จะใช้ JSON สื่อสารกันกับ หลังบ้าน
-  // หน้าบ้านจะแนบ header(content-type) และ body(app-json) เพื่อติดต่อไปยังหลังงบ้านที่ method POST
-  function Submit() {
-    const apiUrl = "http://localhost:8080/login";
-    const requestOptions = {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(login),
-    };
-
-    // หลังบ้านรับ request มา
-    // หลังบ้าน check data
-    fetch(apiUrl, requestOptions)
-      .then((response) => response.json())
-      .then((res) => {
-        if (res.data) {
-          setSuccess(true); // ข้อมูลถูกต้อง แสดง pop up การทำงานสำเร็จ
-          localStorage.setItem("token", res.data.token);  // setItem จะ set ค่า token ไปที่ Local storage
-          localStorage.setItem("id", res.data.id);    // setItem จะ set ค่า id ไปที่ Local storage
-          window.location.href = "/historysheetcreate";   // เปลี่ยน path ไปที่หน้า create
-        } else {
-          setError(true); // ถ้า login ไม่สำเร็จ จะแสดง pop up กรณีทำงานไม่สำเร็จ
-        }
-      });
-  }
-  // function SubmitUser() {
-  //   const apiUrl = "http://localhost:8080/login/user";
-  //   const requestOptions = {
-  //     method: "POST",
-  //     headers: { "Content-Type": "application/json" },
-  //     body: JSON.stringify(loginUser),
-  //   };
-
-  //   // หลังบ้านรับ request มา
-  //   // หลังบ้าน check data
-  //   fetch(apiUrl, requestOptions)
-  //     .then((response) => response.json())
-  //     .then((res) => {
-  //       if (res.data) {
-  //         setSuccess(true); // ข้อมูลถูกต้อง แสดง pop up การทำงานสำเร็จ
-  //         localStorage.setItem("token", res.data.token);  // setItem จะ set ค่า token ไปที่ Local storage
-  //         localStorage.setItem("id", res.data.id);    // setItem จะ set ค่า id ไปที่ Local storage
-  //         window.location.href = "/user_user";   // เปลี่ยน path ไปที่หน้า create
-  //       } else {
-  //         setError(true); // ถ้า login ไม่สำเร็จ จะแสดง pop up กรณีทำงานไม่สำเร็จ
-  //       }
-  //     });
-  // }
-
-  console.log(login);   // แสดงข้อมูลการ Login
-
   return (
     <Container component="main" maxWidth="xs">
-      <Snackbar
-        open={success}
-        autoHideDuration={3000}
-        onClose={handleClose}
-        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-      >
+      <Snackbar open={success} autoHideDuration={6000} onClose={handleClose}>
         <Alert onClose={handleClose} severity="success">
           เข้าสู่ระบบสำเร็จ
         </Alert>
       </Snackbar>
       <Snackbar open={error} autoHideDuration={6000} onClose={handleClose}>
         <Alert onClose={handleClose} severity="error">
-          เข้าสู่ระบบไม่สำเร็จ
+          อีเมลหรือรหัสผ่านไม่ถูกต้อง
         </Alert>
       </Snackbar>
-      <Grid container spacing={2} sx={{ marginTop: 4, paddingX: 7 }}>
-        <Grid item xs={2}>
-          <AccountCircleSharpIcon fontSize="large" color="primary" />
-        </Grid>
-        <Grid item xs={10}>
-          <Typography component="h2" variant="h6" color="primary" gutterBottom>
-            Sign in
-          </Typography>
-        </Grid>
-      </Grid>
-      <Grid container spacing={2} sx={{ padding: 2 }}>
-        <Grid item xs={3}><p>Username</p></Grid>
-        <Grid item xs={9}>
-          <TextField
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            id="Email"
-            label="Email Address"
-            name="Email"
-            autoComplete="email"
-            autoFocus
-            value={login.Email || ""}
-            onChange={handleInputChange}
-          />
-        </Grid>
-      </Grid>
-      <Grid container spacing={2} sx={{ padding: 2 }}>
-        <Grid item xs={3}><p>Password</p></Grid>
-        <Grid item xs={9}>
-          <TextField
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            name="Password"
-            label="Password"
-            type="password"
-            id="Password"
-            autoComplete="current-password"
-            value={login.Password || ""}
-            onChange={handleInputChange}
-          />
-        </Grid>
-      </Grid>
-      <Box display="flex" sx={{ marginTop: 2, paddingX: 14 }}>
-        <Box>
-          <Button
-            onClick={Submit}
-            variant="contained"
-            color="primary"
-          >
-            Log in
-          </Button>
+      <CssBaseline />
+      <div style={{
+        marginTop: 8,
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+      }}>
+        
+        <Avatar sx={{ margin: 1, backgroundColor: "#009688" }}>
+          <LockOutlinedIcon />
+        </Avatar>
+        
+        <Typography component="h1" variant="h5" style={{fontSize: '1rem'}}>
+          เข้าสู่ระบบ
+        </Typography>
+
+        <Box sx={{ width: '100%' }}>
+          <TabContext value={value}>
+          <ThemeProvider theme={theme}>
+            <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+              <TabList onChange={handleChange} aria-label="lab API tabs example">
+                <Tab label="ผู้ดูแลระบบ" value="0" />
+              </TabList>
+            </Box>   
+          </ThemeProvider>
+            <TabPanel value="0">
+              <form style={{ width: "100%", marginTop: 1 }} noValidate>
+              <ThemeProvider theme={theme}>
+                <TextField
+                  variant="outlined"
+                  margin="normal"
+                  required
+                  fullWidth
+                  id="Email"
+                  label="อีเมล"
+                  name="Email"
+                  autoComplete="email"
+                  autoFocus
+                  value={signin.Email || ""}
+                  onChange={handleInputChange}
+                />
+
+                <TextField
+                  variant="outlined"
+                  margin="normal"
+                  required
+                  fullWidth
+                  name="Password"
+                  label="รหัสผ่าน"
+                  type="password"
+                  id="Password"
+                  autoComplete="current-password"
+                  value={signin.Password || ""}
+                  onChange={handleInputChange}
+                />
+                
+                <Button
+                  fullWidth
+                  variant="contained"
+                  color="primary"
+                  sx={{ marginTop: 3, marginBottom: 0 }}
+                  onClick={loginadmin}
+                  style={{fontSize: '1rem'}}
+                >
+                  เข้าสู่ระบบ
+                </Button>
+                
+              </ThemeProvider>
+              </form>
+            </TabPanel>
+            
+          </TabContext>
         </Box>
-      </Box>
-      <Grid container spacing={3} sx={{ padding: 2 }}>
-        <Grid item xs={6}><p>email1 : Jariyaporn24@gmail.com</p></Grid>
-        <Grid item xs={6}><p>password1 : JKNurse24</p></Grid>
-      </Grid>
+      </div>
     </Container>
   );
 }
+
+export default SignIn;

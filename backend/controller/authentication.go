@@ -19,54 +19,55 @@ type LoginPayload struct {
 type LoginResponse struct {
 	Token string `json:"token"`
 	ID    uint   `json:"id"`
+	Role  string `json:"role"`
 }
 
 // POST /login
-func Login(c *gin.Context) {
-	var payload LoginPayload
-	var employee entity.Employee
+// func Login(c *gin.Context) {
+// 	var payload LoginPayload
+// 	var employee entity.Employee
 
-	if err := c.ShouldBindJSON(&payload); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-	// ค้นหา employee ด้วย email ที่ผู้ใช้กรอกเข้ามา
-	if err := entity.DB().Raw("SELECT * FROM employees WHERE email = ?", payload.Email).Scan(&employee).Error; err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
+// 	if err := c.ShouldBindJSON(&payload); err != nil {
+// 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+// 		return
+// 	}
+// 	// ค้นหา employee ด้วย email ที่ผู้ใช้กรอกเข้ามา
+// 	if err := entity.DB().Raw("SELECT * FROM employees WHERE email = ?", payload.Email).Scan(&employee).Error; err != nil {
+// 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+// 		return
+// 	}
 
-	// ตรวจสอบรหัสผ่าน
-	err := bcrypt.CompareHashAndPassword([]byte(employee.Password), []byte(payload.Password))
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid employee credentials"})
-		return
-	}
+// 	// ตรวจสอบรหัสผ่าน
+// 	err := bcrypt.CompareHashAndPassword([]byte(employee.Password), []byte(payload.Password))
+// 	if err != nil {
+// 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid employee credentials"})
+// 		return
+// 	}
 
-	// กำหนดค่า SecretKey, Issuer และระยะเวลาหมดอายุของ Token สามารถกำหนดเองได้
-	// SecretKey ใช้สำหรับการ sign ข้อความเพื่อบอกว่าข้อความมาจากตัวเราแน่นอน
-	// Issuer เป็น unique id ที่เอาไว้ระบุตัว client
-	// ExpirationHours เป็นเวลาหมดอายุของ token
+// 	// กำหนดค่า SecretKey, Issuer และระยะเวลาหมดอายุของ Token สามารถกำหนดเองได้
+// 	// SecretKey ใช้สำหรับการ sign ข้อความเพื่อบอกว่าข้อความมาจากตัวเราแน่นอน
+// 	// Issuer เป็น unique id ที่เอาไว้ระบุตัว client
+// 	// ExpirationHours เป็นเวลาหมดอายุของ token
 
-	jwtWrapper := service.JwtWrapper{
-		SecretKey:       "SvNQpBN8y3qlVrsGAYYWoJJk56LtzFHx",
-		Issuer:          "AuthService",
-		ExpirationHours: 24,
-	}
+// 	jwtWrapper := service.JwtWrapper{
+// 		SecretKey:       "SvNQpBN8y3qlVrsGAYYWoJJk56LtzFHx",
+// 		Issuer:          "AuthService",
+// 		ExpirationHours: 24,
+// 	}
 
-	signedToken, err := jwtWrapper.GenerateToken(employee.Email)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "error signing token"})
-		return
-	}
+// 	signedToken, err := jwtWrapper.GenerateToken(employee.Email)
+// 	if err != nil {
+// 		c.JSON(http.StatusBadRequest, gin.H{"error": "error signing token"})
+// 		return
+// 	}
 
-	tokenResponse := LoginResponse{
-		Token: signedToken,
-		ID:    employee.ID,
-	}
+// 	tokenResponse := LoginResponse{
+// 		Token: signedToken,
+// 		ID:    employee.ID,
+// 	}
 
-	c.JSON(http.StatusOK, gin.H{"data": tokenResponse})
-}
+// 	c.JSON(http.StatusOK, gin.H{"data": tokenResponse})
+// }
 
 // POST /login/employee
 func LoginEmployee(c *gin.Context) {
@@ -110,6 +111,55 @@ func LoginEmployee(c *gin.Context) {
 	tokenResponse := LoginResponse{
 		Token: signedToken,
 		ID:    employee.ID,
+		Role:  "employee",
+	}
+
+	c.JSON(http.StatusOK, gin.H{"data": tokenResponse})
+}
+
+// POST /login/admin
+func LoginAdmin(c *gin.Context) {
+	var payload LoginPayload
+	var admin entity.Admin
+	// ผลลัพธ์ที่ได้จากการ login จะถูก bind เข้าตัวแปร payload
+	if err := c.ShouldBindJSON(&payload); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	// ค้นหา admin ด้วย email ที่ผู้ใช้กรอกเข้ามา
+	if err := entity.DB().Raw("SELECT * FROM admins WHERE email = ?", payload.Email).Scan(&admin).Error; err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	// ตรวจสอบรหัสผ่าน
+	err := bcrypt.CompareHashAndPassword([]byte(admin.Password), []byte(payload.Password))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid admin credentials"})
+		return
+	}
+
+	// กำหนดค่า SecretKey, Issuer และระยะเวลาหมดอายุของ Token สามารถกำหนดเองได้
+	// SecretKey ใช้สำหรับการ sign ข้อความเพื่อบอกว่าข้อความมาจากตัวเราแน่นอน
+	// Issuer เป็น unique id ที่เอาไว้ระบุตัว client
+	// ExpirationHours เป็นเวลาหมดอายุของ token
+
+	jwtWrapper := service.JwtWrapper{
+		SecretKey:       "SvNQpBN8y3qlVrsGAYYWoJJk56LtzFHx",
+		Issuer:          "AuthService",
+		ExpirationHours: 24,
+	}
+
+	signedToken, err := jwtWrapper.GenerateToken(admin.Email)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "error signing token"})
+		return
+	}
+
+	tokenResponse := LoginResponse{
+		Token: signedToken,
+		ID:    admin.ID,
+		Role:  "admin",
 	}
 
 	c.JSON(http.StatusOK, gin.H{"data": tokenResponse})

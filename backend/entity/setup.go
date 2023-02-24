@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"time"
 
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/driver/sqlite"
@@ -66,6 +67,21 @@ func SetupDatabase() {
 		Password:  string(PasswordAdmin2),
 	}
 	db.Model(&Admin{}).Create(&Admin2)
+
+	//พนักงาน
+	PasswordEmp1, err := bcrypt.GenerateFromPassword([]byte("1111"), 14)
+	Emp1 := Employee{
+		Admin:       Admin2,
+		IDCard:      "1410087223152",
+		FirstName:   "มะลิ",
+		LastName:    "แสนสุข",
+		PhoneNumber: "0999999909",
+		Email:       "mali@gmail.com",
+		Password:    string(PasswordEmp1),
+		Salary:      21000,
+		Birthday:    time.Date(2000, 5, 1, 0, 0, 0, 0, time.UTC),
+	}
+	db.Model(&Employee{}).Create(&Emp1)
 
 	// PatientRegisterGender ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	patientregistergender1 := PatientRegisterGender{

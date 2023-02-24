@@ -10,7 +10,7 @@ import (
 )
 
 func TestMedicineRecord(t *testing.T) {
-	g := NewWithT(t)
+	g := NewGomegaWithT(t)
 
 	//ข้อมูลที่ถูกต้องหมดทุก field
 	medicinerecord := MedicineRecord{
@@ -28,7 +28,7 @@ func TestMedicineRecord(t *testing.T) {
 	g.Expect(err).To(BeNil())
 }
 func TestAdvicetext(t *testing.T) {
-	g := NewWithT(t)
+	g := NewGomegaWithT(t)
 
 	// field Advicetext ผิด
 	medicinerecord := MedicineRecord{

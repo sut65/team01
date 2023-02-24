@@ -1,6 +1,5 @@
 import React, { useEffect } from "react";
 import { Link as RouterLink } from "react-router-dom";
-import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
 import Container from "@mui/material/Container";
@@ -15,6 +14,7 @@ import { AppointmentsInterface } from "../../models/IAppointment/IAppointment";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import Typography from "@mui/material/Typography";
 
 const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;

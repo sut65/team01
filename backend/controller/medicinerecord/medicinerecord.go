@@ -178,7 +178,7 @@ func UpdateMedicineRecord(c *gin.Context) {
 	}
 
 	newpayload.TreatmentRecord = payload.TreatmentRecord
-	newpayload.StatusMed = payload.StatusMed
+	newpayload.StatusMedID = payload.StatusMedID
 	newpayload.Advicetext = payload.Advicetext
 	newpayload.MedTime = payload.MedTime
 	updatemr := entity.MedicineRecord{
