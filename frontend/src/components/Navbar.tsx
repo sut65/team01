@@ -28,8 +28,34 @@ export default function Navbar() {
 
     { name: "บันทึกข้อมูลบุคลากร", icon: <CreateIcon />, path: "/createemployee" },
     { name: "ข้อมูลบุคลากร", icon: <AssignmentIcon />, path: "/employees" },
-    { name: "บันทึกภาระงานแพทย์", icon: <CreateIcon />, path: "/createworkload" },
-    { name: "ภาระงานแพทย์", icon: <AssignmentIcon />, path: "/workloads" },
+    { name: "บันทึกข้อมูลภาระงานแพทย์", icon: <CreateIcon />, path: "/createworkload" },
+    { name: "ข้อมูลภาระงานแพทย์", icon: <AssignmentIcon />, path: "/workloads" },
+
+    { name: "ลงทะเบียนข้อมูลคนไข้นอก", icon: <CreateIcon />, path: "/createemployee" },
+    { name: "ข้อมูลคนไข้นอก", icon: <AssignmentIcon />, path: "/employees" },
+    { name: "บันทึกข้อมูลสิทธิการรักษา", icon: <CreateIcon />, path: "/createworkload" },
+    { name: "ข้อมูลสิทธิการรักษา", icon: <AssignmentIcon />, path: "/workloads" },
+
+    { name: "บันทึกข้อมูลการซักประวัติ", icon: <CreateIcon />, path: "/createworkload" },
+    { name: "ข้อมูลการซักประวัติ", icon: <AssignmentIcon />, path: "/workloads" },
+
+    { name: "บันทึกข้อมูลการคัดกรอง", icon: <CreateIcon />, path: "/createemployee" },
+    { name: "ข้อมูลการคัดกรอง", icon: <AssignmentIcon />, path: "/employees" },
+    { name: "บันทึกข้อมูลคิว", icon: <CreateIcon />, path: "/createworkload" },
+    { name: "ข้อมูลคิวการรักษา", icon: <AssignmentIcon />, path: "/workloads" },
+
+    { name: "บันทึกข้อมูลผลการวินิจฉัย", icon: <CreateIcon />, path: "/createemployee" },
+    { name: "ข้อมูลผลการวินิจฉัย", icon: <AssignmentIcon />, path: "/employees" },
+    { name: "บันทึกข้อมูลการรักษา", icon: <CreateIcon />, path: "/createworkload" },
+    { name: "ข้อมูลการรักษา", icon: <AssignmentIcon />, path: "/workloads" },
+    
+    { name: "บันทึกข้อมูลการนัดหมาย", icon: <CreateIcon />, path: "/createemployee" },
+    { name: "ข้อมูลการนัดหมาย", icon: <AssignmentIcon />, path: "/employees" },
+
+    { name: "บันทึกข้อมูลการจ่ายยาและเวชภัณฑ์", icon: <CreateIcon />, path: "/createemployee" },
+    { name: "ข้อมูลการจ่ายยาและเวชภัณฑ์", icon: <AssignmentIcon />, path: "/employees" },
+    { name: "บันทึกข้อมูลการชำระเงิน", icon: <CreateIcon />, path: "/createworkload" },
+    { name: "ข้อมูลการชำระเงิน", icon: <AssignmentIcon />, path: "/workloads" },
   ]
   // const menu_employee = [
 
