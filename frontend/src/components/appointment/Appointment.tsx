@@ -55,8 +55,8 @@ function Appointments() {
       .then((res) => {
         console.log(res);
         if (res.data) {
-          console.log(res.Data);
-          setAppointments(res.Data);  // ข้อมูลถูกต้อง หลังบ้านจะส่งข้อมูลมาตามที่ขอ
+          console.log(res.data);
+          setAppointments(res.data);  // ข้อมูลถูกต้อง หลังบ้านจะส่งข้อมูลมาตามที่ขอ
         }
         else {
           console.log(res.error);  // ข้อมูลไม่ถูกต้อง จะแสดงค่า error ที่ console เช่น token หรือ ข้อมูลไม่ถูกต้อง ก็จะแสดงค่าของข้อมูลตัวนั้น
@@ -140,11 +140,12 @@ function Appointments() {
       }
     },
     { field: "ID", headerName: "ID", width: 96, },
-    { field: "PatientID", headerName: "เลขบัตรประชาชน", width: 96 },
-    { field: "Doctor", headerName: "แพทย์", width: 96, valueGetter: (params) => { return params.row.Doctor.FirstName + " " + params.row.Doctor.LastName } },
-    { field: "Clinic", headerName: "คลินิก", width: 96, valueGetter: (params) => { return params.row.ClinicLog.Name }},
+    { field: "Patient", headerName: "ชื่อ - สกุล", width: 96, valueGetter: (params) => params.row.PatientRegister.FirstName + " " + params.row.PatientRegister.LastName },
+    { field: "PatientID", headerName: "เลขบัตรประชาชน", width: 106, valueGetter: (params) => params.row.PatientRegister.IdentificationNumber },
+    { field: "Doctor", headerName: "แพทย์", width: 96, valueGetter: (params) => { return params.row.Employee.FirstName + " " + params.row.Employee.LastName } },
+    // { field: "Clinic", headerName: "คลินิก", width: 96, valueGetter: (params) => { return params.row.ClinicLog.Name }},
     { field: "Room", headerName: "ห้อง", width: 96 ,valueGetter: (params) => { return params.row.Room.Name }},
-    { field: "Time", headerName: "เวลานัดหมาย", width: 96 },
+    { field: "AppointmentTime", headerName: "เวลานัดหมาย", width: 96 },
     { field: "Note", headerName: "หมายเหตุ", width: 96 },
   ];
 

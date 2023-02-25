@@ -5,8 +5,8 @@ import (
 
 	"github.com/sut65/team01/entity"
 	//"github.com/ChatreeDev/sa-65-example/entity"
-	"github.com/gin-gonic/gin"
 	"github.com/asaskevich/govalidator"
+	"github.com/gin-gonic/gin"
 )
 
 // POST /outpatientScreenings
@@ -118,7 +118,7 @@ func GetOutpatientScreening(c *gin.Context) {
 		Preload("HistorySheet").
 		Preload("EmergencyLevel").
 		Preload("HighBloodPressureLevel").
-		Preload("DiabetesLevels").
+		Preload("DiabetesLevel").
 		Preload("ObesityLevel").
 		Find(&outpatientScreening).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})

@@ -51,7 +51,7 @@ func TestTotal(t *testing.T) {
 		g.Expect(err).ToNot(BeNil())
 
 		// err.Error ต้องมี error message แสดงออกมา
-		g.Expect(err.Error()).To(Equal("The value must be in range 1-9999"))
+		g.Expect(err.Error()).To(Equal("The value must be in range 0-9999"))
 	}
 
 }

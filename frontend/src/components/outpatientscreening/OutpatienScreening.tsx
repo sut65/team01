@@ -53,7 +53,7 @@ function OutpatientScreenings() {
 
 
   const getOutpatientScreenings = async () => {
-        const apiUrl = `http://localhost:8080/outpatientScreenings`;
+        const apiUrl = `http://localhost:8080/outpatientscreenings`;
         const requestOptions = {
           method: "GET",
           headers: {
@@ -75,7 +75,7 @@ function OutpatientScreenings() {
       };
 
   const DeleteOutpatientScreening = async (id: number) => {
-    const apiUrl = `http://localhost:8080/outpatientScreenings/${id}`;
+    const apiUrl = `http://localhost:8080/outpatientscreenings/${id}`;
     const requestOptions = {
       method: "DELETE",
       headers: {
@@ -129,7 +129,7 @@ function OutpatientScreenings() {
       renderCell: (params) => {
         return (
           <React.Fragment>
-            <IconButton size="small" component={RouterLink} to={`/create/${params.row.ID}`}>
+            <IconButton size="small" component={RouterLink} to={`/outpatientscreeningcreate/${params.row.ID}`}>
               <EditIcon color="success" fontSize="small"></EditIcon>
             </IconButton>
             <IconButton size="small" onClick={() => handleOpen(params.row.ID)}>

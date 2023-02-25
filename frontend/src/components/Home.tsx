@@ -1,123 +1,69 @@
+import { Box, Container } from '@mui/system'
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import CardMedia from '@mui/material/CardMedia';
+import { CardActionArea } from '@mui/material';
 import { Link as RouterLink } from "react-router-dom";
-import { Alert, Avatar, Box, Button, Container, CssBaseline, Grid, Paper, Snackbar, Tab, TextField, Typography } from "@mui/material";
-import { error } from "console";
-import React from "react";
-import AccountCircleSharpIcon from '@mui/icons-material/AccountCircleSharp';
-import Navbar from "./Navbar";
-import { useState } from "react";
-
-export default function Home() {
-
-  // ประกาศตัวแปร login และ setlogin สำหรับเก็บค่า email และ password
-  // setlogin เป็นตัว set ค่า email และ password เข้าไปที่ตัวแปร login
-  // const [login, setLogin] = useState<Partial<SigninInterface>>({
-  //   Email: "", Password: ""
-  // });
-  // const [loginUser, setLoginUser] = useState<Partial<SigninInterface>>({
-  //   Email: "", Password: ""
-  // });
-
-  // ประกาศตัวแปร value สำหรับการเปลี่ยนค่าใน tab
-  // const [value, setValue] = useState("1");
-
-  // // ควบคุม pop up snackbar
-  // // success เป็น true จะแสดง pop up กรณีทำงานสำเร็จ
-  // // error เป็น true จะแสดง pop up กรณีทำงานไม่สำเร็จ
-  // const [success, setSuccess] = React.useState(false);
-  // const [error, setError] = React.useState(false);
-
-  // // handleclose จะเป็นตัวจัดการ pop up ให้หยุดการทำงานหลังจากที่แสดง pop up ในแต่ละกรณี 
-  // const handleClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
-  //   if (reason === "clickaway") {
-  //     return;
-  //   }
-  //   if (success === true) {
-  //     window.location.href = "/create"; // เมื่อ success เป็น true จะทำการเปลี่ยน path ไปที่หน้า create
-  //   }
-  //   setSuccess(false);
-  //   setError(false);
-  // };
+import { Button, Typography } from "@mui/material";
 
 
-  // setlogin ทำการเก็บ email และ password จาก textfield ไปเก็บที่ตัวแปร login
-  // const handleInputChange = (
-  //   event: React.ChangeEvent<{ id?: string; value: any }>
-  // ) => {
-  //   const id = event.target.id as keyof typeof login;
-  //   const { value } = event.target;
-  //   setLogin({ ...login, [id]: value });
-  // };
-  // const handleInputUserChange = (
-  //   event: React.ChangeEvent<{ id?: string; value: any }>
-  // ) => {
-  //   const id = event.target.id as keyof typeof loginUser;
-  //   const { value } = event.target;
-  //   setLoginUser({ ...loginUser, [id]: value });
-  // };
-
-  // const handleTabChange = (event: React.ChangeEvent<{}>, newValue: string) => {
-  //   setValue(newValue);
-  // }
 
 
-  // ที่หน้า Login
-  // หน้าบ้าน จะใช้ JSON สื่อสารกันกับ หลังบ้าน
-  // หน้าบ้านจะแนบ header(content-type) และ body(app-json) เพื่อติดต่อไปยังหลังงบ้านที่ method POST
-  // function Submit() {
-  //   const apiUrl = "http://localhost:8080/login";
-  //   const requestOptions = {
-  //     method: "POST",
-  //     headers: { "Content-Type": "application/json" },
-  //     body: JSON.stringify(login),
-  //   };
-
-  //   // หลังบ้านรับ request มา
-  //   // หลังบ้าน check data
-  //   fetch(apiUrl, requestOptions)
-  //     .then((response) => response.json())
-  //     .then((res) => {
-  //       if (res.data) {
-  //         setSuccess(true); // ข้อมูลถูกต้อง แสดง pop up การทำงานสำเร็จ
-  //         localStorage.setItem("token", res.data.token);  // setItem จะ set ค่า token ไปที่ Local storage
-  //         localStorage.setItem("id", res.data.id);    // setItem จะ set ค่า id ไปที่ Local storage
-  //         window.location.href = "/historysheetcreate";   // เปลี่ยน path ไปที่หน้า create
-  //       } else {
-  //         setError(true); // ถ้า login ไม่สำเร็จ จะแสดง pop up กรณีทำงานไม่สำเร็จ
-  //       }
-  //     });
-  // }
-  // function SubmitUser() {
-  //   const apiUrl = "http://localhost:8080/login/user";
-  //   const requestOptions = {
-  //     method: "POST",
-  //     headers: { "Content-Type": "application/json" },
-  //     body: JSON.stringify(loginUser),
-  //   };
-
-  //   // หลังบ้านรับ request มา
-  //   // หลังบ้าน check data
-  //   fetch(apiUrl, requestOptions)
-  //     .then((response) => response.json())
-  //     .then((res) => {
-  //       if (res.data) {
-  //         setSuccess(true); // ข้อมูลถูกต้อง แสดง pop up การทำงานสำเร็จ
-  //         localStorage.setItem("token", res.data.token);  // setItem จะ set ค่า token ไปที่ Local storage
-  //         localStorage.setItem("id", res.data.id);    // setItem จะ set ค่า id ไปที่ Local storage
-  //         window.location.href = "/user_user";   // เปลี่ยน path ไปที่หน้า create
-  //       } else {
-  //         setError(true); // ถ้า login ไม่สำเร็จ จะแสดง pop up กรณีทำงานไม่สำเร็จ
-  //       }
-  //     });
-  // }
-
-  // console.log(login);   // แสดงข้อมูลการ Login
-
+function Home() {
   return (
-    <Container component="main" maxWidth="xs">
-      <Button component={RouterLink} to="/login">ลงชื่อเข้าใช้</Button>
-      <p>
-        Alan Turing
-      </p>
-    </Container>
-  );
+    <div>
+      <Container maxWidth="md">
+        <h1 style={{ textAlign: "center" }}>ระบบจัดการคนไข้นอก</h1>
+        <h4><u>Requirements</u></h4>
+        <p>
+          ระบบคัดกรองคนไข้นอกเป็นระบบสำหรับการประเมินคนไข้นอกเพื่อค้นหาปัญหาและความเสี่ยงโดยการจัดลำดับความเร่งด่วนในการตรวจรักษาของคนไข้นอก
+          โดยพยาบาลซึ่งเป็นผู้ใช้ระบบจะทำการประเมินอาการเสี่ยงของคนไข้นอก โดยจะแบ่งตามระดับความรุนแรงซึ่งการประเมินจะถูกแบ่งออกเป็น 3 ประเภทได้แก่
+          Emergency (ภาวะฉุกเฉิน), Urgent (ภาวะเร่งด่วน), Non-urgent (ภาวะไม่เร่งด่วน) พยาบาลจะทำการประเมินอาการเสี่ยงของคนไข้นอกด้วยตนเอง
+          อีกทั้งยังทำการคัดกรองโดยการประเมินคนไข้ที่เสี่ยงเบาหวาน, ประเมินคนไข้ที่เสี่ยงความดันโลหิตสูง, ประเมินคนไข้ที่เสี่ยงเป็นโรคอ้วน เป็นต้น
+        </p>
+        <br />
+        <Card sx={{ maxWidth: 850 }}>
+          <CardActionArea>
+            <CardMedia
+              component="img"
+              height="140"
+              image='https://images.unsplash.com/photo-1588543385566-413e13a51a24?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2070&q=80'
+            //image="https://images.unsplash.com/photo-1529148482759-b35b25c5f217?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2070&q=80"
+            />
+            <CardContent>
+              <Typography gutterBottom variant="h5" component="div">
+              ระบบจัดการคนไข้นอก
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                บุคลากรทุกท่านสามารถจัดการคนไข้นอกได้อย่างถี่ถ้วนจากระบบนี้
+              </Typography>
+            </CardContent>
+          </CardActionArea>
+        </Card>
+        <Card sx={{ maxWidth: 850 }}>
+          <CardActionArea>
+            <CardMedia
+              component="img"
+              height="140"
+              image='https://images.unsplash.com/photo-1603398938378-e54eab446dde?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2070&q=80'
+  
+            />
+            <CardContent>
+              <Typography variant="body2" color="text.secondary">
+                บุคลากรทุกท่านสามารถจัดการคนไข้นอกได้ที่หน้าถัดไป
+              </Typography>
+            </CardContent>
+            
+          </CardActionArea>
+        </Card>
+        <Box textAlign='center'>
+        <Button style={{ background: '#4db6ac' }} component={RouterLink} to="/login" variant="contained" sx={{marginTop:2, marginBottom:2}}>เข้าสู่ระบบ</Button>
+        </Box>
+      </Container>
+    </div>
+  )
+
 }
+
+export default Home
+

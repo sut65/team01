@@ -419,7 +419,7 @@ function PatientRegisterCreate() {
                     console.log(res.data);    // ข้อมูลถูกต้อง บันทึกข้อมูลที่หลังบ้านและแสดงข้อมูลที่ console
                     setSuccess(true);       // แสดง pop up การทำงานสำเร็จ
                     setMessages("Successfully!");
-                    window.location.href = "/patient";
+                    window.location.href = "/patients";
                     // loginRegisted();      // เป็นการ login เข้าระบบแบบ auto
                 } else {
                     setError(true);       // ข้อมูลไม่ถูกต้อง แสดง pop up การทำงานไม่สำเร็จ

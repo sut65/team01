@@ -36,13 +36,13 @@ const theme = createTheme({
 
 
 
-const Alert = (props: AlertProps) => {
-    return <MuiAlert elevation={6} variant="filled" {...props} />;
-};
+const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(props, ref) {
+  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
 
 function CreatePatientRight() {
 
-  const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
+  // const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
   const [SendingTime, setSendingTime] = React.useState<Date | null>(new Date(),);
   const [hospital, setHospital] = useState<HospitalsInterface[]>([]);
   const [patients, setPatients] = useState<PatientRegistersInterface[]>([]); 
@@ -113,7 +113,7 @@ function CreatePatientRight() {
   };
   //console.log()
   const getRightType = async () => {
-    fetch(`${apiUrl}/righttypes`, requestOptions)
+    fetch(`${apiUrl}/patienttypes`, requestOptions)
       .then((response) => response.json())
       .then((res) => {
         if (res.data) {
@@ -125,7 +125,7 @@ function CreatePatientRight() {
   };
 
   const getPatient = async () => {
-    fetch(`${apiUrl}/patients`, requestOptions)
+    fetch(`${apiUrl}/patientregisters`, requestOptions)
       .then((response) => response.json())
       .then((res) => {
         console.log(res)
@@ -139,8 +139,8 @@ function CreatePatientRight() {
   console.log("Patient",nurse);
   
   const getNurse = async () => {
-    let uid = localStorage.getItem("uid");
-    fetch(`${apiUrl}/employee/${uid}`, requestOptions)
+    let id = localStorage.getItem("id");
+    fetch(`${apiUrl}/employee/${id}`, requestOptions)
       .then((response) => response.json())
       .then((res) => {
         if (res.data) {
@@ -181,11 +181,11 @@ function CreatePatientRight() {
     }else{
       setError(false)
       let data = {
-      PatientID: convertType(patientright.PatientRegisterID),
+      PatientRegisterID: convertType(patientright.PatientRegisterID),
       EmployeeID : convertType(nurse?.ID),
       RightTypeID: convertType(patientright.RightTypeID),
       HospitalID: convertType(patientright.HospitalID),
-      SendingTime: SendingTime,
+      DateRecord: SendingTime,
       Note: patientright.Note ?? "",
       };
     console.log(data)
@@ -277,7 +277,7 @@ function CreatePatientRight() {
                 value={patientright.PatientRegisterID}
                 onChange={handleChange}
                 inputProps={{
-                  name: "PatientID",
+                  name: "PatientRegisterID",
                 }}
               >
                 <option aria-label="None" value="">
@@ -285,7 +285,7 @@ function CreatePatientRight() {
                 </option>
                 {patients.map((item: PatientRegistersInterface) => (
                   <option value={item.ID} key={item.ID}>
-                    {item.FirstName}
+                    {item.FirstName} {item.LastName}
                   </option>
                 ))}
               </Select>
@@ -342,7 +342,7 @@ function CreatePatientRight() {
                 <DesktopDatePicker
                   label="PatientRight time"
                   inputFormat="dd/MM/yyyy"
-                  value={selectedDate || new Date()}
+                  value={SendingTime || new Date()}
                   onChange={handleDateChange}
                   renderInput={(params: TextFieldProps) => {
                     return <TextField{...params}
@@ -378,7 +378,7 @@ function CreatePatientRight() {
                 }}
               >
                 <option value={nurse?.ID} key={nurse?.ID}>
-                  {nurse?.FirstName}{nurse?.LastName}
+                  {nurse?.FirstName} {nurse?.LastName}
                 </option>
               </Select>
             </FormControl>

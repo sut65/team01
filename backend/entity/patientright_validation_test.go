@@ -7,12 +7,13 @@ import (
 	"github.com/asaskevich/govalidator"
 	. "github.com/onsi/gomega"
 )
+
 func TestPatientRightPass(t *testing.T) {
 	g := NewGomegaWithT(t)
 
-	patientright := PatientRight {
-		Note:            "wanted",
-		DateRocrcord:	time.Now(),
+	patientright := PatientRight{
+		Note:       "wanted",
+		DateRecord: time.Now(),
 	}
 
 	//ตรวจสอบ govalidator
@@ -27,9 +28,9 @@ func TestPatientRightPass(t *testing.T) {
 func TestPatientRightNote(t *testing.T) {
 	g := NewGomegaWithT(t)
 
-	patientright := PatientRight {
-		Note:            "", //ผิดต้องไม่เป็นข้อมูล
-		DateRocrcord:	time.Now(),
+	patientright := PatientRight{
+		Note:       "", //ผิดต้องไม่เป็นข้อมูล
+		DateRecord: time.Now(),
 	}
 
 	//ตรวจสอบ govalidator
@@ -48,9 +49,9 @@ func TestPatientRightNote(t *testing.T) {
 func TestPatientRightTime(t *testing.T) {
 	g := NewGomegaWithT(t)
 
-	patientright := PatientRight {
-		Note:            "wanted",
-		DateRocrcord:	time.Date(2024, 1, 1, 12, 00, 00, 00, time.UTC),
+	patientright := PatientRight{
+		Note:       "wanted",
+		DateRecord: time.Date(2024, 1, 1, 12, 00, 00, 00, time.UTC),
 	}
 
 	//ตรวจสอบ govalidator
@@ -65,7 +66,3 @@ func TestPatientRightTime(t *testing.T) {
 	// err.Error ต้องมี error message แสดงออกมา
 	g.Expect(err.Error()).To(Equal("Time must be Now"))
 }
-
-
-
-

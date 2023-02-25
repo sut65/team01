@@ -85,7 +85,7 @@ async function GetEmployee() {
     },
   };
 
-  let res = await fetch(`${apiUrl}/employee/${localStorage.getItem('uid')}`, requestOptions)
+  let res = await fetch(`${apiUrl}/employee/${localStorage.getItem('id')}`, requestOptions)
     .then((response) => response.json())
     .then((res) => {
       if (res.data) {
@@ -131,7 +131,7 @@ async function GetPatient() {
     },
   };
 
-  let res = await fetch(`${apiUrl}/patients`, requestOptions)
+  let res = await fetch(`${apiUrl}/patientregisters`, requestOptions)
     .then((response) => response.json())
     .then((res) => {
       if (res.data) {

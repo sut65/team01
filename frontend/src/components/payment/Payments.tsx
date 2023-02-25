@@ -92,7 +92,7 @@ function Payments() {
       field: "PatientRight",
       headerName: "สิทธิการรักษา",
       width: 150,
-      valueGetter: (params) => params.row.PatientRight.Name,
+      valueGetter: (params) => params.row.PatientRight.RightType.Typename,
     },
     {
       field: "PaymentType",
@@ -127,7 +127,7 @@ function Payments() {
     sortable: false,
     renderCell: ( params ) => (
       <React.Fragment>
-        <IconButton size="small" component={RouterLink} to={`/payment/create/${params.row.ID}`}>
+        <IconButton size="small" component={RouterLink} to={`/paymentcreate/${params.row.ID}`}>
               <EditIcon color="success" fontSize="small"></EditIcon>
             </IconButton>
             <IconButton size="small" onClick={() => handleOpen(params.row.ID)}>

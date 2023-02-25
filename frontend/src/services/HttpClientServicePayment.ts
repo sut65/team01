@@ -90,6 +90,28 @@ async function GetPatientRight() {
   return res;
   }
 
+  async function GetPatientRightByRegister(patientRegisterID: number) {
+    const requestOptions = {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+        "Content-Type": "application/json",
+      },
+    };
+  
+    let res = await fetch(`${apiUrl}/patientright/patientregister/${patientRegisterID}`, requestOptions)
+      .then((response) => response.json())
+      .then((res) => {
+        if (res.data) {
+          return res.data;
+        } else {
+          return false;
+        }
+      });
+  
+    return res;
+    }
+
   async function GetEmployee() {
     let id = localStorage.getItem("id");
     const requestOptions = {
@@ -121,6 +143,7 @@ export {
   GetPayment,
   GetPaymentType,
   GetPatientRight,
+  GetPatientRightByRegister,
   GetEmployee,
   GetPaymentById,
 };

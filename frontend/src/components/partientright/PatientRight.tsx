@@ -59,6 +59,7 @@ function PatientRights() {
         console.log(res);
         if (res.data) {
           console.log(res.Data);
+          setPatientRights(res.data);
         }
         else {
           console.log(res.error);  // ข้อมูลไม่ถูกต้อง จะแสดงค่า error ที่ console เช่น token หรือ ข้อมูลไม่ถูกต้อง ก็จะแสดงค่าของข้อมูลตัวนั้น
@@ -143,12 +144,12 @@ function PatientRights() {
       }
     },
     { field: "ID", headerName: "ID", width: 96, },
-    { field: "PatientRegister ID", headerName: "Patient", width: 96, valueGetter: (params) => { return params.row.Patient.FirstName + " " + params.row.Patient.LastName } },
+    { field: "PatientRegister ID", headerName: "Patient", width: 96, valueGetter: (params) => { return params.row.PatientRegister.FirstName + " " + params.row.PatientRegister.LastName } },
     { field: "RightType", headerName: "สิทธิผู้ป่วย", width: 96 ,valueGetter: (params) => { return params.row.RightType.Typename}},
     { field: "Hospital", headerName: "โรงพยาบาล", width: 96 ,valueGetter: (params) => { return params.row.Hospital.Name}},
-    { field: "Time", headerName: "เวลาบันทึกข้อมูล", width: 96 ,},
+    { field: "DateRecord", headerName: "เวลาบันทึกข้อมูล", width: 96 ,},
     { field: "Note", headerName: "หมายเหตุ", width: 96 },
-    { field: "Nurse ID", headerName: "เจ้าหน้าที่", width: 96, valueGetter: (params) => { return params.row.Nurse.FirstName + " " + params.row.Nurse.LastName } },
+    { field: "Nurse ID", headerName: "เจ้าหน้าที่", width: 96, valueGetter: (params) => { return params.row.Employee.FirstName + " " + params.row.Employee.LastName } },
 
   ];
 

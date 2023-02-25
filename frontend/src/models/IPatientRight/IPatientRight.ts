@@ -4,7 +4,7 @@ import { HospitalsInterface } from './IHospital';
 import { PatientRegistersInterface } from "../IPatientRegister/IPatientRegister";
 export interface PatientRightsInterface{
     ID: number,
-    Name: string,
+    // Name: string,
 
     PatientRegisterID: number,
     PatientRegister: PatientRegistersInterface,
@@ -18,7 +18,9 @@ export interface PatientRightsInterface{
     EmployeeID?: number,
     Employee: EmployeesInterface,
     
-    Discount: number,
+    // Discount: number,
 
     Note: string,
+
+    DateRecord: Date | null,
 }

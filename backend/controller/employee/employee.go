@@ -3,9 +3,10 @@ package controller
 import (
 	"net/http"
 
-	"github.com/sut65/team01/entity"
 	"github.com/asaskevich/govalidator"
 	"github.com/gin-gonic/gin"
+	"github.com/sut65/team01/entity"
+	"golang.org/x/crypto/bcrypt"
 )
 
 func CreateEmployee(c *gin.Context) {
@@ -43,7 +44,12 @@ func CreateEmployee(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Gender not found"})
 		return
 	}
-
+	bytes, err := bcrypt.GenerateFromPassword([]byte(employee.Password), 14)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "error hashing password"})
+		return
+	}
+	employee.Password = string(bytes)
 	// 14: สร้าง Employee
 	WV := entity.Employee{
 		Admin:       admin,
@@ -168,7 +174,7 @@ func UpdateEmployee(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Gender not found"})
 		return
 	}
-	
+
 	updateEmployee := entity.Employee{
 		Admin:       admin,
 		IDCard:      payload.IDCard,    // ตั้งค่าฟิลด์ IDCard
@@ -183,7 +189,7 @@ func UpdateEmployee(c *gin.Context) {
 		Salary:      payload.Salary,      // ตั้งค่าฟิลด์ Salary
 		Birthday:    payload.Birthday,    // ตั้งค่าฟิลด์ BirthDay
 	}
-	
+
 	if _, err := govalidator.ValidateStruct(updateEmployee); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return

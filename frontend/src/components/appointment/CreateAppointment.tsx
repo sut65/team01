@@ -18,8 +18,8 @@ import { PatientRegistersInterface } from "../../models/IPatientRegister/IPatien
 import { AppointmentsInterface } from "../../models/IAppointment/IAppointment";
 import TextField, { TextFieldProps } from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
-import LocalizationProvider from "@mui/lab/LocalizationProvider";
-import DesktopDatePicker from "@mui/lab/DesktopDatePicker";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { DesktopDatePicker } from "@mui/x-date-pickers/DesktopDatePicker";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 // import { useForm } from "react-hook-form";
 
@@ -35,9 +35,10 @@ const theme = createTheme({
   },
 });
 
-const Alert = (props: AlertProps) => {
-  return <MuiAlert elevation={6} variant="filled" {...props} />;
-};
+const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(props, ref) {
+  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
+
 
 function AppointmentCreate() {
 
@@ -110,7 +111,7 @@ function AppointmentCreate() {
   };
 
   const getPatientRegister = async () => {
-    fetch(`${apiUrl}/patient_registers`, requestOptions)
+    fetch(`${apiUrl}/patientregisters`, requestOptions)
       .then((response) => response.json())
       .then((res) => {
         if (res.data) {
@@ -261,18 +262,38 @@ function AppointmentCreate() {
                   }}
                 >
                   <option aria-label="None" value="">
-                    กรุณาเลือกหมายเลขบัตรประชาชน
+                    กรุณาเลือกชื่อคนไข้
                   </option>
                   {patientRegisters.map((item: PatientRegistersInterface) => (
                     <option value={item.ID} key={item.ID}>
-                      {item.ID}
+                      {item?.FirstName} {item?.LastName}
                     </option>
                   ))}
                 </Select>
               </FormControl>
             </Grid>
             <Grid item xs={12} sm={6} >
-              <p></p>
+            <FormControl fullWidth variant="outlined">
+                <p style={{ color: "#006A7D", fontSize: "10" }}>หมายเลขบัตรประชาชน</p>
+                <Select
+                  native
+                  value={appointment.PatientRegisterID}
+                  onChange={handleChange}
+                  disabled
+                  inputProps={{
+                    name: "PatientRegisterID",
+                  }}
+                >
+                  <option aria-label="None" value="">
+                    หมายเลขบัตรประชาชน
+                  </option>
+                  {patientRegisters.map((item: PatientRegistersInterface) => (
+                    <option value={item.ID} key={item.ID}>
+                      {item?.IdentificationNumber} 
+                    </option>
+                  ))}
+                </Select>
+              </FormControl>
             </Grid>
             <Grid item xs={12} sm={6}>
               <FormControl fullWidth variant="outlined">
@@ -299,7 +320,7 @@ function AppointmentCreate() {
             </Grid>
             <Grid item xs={12} sm={6}>
               <FormControl fullWidth variant="outlined">
-                <p style={{ color: "#006A7D", fontSize: "10" }}>คลินิก</p>
+                <p style={{ color: "#006A7D", fontSize: "10" }}>ห้องตรวจ</p>
                 <Select
                   native
                   value={appointment.RoomID}
@@ -309,7 +330,7 @@ function AppointmentCreate() {
                   }}
                 >
                   <option aria-label="None" value="">
-                    กรุณาเลือกคลินิก
+                    กรุณาเลือกห้องตรวจ
                   </option>
                   {rooms.map((item: RoomsInterface) => (
                     <option value={item.ID} key={item.ID}>
@@ -319,7 +340,7 @@ function AppointmentCreate() {
                 </Select>
               </FormControl>
             </Grid>
-            <Grid item xs={12} sm={6}>
+            {/* <Grid item xs={12} sm={6}>
               <FormControl fullWidth variant="outlined">
                 <p style={{ color: "#006A7D", fontSize: "10" }}>หมายเลขห้อง :</p>
                 <TextField
@@ -332,7 +353,7 @@ function AppointmentCreate() {
                   inputProps={{ min: 0 }}
                 />
               </FormControl>
-            </Grid>
+            </Grid> */}
             <ThemeProvider theme={theme}>
           <Grid item xs={12}>
             <FormControl fullWidth variant="outlined">
@@ -343,10 +364,7 @@ function AppointmentCreate() {
                   inputFormat="dd/MM/yyyy"
                   value={selectedDate || new Date()}
                   onChange={handleDateChange}
-                  renderInput={(params: TextFieldProps) => {
-                    return <TextField{...params}
-                    />;
-                  }}
+                  renderInput={(params: TextFieldProps) => <TextField {...params} />}
                 />
               </LocalizationProvider>
             </FormControl>
@@ -371,7 +389,7 @@ function AppointmentCreate() {
             <Grid item xs={12}>
               <Button
                 component={RouterLink}
-                to="/appointment"
+                to="/appointments"
                 variant="contained"
               >
                 กลับ

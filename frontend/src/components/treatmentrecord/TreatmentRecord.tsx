@@ -108,7 +108,7 @@ function TreatmentRecord() {
             renderCell: (params) => {
               return (
                 <React.Fragment>
-                  <IconButton size="small" component={RouterLink} to={`/treatment_records/create/${params.row.ID}`}>
+                  <IconButton size="small" component={RouterLink} to={`/treatmentrecordcreate/${params.row.ID}`}>
                     <EditIcon color="success" fontSize="small"></EditIcon>
                   </IconButton>
                   <IconButton size="small" onClick={() => handleOpen(params.row.ID)}>
@@ -150,23 +150,23 @@ function TreatmentRecord() {
             width: 200,
             valueGetter: (params) => params.row.Note,
         },
-        {   field: "Medicine", 
-            headerName: "รายการยา", 
-            width: 100,
-            renderCell: () => (
-                <div>
-                    &nbsp;
-                  <Button 
-                    onClick={handleEdit}
-                    variant="contained" 
-                    size="small" 
-                    startIcon={<SearchIcon />}
-                    color="success"> 
-                    แสดง
-                  </Button>
-                </div>
-              ),
-        },
+        // {   field: "Medicine", 
+        //     headerName: "รายการยา", 
+        //     width: 100,
+        //     renderCell: () => (
+        //         <div>
+        //             &nbsp;
+        //           <Button 
+        //             onClick={handleEdit}
+        //             variant="contained" 
+        //             size="small" 
+        //             startIcon={<SearchIcon />}
+        //             color="success"> 
+        //             แสดง
+        //           </Button>
+        //         </div>
+        //       ),
+        // },
         {   field: "Appointment", headerName: "การนัดหมาย", width: 120,
             renderCell : params => {
                 if (params.row.Appointment === true) {

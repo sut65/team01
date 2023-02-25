@@ -29,7 +29,7 @@ import Button from "@mui/material/Button";
 import MuiAlert, { AlertProps } from "@mui/material/Alert";
 // import moment from "moment";
 import { GetMedicineRecord,GetTreatmentRecordforMed } from "../../services/HttpClientServiceMedicineRecord";
-import { GetPaymentType, GetEmployee,GetPaymentById,GetPatientRight } from "../../services/HttpClientServicePayment";
+import { GetPaymentType, GetEmployee,GetPaymentById,GetPatientRight, GetPatientRightByRegister } from "../../services/HttpClientServicePayment";
 import { MedicineOrdersInterface } from "../../models/ITreatmentRecord/ITreatmentRecord";
 import { PaymentTypesInterface } from "../../models/IPayment/IPayment";
 import { PatientRightsInterface } from "../../models/IPatientRight/IPatientRight";
@@ -45,11 +45,12 @@ export default function PaymentCreate() {
   const params = useParams();
   const [cashiers, setEmployee] = React.useState<EmployeesInterface>();
   const [paymenttypes, setPaymentType] = React.useState<PaymentTypesInterface[]>([]);
-  const [patientrights, setPatientRight] = React.useState<PatientRightsInterface[]>([]);
+  // const [patientrights, setPatientRight] = React.useState<PatientRightsInterface[]>([]);
+  const [patientright, setPatientRight] = React.useState<PatientRightsInterface>();
   const [medicinerecords, setMedicineRecord] = React.useState<MedicineRecordsInterface[]>([]);
   const [medicineorder, setMedicineOrder] = React.useState<MedicineOrdersInterface[]>([]);
 
-  const [selectedPatientRight, setSelectedPatientRight] = React.useState<PatientRightsInterface>();
+  // const [selectedPatientRight, setSelectedPatientRight] = React.useState<PatientRightsInterface>();
   const [payments, setPayment] = React.useState<Partial<PaymentsInterface>>(
     { PatientRightID: 0, PaymentTypeID: 0, PaymentTime: new Date(), Total: 0, });
   const [success, setSuccess] = React.useState(false);
@@ -78,13 +79,15 @@ export default function PaymentCreate() {
       [name]: event.target.value,
     });
     if (name === "MedicineRecordID") {
-      let TreatmentRecordID = medicinerecords.find(m => m.ID === Number(event.target.value))?.TreatmentRecordID;
-      getTreatmentRecordforMed(TreatmentRecordID!);
+      let getMedicineRecord = medicinerecords.find(m => m.ID === Number(event.target.value));
+
+      getTreatmentRecordforMed(getMedicineRecord?.TreatmentRecordID!);
+      getPatientRightByRegister(getMedicineRecord?.TreatmentRecord?.DiagnosisRecord?.HistorySheet?.PatientRegisterID ?? 0);
     }
-    if (name === "PatientRightID") {
-      let patientRight = patientrights.find(p => p.ID === Number(event.target.value));
-      setSelectedPatientRight(patientRight!);
-    }
+    // if (name === "PatientRightID") {
+    //   let patientRight = patientrights.find(p => p.ID === Number(event.target.value));
+    //   setSelectedPatientRight(patientRight!);
+    // }
   };
 
   const handleInputChange = (
@@ -109,13 +112,22 @@ export default function PaymentCreate() {
       console.log(res)
     }
   }
-  const getPatientRight = async () => {
-    let res = await GetPatientRight()
+  // const getPatientRight = async () => {
+  //   let res = await GetPatientRight()
+  //   if (res) {
+  //     setPatientRight(res)
+  //     console.log(res)
+  //   }
+  // }
+
+  const getPatientRightByRegister = async (patientRegisterId: number) => {
+    let res = await GetPatientRightByRegister(patientRegisterId)
     if (res) {
       setPatientRight(res)
       console.log(res)
     }
   }
+
   const getMedicineRecord = async () => {
     let res = await GetMedicineRecord()
     if (res) {
@@ -134,6 +146,8 @@ export default function PaymentCreate() {
     if (res) {
       setPayment(res)
       console.log(res)
+      getTreatmentRecordforMed(res?.MedicineRecord?.TreatmentRecordID)
+      getPatientRightByRegister(res?.MedicineRecord?.TreatmentRecord?.DiagnosisRecord?.HistorySheet?.PatientRegisterID)
     }
   }
 
@@ -150,10 +164,7 @@ export default function PaymentCreate() {
       setError(true)
       setErrorMessage("กรุณาเลือกชื่อ - นามสกุล")
     }
-    else if (payments.PatientRightID == 0) {
-      setError(true)
-      setErrorMessage("กรุณาเลือกสิทธิการรักษา")
-    }
+ 
     else if (payments.PaymentTypeID == 0) {
       setError(true)
       setErrorMessage("กรุณาเลือกประเภทการจ่ายเงิน")
@@ -162,21 +173,22 @@ export default function PaymentCreate() {
       setError(false)
       let data: any = {
         MedicineRecordID: convertType(payments.MedicineRecordID),
-        PatientRightID: convertType(payments.PatientRightID),
+        PatientRightID: convertType(patientright?.ID),
         EmployeeID: convertType(cashiers?.ID),
         PaymentTypeID: convertType(payments.PaymentTypeID),
         PaymentTime: payments.PaymentTime,
         Total: payments.Total,
       };
       console.log(data);
-      
+        // หน้าบ้าน จะใช้ JSON สื่อสารกันกับ หลังบ้าน
+        // หน้าบ้านจะแนบ header(content-type) และ body(app-json) เพื่อติดต่อไปยังหลังงบ้านที่ method POST
       let apiUrl : any
       if (params.id){
         data["ID"] = parseInt(params.id);
         apiUrl = "http://localhost:8080/payments"
       }
       else{
-        apiUrl = "http://localhost:8080/createpayment"
+        apiUrl = "http://localhost:8080/payments"
       }
 
       const requestOptions = {
@@ -213,9 +225,14 @@ export default function PaymentCreate() {
     }
 
   }
+
+    // เรียกใช้ฟังก์ชันเหล่านี้ ขณะกำลังสร้าง user
+    // หากไม่มี [] จะเรียกใช้ function พวกนี้ตลอดเวลา
+    // หากมี [] จะเรียกใช้ function พวกนี้แค่ครั้งเดียว
+    // หากมี [var] จะเรียกใช้ตามเงือนไขเฉพาะ function ที่มีการเปลี่ยนแปลง
   useEffect(() => {
     getPaymentType();
-    getPatientRight();
+    // getPatientRight();
     getMedicineRecord();
     getEmployee(localStorage.getItem("id"));
 
@@ -226,11 +243,11 @@ export default function PaymentCreate() {
   useEffect(() => {
     setPayment (payment => {
       let MedPrice = medicineorder.reduce((a, b) => a + Number(b!.OrderAmount! * b!.Medicine!.Price!) , 0) ?? 0;
-      let PatientRightPrice = selectedPatientRight?.RightType?.Discount ?? 0;
-      return { ...payment, Total: MedPrice - PatientRightPrice }
+      let PatientRightPrice = patientright?.RightType?.Discount ?? 0;
+      return { ...payment, Total: (MedPrice - PatientRightPrice) < 0 ? 0 : (MedPrice - PatientRightPrice) }
     });
       
-  }, [selectedPatientRight, medicineorder]);
+  }, [patientright, medicineorder]);
 
   console.log(payments);
   
@@ -301,11 +318,10 @@ export default function PaymentCreate() {
           <Grid item xs={6}>
             <FormControl fullWidth variant="outlined">
               <p>สิทธิการรักษา</p>
-              <Select
+              {/* <Select
                 native
                 value={payments.PatientRightID + ""}
                 onChange={handleChange}
-
                 inputProps={{
                   name: "PatientRightID",
                 }}
@@ -315,10 +331,18 @@ export default function PaymentCreate() {
                 </option>
                 {patientrights.map((item: PatientRightsInterface) => (
                   <option value={item.ID} key={item.ID}>
-                    {item.Name}
+                    {item?.RightType?.Typename}
                   </option>
                 ))}
-              </Select>
+              </Select> */}
+              <TextField
+                id="FirstName"
+                disabled
+                variant="outlined"
+                type="string"
+                size="medium"
+                value={patientright?.RightType?.Typename ?? ""}
+              />
             </FormControl>
           </Grid>
           <Grid item xs={6}>
@@ -370,7 +394,7 @@ export default function PaymentCreate() {
                 <TableBody>
                   {medicineorder.map((row: MedicineOrdersInterface, index) => {
                     // sumTotalPrice()
-                    if (payments.MedicineRecordID == row.ID)
+                    // if (payments.MedicineRecordID == row.ID)
                       return (
                       <TableRow key={index}>
                         <TableCell align="center">{row.Medicine?.Name}</TableCell>
@@ -385,9 +409,6 @@ export default function PaymentCreate() {
               </Table>
             </TableContainer>
           </Grid>
-
-
-
 
           <Grid item xs={4}>
             <FormControl fullWidth variant="outlined">

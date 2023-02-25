@@ -130,7 +130,7 @@ const handleClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
           return (
             <React.Fragment>
               <Tooltip title="แก้ไข">
-              <IconButton size="small" component={RouterLink} to={`/createworkload/${params.row.ID}`}>
+              <IconButton size="small" component={RouterLink} to={`/workloadcreate/${params.row.ID}`}>
                 <EditIcon color="success" fontSize="small"></EditIcon>
               </IconButton>
             </Tooltip>
@@ -141,7 +141,7 @@ const handleClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
             </Tooltip>
               <Dialog open={checkOpen(params.row.ID)} onClose={() => handleCloseDialog(params.row.ID)}>
                 <DialogTitle>Confirm Delete</DialogTitle>
-                <DialogContent>คุณต้องการลบข้อมูลของ { params.row.Employee.FirstName + " " + params.row.Employee.LastName } ?</DialogContent>
+                <DialogContent>คุณต้องการลบภาระงานของ { params.row.Employee.FirstName + " " + params.row.Employee.LastName } ?</DialogContent>
                 <DialogActions>
                   <Button onClick={() => handleCloseDialog(params.row.ID)}>Cancel</Button>
                   <Button onClick={() => deleteWorkload(params.row.ID)}>OK</Button>
@@ -196,7 +196,7 @@ const handleClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
           <Box>
             <Button
                 component={RouterLink}
-                to="/createworkload"
+                to="/workloadcreate"
                 variant="contained"
                 color="primary"
                 style={{background: '#4db6ac' }}

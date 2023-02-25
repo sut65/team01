@@ -130,7 +130,7 @@ function MedicineRecords() {
       sortable: false,
       renderCell: ( params ) => (
         <React.Fragment>
-          <IconButton size="small" component={RouterLink} to={`/medicinerecord/create/${params.row.ID}`}>
+          <IconButton size="small" component={RouterLink} to={`/medicinerecordcreate/${params.row.ID}`}>
                 <EditIcon color="success" fontSize="small"></EditIcon>
               </IconButton>
               <IconButton size="small" onClick={() => handleOpen(params.row.ID)}>
@@ -173,7 +173,7 @@ function MedicineRecords() {
           <Box>
             <Button
               component={RouterLink}
-              to="/medicinerecord/create"
+              to="/medicinerecordcreate"
               variant="contained"
               color="primary"
             >

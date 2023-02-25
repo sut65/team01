@@ -40,10 +40,10 @@ func CreateAppointmet(c *gin.Context) {
 	}
 	// 12: สร้าง Appointment
 	apm := entity.Appointment{
-		PatientRegister: patientregister,             // โยงความสัมพันธ์กับ Entity Patient
-		Employee:        employee,                    // โยงความสัมพันธ์กับ Entity Employee
-		Room:            room,                        // โยงความสัมพันธ์กับ Entity Clinic
-		RoomNumber:      appointment.RoomNumber,      // ตั้งค่าฟิลด์ roomnumber
+		PatientRegister: patientregister, // โยงความสัมพันธ์กับ Entity Patient
+		Employee:        employee,        // โยงความสัมพันธ์กับ Entity Employee
+		Room:            room,            // โยงความสัมพันธ์กับ Entity Clinic
+		// RoomNumber:      appointment.RoomNumber,      // ตั้งค่าฟิลด์ roomnumber
 		AppointmentTime: appointment.AppointmentTime, // ตั้งค่าฟิลด์ appointmentTime
 		Note:            appointment.Note,            // ตั้งค่าฟิลด์ note
 	}
@@ -77,9 +77,10 @@ func GetAppointment(c *gin.Context) {
 func ListAppointments(c *gin.Context) {
 	var appointments []entity.Appointment
 	if err := entity.DB().
-		Preload("Patient").
+		Preload("PatientRegister").
+		Preload("PatientRegister.PatientRegisterGender").
 		Preload("Employee").
-		Preload("Clinic").
+		Preload("Room").
 		Raw("SELECT * FROM appointments").Find(&appointments).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -130,10 +131,10 @@ func UpdateAppointment(c *gin.Context) {
 	}
 	// 12: สร้าง Appointment
 	upapm := entity.Appointment{
-		PatientRegister: patientregister,                   // โยงความสัมพันธ์กับ Entity Patient
-		Employee:        employee,                          // โยงความสัมพันธ์กับ Entity Employee
-		Room:            room,                              // โยงความสัมพันธ์กับ Entity Clinic
-		RoomNumber:      updateappointment.RoomNumber,      // ตั้งค่าฟิลด์ roomnumber
+		PatientRegister: patientregister, // โยงความสัมพันธ์กับ Entity Patient
+		Employee:        employee,        // โยงความสัมพันธ์กับ Entity Employee
+		Room:            room,            // โยงความสัมพันธ์กับ Entity Clinic
+		// RoomNumber:      updateappointment.RoomNumber,      // ตั้งค่าฟิลด์ roomnumber
 		AppointmentTime: updateappointment.AppointmentTime, // ตั้งค่าฟิลด์ appointmentTime
 		Note:            updateappointment.Note,            // ตั้งค่าฟิลด์ note
 	}

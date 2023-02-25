@@ -56,23 +56,17 @@ func CreatePayment(c *gin.Context) {
 
 	// : สร้าง Payment
 	pm := entity.Payment{
-		PatientRight:     patientright,        // โยงความสัมพันธ์กับ Entity PatientRight
-		PaymentType:      paymenttype,         // โยงความสัมพันธ์ Entity PaymentType
-		Employee:         employee,            // โยงความสัมพันธ์กับ Entity cashier
-		MedicineRecordID: &medicinerecord.ID,  // โยงความสัมพันธ์กับ Entity MedicineRecord
-		PaymentTime:      payment.PaymentTime, // ตั้งค่าฟิลด์ PaymentTime
-		Total:            payment.Total,       //ตั้งค่าฟิลด์ Total
-
+		PatientRight:   patientright,        // โยงความสัมพันธ์กับ Entity PatientRight
+		PaymentType:    paymenttype,         // โยงความสัมพันธ์ Entity PaymentType
+		Employee:       employee,            // โยงความสัมพันธ์กับ Entity cashier
+		MedicineRecord: medicinerecord,      // โยงความสัมพันธ์กับ Entity MedicineRecord
+		PaymentTime:    payment.PaymentTime, // ตั้งค่าฟิลด์ PaymentTime
+		Total:          payment.Total,       //ตั้งค่าฟิลด์ Total
 	}
 
 	// แทรกการ validate ไว้ช่วงนี้ของ controller
 	if _, err := govalidator.ValidateStruct(payment); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-
-	if pm.Total == 0 {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Total cannot be zero"})
 		return
 	}
 
@@ -96,7 +90,7 @@ func GetMedbyPatient(c *gin.Context) {
 		Preload("TreatmentRecord.DiagnosisRecord.HistorySheet.PatientRegister").
 		Preload("Employee").
 		Preload("StatusMed").
-		Raw("SELECT * FROM medicinerecord WHERE patientregister.id = ?", id).
+		Raw("SELECT * FROM medicine_records WHERE patient_register.id = ?", id).
 		Find(&medicinerecord).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -110,8 +104,9 @@ func GetPayment(c *gin.Context) {
 	id := c.Param("id")
 	if err := entity.DB().
 		Preload("PatientRight").
-		Preload("MedicineRecord").
+		Preload("PatientRight.RightType").
 		Preload("PaymentType").
+		Preload("MedicineRecord").
 		Preload("MedicineRecord.TreatmentRecord").
 		Preload("MedicineRecord.TreatmentRecord.DiagnosisRecord").
 		Preload("MedicineRecord.TreatmentRecord.DiagnosisRecord.HistorySheet").
@@ -130,6 +125,7 @@ func ListPayments(c *gin.Context) {
 	var payments []entity.Payment
 	if err := entity.DB().
 		Preload("PatientRight").
+		Preload("PatientRight.RightType").
 		Preload("PaymentType").
 		Preload("MedicineRecord").
 		Preload("MedicineRecord.TreatmentRecord").
@@ -197,6 +193,7 @@ func DeletePayment(c *gin.Context) {
 	}
 	if err := entity.DB().
 		Preload("PatientRight").
+		Preload("PatientRight.RightType").
 		Preload("PaymentType").
 		Preload("MedicineRecord").
 		Preload("MedicineRecord.TreatmentRecord").
