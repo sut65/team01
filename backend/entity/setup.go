@@ -5,7 +5,8 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"time"
+
+	// "time"
 
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/driver/sqlite"
@@ -46,6 +47,10 @@ func SetupDatabase() {
 		&StatusMed{},
 		&OutpatientScreening{},
 		&QueuingManagement{},
+		&Room{},
+		&Status{},
+		&Workload{},
+		&Appointment{},
 	)
 
 	db = database
@@ -67,21 +72,6 @@ func SetupDatabase() {
 		Password:  string(PasswordAdmin2),
 	}
 	db.Model(&Admin{}).Create(&Admin2)
-
-	//พนักงาน
-	PasswordEmp1, err := bcrypt.GenerateFromPassword([]byte("1111"), 14)
-	Emp1 := Employee{
-		Admin:       Admin2,
-		IDCard:      "1410087223152",
-		FirstName:   "มะลิ",
-		LastName:    "แสนสุข",
-		PhoneNumber: "0999999909",
-		Email:       "mali@gmail.com",
-		Password:    string(PasswordEmp1),
-		Salary:      21000,
-		Birthday:    time.Date(2000, 5, 1, 0, 0, 0, 0, time.UTC),
-	}
-	db.Model(&Employee{}).Create(&Emp1)
 
 	// PatientRegisterGender ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	patientregistergender1 := PatientRegisterGender{
@@ -392,9 +382,9 @@ func SetupDatabase() {
 	})
 
 	db.Model(&Medicine{}).Create(&Medicine{
-		Name:	"Bromhexine",
+		Name:        "Bromhexine",
 		Description: "ยาแก้ไอละลายเสมหะ",
-		Price: 85,
+		Price:       85,
 	})
 	//=================OutpatientScreening Data======================================================================================
 	//EmergencyLevel Data
@@ -590,6 +580,37 @@ func SetupDatabase() {
 		Status: "การจ่ายยาครั้งที่4",
 	}
 	db.Model(&StatusMed{}).Create(&statusmed4)
+
+	Room1 := Room{
+		Name: "ห้องตรวจ 1",
+	}
+	db.Model(&Room{}).Create(&Room1)
+
+	Room2 := Room{
+		Name: "ห้องตรวจ 2",
+	}
+	db.Model(&Room{}).Create(&Room2)
+
+	Room3 := Room{
+		Name: "ห้องตรวจ 3",
+	}
+	db.Model(&Room{}).Create(&Room3)
+
+	Room4 := Room{
+		Name: "ห้องตรวจ 4",
+	}
+	db.Model(&Room{}).Create(&Room4)
+
+	//Status
+	Status1 := Status{
+		Name: "ว่าง",
+	}
+	db.Model(&Status{}).Create(&Status1)
+
+	Status2 := Status{
+		Name: "กำลังปฏิบัติงาน",
+	}
+	db.Model(&Status{}).Create(&Status2)
 
 	GetDistrictList(db)
 	GetNationalityList(db)

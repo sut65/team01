@@ -59,10 +59,11 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
     }
    
   // ดึง HistorySheetId มาจาก url ตอนกดเลือกใบการซักประวัติ ex. "localhost:3000/OutpatienScreeningCreate/2" จะได้ HistorySheetId = 2
-  const { HistorySheetId } = useParams();
+  // const { HistorySheetId } = useParams();
   const [selectedDate, setSelectedDate] = React.useState<Date | null>(new Date());
 
-  const [HistorySheet, setHistorySheet] = React.useState<HistorySheetsInterface>();
+  const [HistorySheet, setHistorySheet] = React.useState<HistorySheetsInterface[]>([]);
+  const [selectedHistorySheet, setSelectedHistorySheet] = React.useState<HistorySheetsInterface>();
   const [EmergencyLevel, setEmergencyLevel] = React.useState<EmergencyLevelsInterface[]>([]);
   const [HighBloodPressureLevel, setHighBloodPressureLevel] = React.useState<HighBloodPressureLevelsInterface[]>([]);
   //const [HighBloodPressureLevel, setHighBloodPressureLevel] = React.useState<HighBloodPressureLevelInterface>();
@@ -72,8 +73,8 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
   //const [ObesityLevel, setObesityLevel] = React.useState<ObesityLevelInterface>();
   const [OutpatientScreenings, setOutpatientScreenings] = React.useState<Partial<OutpatientScreeningsInterface>>({
     //แก้ตอนรวมไฟล์
-    //HistorySheetID: HistorySheetId,
-    HistorySheetID: 1,
+    // HistorySheetID: HistorySheetId,
+    HistorySheetID: 0,
     EmployeeID: 0,
     EmergencyLevelID: 0,
     HighBloodPressureLevelID: 0,
@@ -106,6 +107,22 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
     });
   };
 
+  const handleSelectHistorySheetChange = (
+    event: SelectChangeEvent<number>
+  ) => {
+    if (event.target.name === "HistorySheetID") {
+      const name = event.target.name as keyof typeof OutpatientScreenings;
+      setOutpatientScreenings({
+        ...OutpatientScreenings,
+        [name]: event.target.value,
+      });
+
+      let selected = HistorySheet.find(h => h.ID === event.target.value);
+      setSelectedHistorySheet(selected);
+    }
+    
+  }
+
   const handleClose = (
     event?: React.SyntheticEvent | Event,
     reason?: string
@@ -124,7 +141,7 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
   //Get Function
   const getHistorySheet = async () => {
     
-    const apiUrl = `http://localhost:8080/HistorySheet/${HistorySheetId}`;
+    const apiUrl = `http://localhost:8080/historysheets`;
     // const apiUrl = `http://localhost:8080/HistorySheet/1`;  
     const requestOptions = {
       method: "GET",                                       
@@ -146,7 +163,7 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
       })
   }
   const getEmergencyLevel = async () => {
-    const apiUrl = "http://localhost:8080/EmergencyLevel";
+    const apiUrl = "http://localhost:8080/emergencylevels";
     const requestOptions = {
       method: "GET",
       headers: {
@@ -168,7 +185,7 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
   }
 
   const getHighBloodPressureLevel = async () => {                       
-    const apiUrl = "http://localhost:8080/highbloodpressure_levels";
+    const apiUrl = "http://localhost:8080/highbloodpressurelevels";
     const requestOptions = {
       method: "GET",
       headers: {
@@ -189,7 +206,7 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
       })
   }
   const getDiabetesLevel = async () => {                       
-    const apiUrl = "http://localhost:8080/DiabetesLevel";
+    const apiUrl = "http://localhost:8080/diabeteslevels";
     const requestOptions = {
       method: "GET",
       headers: {
@@ -210,7 +227,7 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
       })
   }
   const getObesityLevel = async () => {                       
-    const apiUrl = "http://localhost:8080/ObesityLevels";
+    const apiUrl = "http://localhost:8080/obesitylevels";
     const requestOptions = {
       method: "GET",
       headers: {
@@ -246,17 +263,18 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
       },
     };
   
-    let res = await fetch(`${apiUrl}/outpatientScreening/${id}`, requestOptions)
+    let res = await fetch(`${apiUrl}/outpatientscreening/${id}`, requestOptions)
       .then((response) => response.json())
       .then((res) => {
         if (res.data) {
-          return res.data;
+          setOutpatientScreenings(res.data);
+          setSelectedHistorySheet(res.data.HistorySheet);
         } else {
-          return false;
+          console.log(res.error);
         }
       });
   
-    return res;
+    // return res;
   }
   
 
@@ -274,18 +292,10 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
 
     };
 
-    let apiUrl : any
-      if (params.id){
-        data["ID"] = parseInt(params.id);
-        apiUrl = "http://localhost:8080/outpatientScreenings"
-      }
-      else{
-        apiUrl = "http://localhost:8080/outpatientScreenings"
-      }
-
-    // if (params.id){
-    //    data["ID"] = parseInt(params.id);
-    // }
+    let apiUrl : any = "http://localhost:8080/outpatientscreenings"
+    if (params.id){
+      data["ID"] = parseInt(params.id);
+    }
 
     console.log(data);
 
@@ -393,6 +403,25 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
            </FormControl>
          </Grid> */}
          <Grid item xs={3}>
+            <FormControl fullWidth variant="outlined">
+              <p>เลือกบันทึกการซักประวัติ</p>
+              <Select
+                value={OutpatientScreenings?.HistorySheetID}
+                //size="small"
+                onChange={handleSelectHistorySheetChange}
+                inputProps={{
+                  name: "HistorySheetID",
+                }}
+              >
+                {HistorySheet.map((item: HistorySheetsInterface) => (
+                  <MenuItem value={item.ID} key={item.ID}>
+                    {item?.PatientRegister?.FirstName} {item?.PatientRegister?.LastName}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+         </Grid>
+         <Grid item xs={3}>
            <p>น้ำหนัก</p>
            <FormControl fullWidth variant="outlined" >
              <TextField
@@ -401,7 +430,7 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
                //disabled
                type="string"
                size="small"
-               value={HistorySheet?.Weight}
+               value={selectedHistorySheet?.Weight}
                onChange={handleInputChange}
              />
            </FormControl>
@@ -415,13 +444,13 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
                //disabled
                type="string"
                size="small"
-               value={HistorySheet?.Height}
+               value={selectedHistorySheet?.Height}
                onChange={handleInputChange}
              />
            </FormControl>
          </Grid>
 
-        <Grid item xs={3}>
+        {/* <Grid item xs={3}>
            <p>BMI</p>
            <FormControl fullWidth variant="outlined" >
              <TextField
@@ -430,11 +459,11 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
                //disabled
                type="string"
                size="small"
-               value={HistorySheet?.BMI}
+               value={selectedHistorySheet?.BMI}
                onChange={handleInputChange}
              />
            </FormControl>
-         </Grid>
+         </Grid> */}
          <Grid item xs={3}>
            <p>อุณหภูมิ</p>
            <FormControl fullWidth variant="outlined" >
@@ -444,7 +473,7 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
                //disabled
                type="string"
                size="small"
-               value={HistorySheet?.Temperature}
+               value={selectedHistorySheet?.Temperature}
                onChange={handleInputChange}
              />
            </FormControl>
@@ -458,7 +487,7 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
                //disabled
                type="string"
                size="small"
-               value={HistorySheet?.HeartRate}
+               value={selectedHistorySheet?.HeartRate}
                onChange={handleInputChange}
              />
            </FormControl>
@@ -472,7 +501,7 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
                //disabled
                type="string"
                size="small"
-               value={HistorySheet?.DiastolicBloodPressure}
+               value={selectedHistorySheet?.DiastolicBloodPressure}
                onChange={handleInputChange}
              />
            </FormControl>
@@ -486,7 +515,7 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
                //disabled
                type="string"
                size="small"
-               value={HistorySheet?.RespiratoryRate}
+               value={selectedHistorySheet?.RespiratoryRate}
                onChange={handleInputChange}
              />
            </FormControl>
@@ -500,7 +529,7 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
                //disabled
                type="string"
                size="small"
-               value={HistorySheet?.OxygenSaturation}
+               value={selectedHistorySheet?.OxygenSaturation}
                onChange={handleInputChange}
              />
            </FormControl>
@@ -802,7 +831,7 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
          </Grid>
          
          <Grid item xs={12}>
-           <Button component={RouterLink} to="/history" variant="contained">
+           <Button component={RouterLink} to="/outpatientscreenings" variant="contained">
              Back
            </Button>
            <Button 

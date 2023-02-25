@@ -61,17 +61,19 @@ function QueuingManagementsCreate() {
     setAddedTime1(date);
   }
 
-  const { HistorySheetId } = useParams();
+  // const { HistorySheetId } = useParams();
   const [Count ,setCount] = React.useState(0);
   const [selectedDate, setSelectedDate] = React.useState<Date | null>(new Date());
   
   //const [PatientRegister, setPatientRegister] = React.useState<PatientRegistersInterface>();
-  const [HistorySheet, setHistorySheet] = React.useState<HistorySheetsInterface>();
+  const [HistorySheet, setHistorySheet] = React.useState<HistorySheetsInterface[]>([]);
+  const [selectedHistorySheet, setSelectedHistorySheet] = React.useState<HistorySheetsInterface>();
+  
   const [ServicePoint, setServicePoint] = React.useState<ServicePointsInterface[]>([]);
   const [ServiceChannel, setServiceChannel] = React.useState<ServiceChannelsInterface[]>([]);
   const [MedicalAction, setMedicalAction] = React.useState<MedicalActionsInterface[]>([]);
   const [QueuingManagements, setQueuingManagements] = React.useState<Partial<QueuingManagementsInterface>>({
-    HistorySheetID: 1,
+    HistorySheetID: 0,
   });
   const [errorMessage, setErrorMessage] = React.useState("");
 
@@ -96,6 +98,22 @@ function QueuingManagementsCreate() {
     });
   };
 
+  const handleSelectHistorySheetChange = (
+    event: SelectChangeEvent<number>
+  ) => {
+    if (event.target.name === "HistorySheetID") {
+      const name = event.target.name as keyof typeof QueuingManagements;
+      setQueuingManagements({
+        ...QueuingManagements,
+        [name]: event.target.value,
+      });
+
+      let selected = HistorySheet.find(h => h.ID === event.target.value);
+      setSelectedHistorySheet(selected);
+    }
+    
+  }
+
   const handleClose = (
     event?: React.SyntheticEvent | Event,
     reason?: string
@@ -109,7 +127,7 @@ function QueuingManagementsCreate() {
 
   //Get Function
   const getHistorySheet = async () => {
-    const apiUrl = `http://localhost:8080/HistorySheet/1`;
+    const apiUrl = `http://localhost:8080/historysheets`;
     const requestOptions = {
       method: "GET",
       headers: {
@@ -296,7 +314,7 @@ function QueuingManagementsCreate() {
       </Snackbar>
       <Snackbar open={error} autoHideDuration={6000} onClose={handleClose}>
         <Alert onClose={handleClose} severity="error">
-          บันทึกข้อมูลไม่สำเร็จ
+          บันทึกข้อมูลไม่สำเร็จ {errorMessage}
         </Alert>
       </Snackbar>
       <Paper sx={{ padding: 2, color: "text.secondary" }}>
@@ -311,6 +329,30 @@ function QueuingManagementsCreate() {
               การจัดลำดับคิวการรักษา
             </Typography>
           </Box>
+          <Typography
+            variant="body1"
+            color="primary"
+            gutterBottom
+            sx={{ marginRight: 2 }}
+          >
+            เลือกรายชื่อคนไข้นอก
+          </Typography>
+          <FormControl size="small" variant="outlined" sx={{minWidth: 320}}>
+            <Select
+              value={QueuingManagements?.HistorySheetID}
+              size="small"
+              onChange={handleSelectHistorySheetChange}
+              inputProps={{
+                name: "HistorySheetID",
+              }}
+            >
+              {HistorySheet.map((item: HistorySheetsInterface) => (
+                <MenuItem value={item.ID} key={item.ID}>
+                  {item?.PatientRegister?.FirstName} {item?.PatientRegister?.LastName}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
         </Box>
         <Divider />
         <Grid container spacing={3} sx={{ flexGrow: 1 }}>
@@ -333,7 +375,7 @@ function QueuingManagementsCreate() {
             </FormControl>
           </Grid>
           <Grid item xs={3}>
-            <p>ชื่อ(น้ำหนัก)</p>
+            <p>ชื่อ</p>
             <FormControl fullWidth variant="outlined">
               <TextField
                 id="firstName"
@@ -341,13 +383,13 @@ function QueuingManagementsCreate() {
                 disabled
                 type="string"
                 size="medium"
-                value={HistorySheet?.Weight}
+                value={selectedHistorySheet?.PatientRegister?.FirstName || ""}
                 onChange={handleInputChange}
               />
             </FormControl>
           </Grid>
           <Grid item xs={3}>
-            <p>นามสกุล (สูง)</p>
+            <p>นามสกุล</p>
             <FormControl fullWidth variant="outlined">
               <TextField
                 id="LastName"
@@ -355,7 +397,7 @@ function QueuingManagementsCreate() {
                 disabled
                 type="string"
                 size="medium"
-                value={HistorySheet?.Height}
+                value={selectedHistorySheet?.PatientRegister?.LastName || ""}
               />
             </FormControl>
           </Grid>
@@ -457,7 +499,7 @@ function QueuingManagementsCreate() {
            </FormControl>
          </Grid>
           <Grid item xs={12}>
-            <Button component={RouterLink} to="/history" variant="contained">
+            <Button component={RouterLink} to="/queuings" variant="contained">
               Back
             </Button>
             <Button

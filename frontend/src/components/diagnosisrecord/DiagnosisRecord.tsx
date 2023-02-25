@@ -104,7 +104,7 @@ function DiagnosisRecord() {
             renderCell: (params) => {
               return (
                 <React.Fragment>
-                  <IconButton size="small" component={RouterLink} to={`/diagnosis_records/create/${params.row.ID}`}>
+                  <IconButton size="small" component={RouterLink} to={`/diagnosisrecordcreate/${params.row.ID}`}>
                     <EditIcon color="success" fontSize="small"></EditIcon>
                   </IconButton>
                   <IconButton size="small" onClick={() => handleOpen(params.row.ID)}>
@@ -153,9 +153,9 @@ function DiagnosisRecord() {
                 } return <div>ไม่รับ</div>
             },
         },
-        // {   field: "Date", headerName: "Date", width: 140,
-        //     valueFormatter: (params) => moment(params?.value).format("DD/MM/YYYY hh:mm A"),
-        // },
+        {   field: "Date", headerName: "Date", width: 140,
+            valueFormatter: (params) => moment(params?.value).format("DD/MM/YYYY"),
+        },
     ];
 
     return (

@@ -155,7 +155,7 @@ type DrugAllergy struct {
 // ===========================Structure PatientRight============================//
 type PatientRight struct {
 	gorm.Model
-	
+
 	RightTypeID *uint
 	RightType   RightType `gorm:"references:id" valid:"-"`
 
@@ -167,7 +167,7 @@ type PatientRight struct {
 
 	Note string `valid:"required~Note cannot be blank"`
 
-	DateRocrcord time.Time `valid:"Now~Time must be Now"`
+	DateRecord time.Time `valid:"Now~Time must be Now"`
 
 	PatientRegisterID *uint
 	PatientRegister   PatientRegister `gorm:"references:id" valid:"-"`
@@ -195,7 +195,7 @@ type Appointment struct {
 
 	AppointmentTime time.Time `valid:"future~AppointmentTime must be in the future"`
 	Note            string    `valid:"required~Note cannot be blank"`
-	RoomNumber      int       `valid:"required~RoomNumber cannot be blank,positivenum~RoomNumber more than 0"`
+	// RoomNumber      int       `valid:"required~RoomNumber cannot be blank,positivenum~RoomNumber more than 0"`
 
 	//PatientID ทำหน้าที่เป็น FK
 	PatientRegisterID *uint
@@ -457,7 +457,7 @@ type Payment struct {
 	gorm.Model
 
 	PaymentTime time.Time `valid:"present~PaymentTime incorrect"`
-	Total       int       `valid:"Total~The value must be in range 1-9999"`
+	Total       int       `valid:"Total~The value must be in range 0-9999"`
 
 	PatientRightID *uint
 	PatientRight   PatientRight `gorm:"references:ID" valid:"-"`
@@ -571,7 +571,7 @@ func init() {
 
 	govalidator.CustomTypeTagMap.Set("Now", func(i interface{}, context interface{}) bool {
 		t := i.(time.Time)
-		return t.Equal(time.Now())
+		return t.After(time.Now().Add(time.Minute*-2)) && t.Before(time.Now().Add(time.Minute*2))
 	})
 
 	govalidator.CustomTypeTagMap.Set("DelayNow3Min", func(i interface{}, context interface{}) bool {
@@ -600,7 +600,7 @@ func init() {
 	})
 
 	govalidator.CustomTypeTagMap.Set("Total", func(i interface{}, context interface{}) bool {
-		return govalidator.InRangeInt(int(i.(int)), 1, 9999)
+		return govalidator.InRangeInt(int(i.(int)), 0, 9999)
 	})
 }
 

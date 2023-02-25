@@ -163,7 +163,7 @@ function HistorySheets() {
     { field: "DrugAllergySymtom", headerName: "DrugAllergySymtom", width: 96 },
     { field: "PatientSymtom", headerName: "PatientSymtom", width: 96 },
     { field: "PatientRegister ID", headerName: "Patient", width: 96, valueGetter: (params) => { return params.row.PatientRegister.FirstName + " " + params.row.PatientRegister.LastName } },
-    { field: "Nurse ID", headerName: "Nurse", width: 96, valueGetter: (params) => { return params.row.Nurse.FirstName + " " + params.row.Nurse.LastName } },
+    { field: "Nurse ID", headerName: "Nurse", width: 96, valueGetter: (params) => { return params.row.Employee.FirstName + " " + params.row.Employee.LastName } },
     { field: "DrugAllergy ID", headerName: "Drug Allergy", width: 96, valueGetter: (params) => { return params.row.DrugAllergy.Name } },
 
   ];

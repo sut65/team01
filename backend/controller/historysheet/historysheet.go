@@ -117,6 +117,7 @@ func ListHistorySheets(c *gin.Context) {
 	var historysheets []entity.HistorySheet
 	if err := entity.DB().Raw("SELECT * FROM history_sheets").
 		Preload("PatientRegister").
+		Preload("PatientRegister.PatientRegisterGender").
 		Preload("Employee").
 		Preload("DrugAllergy").
 		Find(&historysheets).Error; err != nil {

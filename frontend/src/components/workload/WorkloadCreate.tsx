@@ -209,6 +209,8 @@ function WorkloadCreate() {
                 console.log(res.data);
                 if (res.data) {
                     setWorkload(res.data)
+                    setAddedTime1(res.data.AddedTime1)
+                    setAddedTime2(res.data.AddedTime2)
                 } else {
                     console.log(res.error)
                 }
@@ -255,9 +257,9 @@ function WorkloadCreate() {
                     console.log("บันทึกข้อมูลสำเร็จ")
                     setSuccess(true);
                     setErrorMessage("")
-                    // setTimeout(() => {
-                    // window.location.href = "/workloads";
-                    //   }, 2000)
+                    setTimeout(() => {
+                    window.location.href = "/workloads";
+                      }, 2000)
                 } else {
                     console.log(res.error)
                     console.log("บันทึกข้อมูลไม่สำเร็จ")
@@ -269,7 +271,7 @@ function WorkloadCreate() {
                     } else if (res.error.includes("Status not found")) {
                         setErrorMessage("กรุณาเลือกสถานะแพทย์")
                     } else if (res.error.includes("Date must be present")) {
-                        setErrorMessage("กรุณาเลือกวันที่ที่เป็นปัจจุบันหรืออนาคต")
+                        setErrorMessage("กรุณาเลือกวันที่ที่เป็นปัจจุบัน")
                     } else if (res.error.includes("Start Time must be future")) {
                         setErrorMessage("เวลาเริ่มต้นต้องเป็นอนาคต")
                     } else if (res.error.includes("End Time must be future")) {

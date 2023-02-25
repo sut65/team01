@@ -45,6 +45,10 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
 });
 
+// export interface RowDetails extends Partial<MedicineOrdersInterface> {
+//   RowId: number;
+// }
+
 function TreatmentRecordCreate() {
   const [employee, setEmployee] = useState<Partial<EmployeesInterface>>({ FirstName: "", LastName: "" });
   const [patient, setPatient] = useState<PatientRegistersInterface[]>([]);
@@ -60,6 +64,8 @@ function TreatmentRecordCreate() {
 
   const [selected, setSelected] = useState<Partial<MedicineOrdersInterface>>({});
   const [medicineOreder, setMedicineOreder] = useState<Partial<MedicineOrdersInterface>[]>([]);
+  // Row Sequence Number
+  const [rowSeq, setRowSeq] = useState<number>(0);
 
   const [success, setSuccess] = React.useState(false);
   const [error, setError] = React.useState(false);
@@ -138,12 +144,14 @@ function TreatmentRecordCreate() {
 
   function AddToTable() {
     let newMedicineOrder = [...medicineOreder]
+    
     newMedicineOrder.push({ 
       ...selected, 
-      ID: medicineOreder.length+1, 
-      OrderAmount: convertType(selected.OrderAmount)
+      ID: rowSeq, 
+      OrderAmount: convertType(selected.OrderAmount),
     });
     setMedicineOreder(newMedicineOrder);
+    setRowSeq(rowSeq + 1);
   }
 
   const getEmployee = async () => {
@@ -200,13 +208,13 @@ function TreatmentRecordCreate() {
     return `${params.row.Medicine.Name || ''}`
   }
 
-  const removeFromOrder = (index: number) => {
-    let updatedOrderItem = medicineOreder.filter((_, i) => i !== index);
+  const removeFromOrder = (rowID: number) => {
+    let updatedOrderItem = medicineOreder.filter((m) => m.ID !== rowID);
     setMedicineOreder(updatedOrderItem);
   }
 
   const columns: GridColDef[] = [
-    { field: "ID", headerName: "No.", width: 50 },
+    
     {
         field: "Medicine",
         headerName: "รายการยา",
@@ -276,14 +284,17 @@ function TreatmentRecordCreate() {
       if  (params.id) {
         data["ID"] = parseInt(params.id);
         res = await UpdateTreatmentRecord(data);
-      } else {
+      } 
+      else {
         res = await CreateTreatmentRecord(data);
       }
  
       if (res.status) {
         setSuccess(true);
         setMessages("บันทึกข้อมูลสำเร็จ");
-        window.location.href="/treatment_records";
+        setTimeout(() => {
+          window.location.href="/treatment_records";
+        }, 2000)
       } else {
         setError(true);
         if (res.message === "Treatment cannot be blank") {
@@ -292,6 +303,8 @@ function TreatmentRecordCreate() {
           setMessages("วันที่ต้องเป็นปัจจุบัน");
         } else if (res.message === "Appointment cannot be Null") {
           setMessages("กรุณาเลือกการนัดหมาย");
+        } else if (res.message === "Order Amount must not be negative") {
+          setMessages("จำนวนต้องไม่เป็นลบ");
         } else  { 
           setMessages(res.message);
         }
@@ -561,7 +574,7 @@ function TreatmentRecordCreate() {
           <Box sx={{ paddingX: 3, paddingY: 2 }}>
             <Button
               component={RouterLink}
-              to="/treatment_records"
+              to="/treatmentrecords"
               variant="contained"
               sx={{ p: 1, m: 2, mx: 'auto' }}
               color="inherit">

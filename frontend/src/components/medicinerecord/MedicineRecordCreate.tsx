@@ -79,7 +79,7 @@ function MedicineRecordCreate() {
       [name]: event.target.value,
     });
     if (name === "TreatmentRecordID") {
-      getTreatmentRecordforMed( Number(event.target.value));
+      getTreatmentRecordforMed(Number(event.target.value));
   }
   };
 
@@ -177,7 +177,7 @@ function MedicineRecordCreate() {
           if (res.data) {
             setSuccess(true);
             setErrorMessage("");
-            // clearForm();
+            window.location.href = "/medicinerecords";
           } else {
             setError(true);
             if (res.error == "Advicetext cannot be blank") {

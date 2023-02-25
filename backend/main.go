@@ -222,6 +222,7 @@ func main() {
 			protected.POST("/patientrights", controller_patientright.CreatePatientrights)
 			protected.PATCH("/patientrights", controller_patientright.UpdatePatientRights)
 			protected.DELETE("/patientrights/:id", controller_patientright.DeletePatientRights)
+			protected.GET("/patientright/patientregister/:id", controller_patientright.GetPatientRightsByRegister)
 
 			// Hospital Routes
 			protected.GET("/hospitals", controller_patientright.ListHospital)

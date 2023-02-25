@@ -18,7 +18,7 @@ import MuiAlert, { AlertProps } from "@mui/material/Alert";
 // import 'App.css';
 import { EmployeesInterface } from "../../models/IEmployee/IEmployee";
 import { PatientRegistersInterface } from "../../models/IPatientRegister/IPatientRegister";
-import { DiagnosisRecordsInterface,  DiseasesInterface } from "../../models/IDiagnosisRecord/IDiagnosisRecord";
+import { DiagnosisRecordsInterface, DiseasesInterface } from "../../models/IDiagnosisRecord/IDiagnosisRecord";
 import { HistorySheetsInterface } from "../../models/IHistorySheet/IHistorySheet";
 
 
@@ -49,6 +49,7 @@ function DiagnosisRecordCreate() {
     MedicalCertificate: undefined,
     Date: new Date(),
     DoctorID: parseInt(localStorage.getItem('uid') ?? ""),
+    HistorySheetID: 0,
   });
 
   const [success, setSuccess] = React.useState(false);
@@ -137,22 +138,22 @@ function DiagnosisRecordCreate() {
   const getDiagnosisRecord = async (id: string) => {
     const apiUrl = `http://localhost:8080/diagnosisrecord/${id}`;
     const requestOptions = {
-        method: "GET",
-        headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`
-        }
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("token")}`
+      }
     };
 
     fetch(apiUrl, requestOptions)
-        .then((response) => response.json())
-        .then((res) => {
-            if (res.data) {
-                setDiagnosisRecord(res.data);
-            } else {
-                console.log(res.error);
-            }
-        });
+      .then((response) => response.json())
+      .then((res) => {
+        if (res.data) {
+          setDiagnosisRecord(res.data);
+        } else {
+          console.log(res.error);
+        }
+      });
   }
 
   const convertType = (data: string | number | undefined) => {
@@ -178,7 +179,7 @@ function DiagnosisRecordCreate() {
         Date: diagnosisRecords.Date,
       };
 
-      let res : any 
+      let res: any
       console.log(params.id);
       if (params.id) {
         data["ID"] = parseInt(params.id);
@@ -186,12 +187,14 @@ function DiagnosisRecordCreate() {
       } else {
         res = await CreateDiagnosisRecord(data);
       }
-      
+
       console.log(data);
       if (res.status) {
         setSuccess(true);
         setMessages("บันทึกข้อมูลสำเร็จ");
-        window.location.href="/diagnosis_records";
+        setTimeout(() => {
+          window.location.href = "/diagnosis_records";
+        }, 2000)
       } else {
         setError(true);
         if (res.message === "Examination cannot be Blank") {
@@ -200,7 +203,7 @@ function DiagnosisRecordCreate() {
           setMessages("วันที่ต้องเป็นปัจจุบัน");
         } else if (res.message === "MedicalCertificate cannot be Null") {
           setMessages("กรุณาเลือกใบรับรองแพทย์");
-        } else  { 
+        } else {
           setMessages(res.message);
         }
       }
@@ -251,7 +254,7 @@ function DiagnosisRecordCreate() {
             </Typography>
           </Box>
           <Divider />
-{/* =========================== Patient ==================================== */}
+          {/* =========================== Patient ==================================== */}
           <Box sx={{ paddingX: 3, paddingY: 2 }}>
             <p>ข้อมูลผู้ป่วย</p>
             <FormControl required sx={{ m: 1, minWidth: 200 }}>
@@ -259,7 +262,7 @@ function DiagnosisRecordCreate() {
               <Select
                 id="select-patient"
                 label="ชื่อ"
-                inputProps={{ name: "HistorySheetID", native: true, autoFocus: true  }}
+                inputProps={{ name: "HistorySheetID", native: true, autoFocus: true }}
                 value={diagnosisRecords.HistorySheetID + ""}
                 onChange={handleChange}
                 native
@@ -268,9 +271,9 @@ function DiagnosisRecordCreate() {
                 <option key={0} value={0}>
                   เลือกข้อมูล
                 </option>
-                {patient.map((item: PatientRegistersInterface) => (
+                {historySheet.map((item: HistorySheetsInterface) => (
                   <option value={item.ID} key={item.ID}>
-                    {item.FirstName} {item.LastName}
+                    {item?.PatientRegister?.FirstName} {item?.PatientRegister?.LastName}
                   </option>
                 ))}
               </Select>
@@ -288,9 +291,9 @@ function DiagnosisRecordCreate() {
                   <em>None</em>
                 </MenuItem>
                 <option key={0} value={0}></option>
-                {patient.map((item: PatientRegistersInterface) => (
+                {historySheet.map((item: HistorySheetsInterface) => (
                   <option value={item.ID} key={item.ID}>
-                    {item.Age}
+                    {item?.PatientRegister?.Age}
                   </option>
                 ))}
               </Select>
@@ -305,15 +308,15 @@ function DiagnosisRecordCreate() {
                 inputProps={{ readOnly: true, native: true, autoFocus: true }}
               >
                 <option key={0} value={0}></option>
-                {patient.map((item: PatientRegistersInterface) => (
+                {historySheet.map((item: HistorySheetsInterface) => (
                   <option value={item.ID} key={item.ID}>
-                    {item.PatientRegisterGender.Name}
+                    {item?.PatientRegister?.PatientRegisterGender?.Name}
                   </option>
                 ))}
               </Select>
             </FormControl>
           </Box>
-{/* ========================== Examine ==================================== */}
+          {/* ========================== Examine ==================================== */}
           <Box sx={{ paddingX: 3, paddingY: 2 }}>
             <p>รายละเอียดการวินิจฉัย</p>
             <FormControl required sx={{ m: 1, minWidth: 300 }}>
@@ -343,20 +346,20 @@ function DiagnosisRecordCreate() {
                 </option>
                 {disease.map((item: DiseasesInterface) => (
                   <option value={item.ID} key={item.ID}>
-                  {item.Name}
-                </option>
+                    {item.Name}
+                  </option>
                 ))}
               </Select>
             </FormControl>
-            <FormControl sx={{ m: 1, maxWidth: 150 }}>        
+            <FormControl sx={{ m: 1, maxWidth: 150 }}>
               <TextField
                 select
                 id="select-medicalcertificate-label"
                 label="รับใบรับรองแพทย์"
                 value={diagnosisRecords.MedicalCertificate + ""}
                 inputProps={{ name: "MedicalCertificate", }}
-                SelectProps={{ 
-                  native: true, 
+                SelectProps={{
+                  native: true,
                   autoFocus: true,
                 }}
                 onChange={handleSeclectChange}
@@ -372,7 +375,7 @@ function DiagnosisRecordCreate() {
               </TextField>
             </FormControl>
           </Box>
-{/* =========================== Sheet ==================================== */}
+          {/* =========================== Sheet ==================================== */}
           <Box sx={{ paddingX: 3, paddingY: 2 }}>
             <p>ข้อมูลร่างกาย</p>
             <FormControl sx={{ m: 1, minWidth: 120 }}>
@@ -382,7 +385,7 @@ function DiagnosisRecordCreate() {
                 value={diagnosisRecords.HistorySheetID + ""}
                 label="น้ำหนัก"
                 // onChange={handleChange}
-                inputProps={{ readOnly: true, native: true, autoFocus: true }} 
+                inputProps={{ readOnly: true, native: true, autoFocus: true }}
               >
                 <option key={0} value={0}></option>
                 {historySheet.map((item: HistorySheetsInterface) => (
@@ -399,7 +402,7 @@ function DiagnosisRecordCreate() {
                 value={diagnosisRecords.HistorySheetID + ""}
                 label="ส่วนสูง"
                 // onChange={handleChange}
-                inputProps={{ readOnly: true, native: true, autoFocus: true }} 
+                inputProps={{ readOnly: true, native: true, autoFocus: true }}
               >
                 <option key={0} value={0}></option>
                 {historySheet.map((item: HistorySheetsInterface) => (
@@ -416,7 +419,7 @@ function DiagnosisRecordCreate() {
                 value={diagnosisRecords.HistorySheetID + ""}
                 label="อุณหภูมิ"
                 // onChange={handleChange}
-                inputProps={{ readOnly: true, native: true, autoFocus: true }} 
+                inputProps={{ readOnly: true, native: true, autoFocus: true }}
               >
                 <option key={0} value={0}></option>
                 {historySheet.map((item: HistorySheetsInterface) => (
@@ -433,7 +436,7 @@ function DiagnosisRecordCreate() {
                 value={diagnosisRecords.HistorySheetID + ""}
                 label="ชีพจร"
                 // onChange={handleChange}
-                inputProps={{ readOnly: true, native: true, autoFocus: true }} 
+                inputProps={{ readOnly: true, native: true, autoFocus: true }}
               >
                 <option key={0} value={0}></option>
                 {historySheet.map((item: HistorySheetsInterface) => (
@@ -450,7 +453,7 @@ function DiagnosisRecordCreate() {
                 value={diagnosisRecords.HistorySheetID + ""}
                 label="ค่าออกซิเจน"
                 // onChange={handleChange}
-                inputProps={{ readOnly: true, native: true, autoFocus: true }} 
+                inputProps={{ readOnly: true, native: true, autoFocus: true }}
               >
                 <option key={0} value={0}></option>
                 {historySheet.map((item: HistorySheetsInterface) => (
@@ -467,7 +470,7 @@ function DiagnosisRecordCreate() {
                 value={diagnosisRecords.HistorySheetID + ""}
                 label="ค่าออกซิเจน"
                 // onChange={handleChange}
-                inputProps={{ readOnly: true, native: true, autoFocus: true }} 
+                inputProps={{ readOnly: true, native: true, autoFocus: true }}
               >
                 <option key={0} value={0}></option>
                 {historySheet.map((item: HistorySheetsInterface) => (
@@ -484,7 +487,7 @@ function DiagnosisRecordCreate() {
                 value={diagnosisRecords.HistorySheetID + ""}
                 label="การแพ้ยา"
                 // onChange={handleChange}
-                inputProps={{ readOnly: true, native: true, autoFocus: true }} 
+                inputProps={{ readOnly: true, native: true, autoFocus: true }}
               >
                 <option key={0} value={0}></option>
                 {historySheet.map((item: HistorySheetsInterface) => (
@@ -496,10 +499,10 @@ function DiagnosisRecordCreate() {
             </FormControl>
 
           </Box>
-{/* ========================== Doctor ==================================== */}
+          {/* ========================== Doctor ==================================== */}
           <Box sx={{ paddingX: 3, paddingY: 2 }}>
             <FormControl sx={{ m: 1, minWidth: 120 }}>
-               <TextField disabled label="แพทย์ผู้ตรวจ" value={`${employee?.Title?.Name}${employee?.FirstName}`} />
+              <TextField disabled label="แพทย์ผู้ตรวจ" value={`${employee?.Title?.Name}${employee?.FirstName}`} />
             </FormControl>
             <FormControl sx={{ m: 1, minWidth: 120 }}>
               <LocalizationProvider dateAdapter={AdapterDateFns}>
@@ -517,11 +520,11 @@ function DiagnosisRecordCreate() {
               </LocalizationProvider>
             </FormControl>
           </Box>
-{/* ========================== Submit ==================================== */}
+          {/* ========================== Submit ==================================== */}
           <Box sx={{ paddingX: 3, paddingY: 2 }}>
             <Button
               component={RouterLink}
-              to="/diagnosis_records"
+              to="/diagnosisrecords"
               variant="contained"
               sx={{ p: 1, m: 2, mx: 'auto' }}
               color="inherit">

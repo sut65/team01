@@ -41,10 +41,10 @@ func CreateMedicineRecord(c *gin.Context) {
 	}
 	entity.DB().Joins("Role").Find(&employee)
 
-	if employee.Role.Name != "Pharmacist" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "The data recorder should be a Pharmacist"})
-		return
-	}
+	// if employee.Role.Name != "Pharmacist" {
+	// 	c.JSON(http.StatusBadRequest, gin.H{"error": "The data recorder should be a Pharmacist"})
+	// 	return
+	// }
 
 	// : สร้าง medicinerecord
 	mr := entity.MedicineRecord{
@@ -80,6 +80,7 @@ func GetMedicineRecord(c *gin.Context) {
 		Preload("TreatmentRecord.DiagnosisRecord").
 		Preload("TreatmentRecord.DiagnosisRecord.HistorySheet").
 		Preload("TreatmentRecord.DiagnosisRecord.HistorySheet.PatientRegister").
+		Preload("TreatmentRecord.DiagnosisRecord.HistorySheet.PatientRegister.PatientRegisterGender").
 		Preload("Employee").
 		Preload("StatusMed").
 		Raw("SELECT * FROM medicine_records WHERE id = ?", id).
@@ -101,6 +102,7 @@ func GetTreatmentRecordforMed(c *gin.Context) {
 		Preload("TreatmentRecord.DiagnosisRecord").
 		Preload("TreatmentRecord.DiagnosisRecord.HistorySheet").
 		Preload("TreatmentRecord.DiagnosisRecord.HistorySheet.PatientRegister").
+		Preload("TreatmentRecord.DiagnosisRecord.HistorySheet.PatientRegister.PatientRegisterGender").
 		Preload("Employee").
 		Preload("StatusMed").
 		Raw("SELECT * FROM medicine_records WHERE id = ?", id).
@@ -121,6 +123,7 @@ func ListMedicineRecords(c *gin.Context) {
 		Preload("TreatmentRecord.DiagnosisRecord").
 		Preload("TreatmentRecord.DiagnosisRecord.HistorySheet").
 		Preload("TreatmentRecord.DiagnosisRecord.HistorySheet.PatientRegister").
+		Preload("TreatmentRecord.DiagnosisRecord.HistorySheet.PatientRegister.PatientRegisterGender").
 		Preload("Employee").
 		Preload("StatusMed").
 		Raw("SELECT * FROM medicine_records").
@@ -146,6 +149,7 @@ func DeleteMedicineRecord(c *gin.Context) {
 		Preload("TreatmentRecord.DiagnosisRecord").
 		Preload("TreatmentRecord.DiagnosisRecord.HistorySheet").
 		Preload("TreatmentRecord.DiagnosisRecord.HistorySheet.PatientRegister").
+		Preload("TreatmentRecord.DiagnosisRecord.HistorySheet.PatientRegister.PatientRegisterGender").
 		Preload("Employee").
 		Preload("StatusMed").
 		Raw("SELECT * FROM medicine_records").

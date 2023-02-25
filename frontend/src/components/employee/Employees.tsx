@@ -134,7 +134,7 @@ const handleClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
           return (
             <React.Fragment>
             <Tooltip title="แก้ไข">
-              <IconButton size="small" component={RouterLink} to={`/createemployee/${params.row.ID}`}>
+              <IconButton size="small" component={RouterLink} to={`/employeecreate/${params.row.ID}`}>
                 <EditIcon color="success" fontSize="small"></EditIcon>
               </IconButton>
             </Tooltip>
@@ -145,7 +145,7 @@ const handleClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
             </Tooltip>
               <Dialog open={checkOpen(params.row.ID)} onClose={() => handleCloseDialog(params.row.ID)}>
                 <DialogTitle>Confirm Delete</DialogTitle>
-                <DialogContent>คุณต้องการลบภาระงานของ { params.row.FirstName + " " + params.row.LastName } ?</DialogContent>
+                <DialogContent>คุณต้องการลบข้อมูลของ { params.row.FirstName + " " + params.row.LastName } ?</DialogContent>
                 <DialogActions>
                   <Button onClick={() => handleCloseDialog(params.row.ID)}>Cancel</Button>
                   <Button onClick={() => deleteEmployee(params.row.ID)}>OK</Button>

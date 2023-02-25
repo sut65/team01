@@ -1,14 +1,27 @@
 import { Alert, Avatar, Box, Button, Container, CssBaseline, Grid, Snackbar, Tab, TextField, Typography } from "@mui/material";
 import { error } from "console";
+import TabContext from '@mui/lab/TabContext';
+import TabList from '@mui/lab/TabList';
+import TabPanel from '@mui/lab/TabPanel';
 import React from "react";
-import AccountCircleSharpIcon from '@mui/icons-material/AccountCircleSharp';
 import { useState } from "react";
 import { SigninInterface } from "../models/ISignin";
+import { createTheme, ThemeProvider } from "@mui/material";
+import LockIcon from '@mui/icons-material/Lock';
 // import { SigninInterface } from "../models/ISignin/ISignin";
 // import { LoginInterface } from "../models/ILogin";
 
 
-
+const theme = createTheme({
+  palette:{
+    primary:{
+    light: '#80cbc4',
+    main: '#4db6ac',
+    dark: '#26a69a',
+    contrastText: '#fff',
+  },
+  }
+})
 export default function LogIn() {
 
   // ประกาศตัวแปร login และ setlogin สำหรับเก็บค่า email และ password
@@ -41,7 +54,10 @@ export default function LogIn() {
     setError(false);
   };
 
-
+  const handleChange = (event: React.ChangeEvent<{}>, newValue: string) => {
+    setValue(newValue);
+    setLogin({});
+  }
   // setlogin ทำการเก็บ email และ password จาก textfield ไปเก็บที่ตัวแปร login
   const handleInputChange = (
     event: React.ChangeEvent<{ id?: string; value: any }>
@@ -137,114 +153,105 @@ export default function LogIn() {
         </Alert>
       </Snackbar>
       <Grid container spacing={2} sx={{ marginTop: 4, paddingX: 7 }}>
-        <Grid item xs={2}>
-          <AccountCircleSharpIcon fontSize="large" color="primary" />
-        </Grid>
-        <Grid item xs={10}>
-          <Typography component="h2" variant="h6" color="primary" gutterBottom>
-            Sign in
-          </Typography>
-        </Grid>
-      </Grid>
-      <Grid container spacing={2} sx={{ padding: 2 }}>
-        <Grid item xs={3}><p>Username</p></Grid>
-        <Grid item xs={9}>
-          <TextField
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            id="Email"
-            label="Email Address"
-            name="Email"
-            autoComplete="email"
-            autoFocus
-            value={login.Email || ""}
-            onChange={handleInputChange}
-          />
-        </Grid>
-      </Grid>
-      <Grid container spacing={2} sx={{ padding: 2 }}>
-        <Grid item xs={3}><p>Password</p></Grid>
-        <Grid item xs={9}>
-          <TextField
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            name="Password"
-            label="Password"
-            type="password"
-            id="Password"
-            autoComplete="current-password"
-            value={login.Password || ""}
-            onChange={handleInputChange}
-          />
-        </Grid>
-      </Grid>
-      <Box display="flex" sx={{ marginTop: 2, paddingX: 14 }}>
-        <Box>
-          <Button
-            onClick={Submit}
-            variant="contained"
-            color="primary"
-          >
-            Log in
-          </Button>
-        </Box>
-      </Box>
-      <Grid container spacing={3} sx={{ padding: 2 }}>
-        <Grid item xs={6}><p>email1 : Jariyaporn24@gmail.com</p></Grid>
-        <Grid item xs={6}><p>password1 : JKNurse24</p></Grid>
-      </Grid>
+        <Avatar sx={{ margin: 1,marginLeft: 17, backgroundcolor: "#009688" }}>
+          <Box textAlign='center' ><LockIcon /></Box>
 
-      <Grid container spacing={2} sx={{ padding: 2 }}>
-        <Grid item xs={3}><p>Username</p></Grid>
-        <Grid item xs={9}>
-          <TextField
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            id="Email"
-            label="Email Address"
-            name="Email"
-            autoComplete="email"
-            autoFocus
-            value={loginUser.Email || ""}
-            onChange={handleInputUserChange}
-          />
-        </Grid>
-      </Grid>
-      <Grid container spacing={2} sx={{ padding: 2 }}>
-        <Grid item xs={3}><p>Password</p></Grid>
-        <Grid item xs={9}>
-          <TextField
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            name="Password"
-            label="Password"
-            type="password"
-            id="Password"
-            autoComplete="current-password"
-            value={loginUser.Password || ""}
-            onChange={handleInputUserChange}
-          />
-        </Grid>
-      </Grid>
-      <Box display="flex" sx={{ marginTop: 2, paddingX: 14 }}>
-        <Box>
-          <Button
-            onClick={SubmitUser}
-            variant="contained"
-            color="primary"
-          >
-            Log in
-          </Button>
+        </Avatar>
+        <Box sx={{ width: '100%' }}>
+          <TabContext value={value}>
+            <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+              <TabList onChange={handleChange} aria-label="lab API tabs example">
+                <Tab label="แอดมิน" value="0" />
+                <Tab label="บุคลากร" value="1" />
+              </TabList>
+            </Box>
+            <TabPanel value="0">
+              <form style={{ width: "100%", marginTop: 1 }} noValidate>
+                <TextField
+                  variant="outlined"
+                  margin="normal"
+                  required
+                  fullWidth
+                  id="Email"
+                  label="อีเมล"
+                  name="Email"
+                  autoComplete="email"
+                  autoFocus
+                  value={login.Email || ""}
+                  onChange={handleInputChange}
+                />
+                <TextField
+                  variant="outlined"
+                  margin="normal"
+                  required
+                  fullWidth
+                  name="Password"
+                  label="รหัสผ่าน"
+                  type="password"
+                  id="Password"
+                  autoComplete="current-password"
+                  value={login.Password || ""}
+                  onChange={handleInputChange}
+                />
+                <Button
+                  fullWidth
+                  variant="contained"
+                  color="primary"
+                  sx={{ marginTop: 3, marginBottom: 0 }}
+                  onClick={Submit}
+                  style={{ background: '#4db6ac' }}
+                >
+                  เข้าสู่ระบบ
+                </Button>
+              </form>
+            </TabPanel>
+
+            <TabPanel value="1">
+
+              <form style={{ width: "100%", marginTop: 1 }} noValidate>
+                <TextField
+                  variant="outlined"
+                  margin="normal"
+                  required
+                  fullWidth
+                  id="Email"
+                  label="อีเมล"
+                  name="Email"
+                  autoComplete="email"
+                  autoFocus
+                  value={loginUser.Email || ""}
+                  onChange={handleInputUserChange}
+                />
+                <TextField
+                  variant="outlined"
+                  margin="normal"
+                  required
+                  fullWidth
+                  name="Password"
+                  label="รหัสผ่าน"
+                  type="password"
+                  id="Password"
+                  autoComplete="current-password"
+                  value={loginUser.Password || ""}
+                  onChange={handleInputUserChange}
+                />
+                <Button
+                  fullWidth
+                  variant="contained"
+                  color="primary"
+                  sx={{ marginTop: 3, marginBottom: 0 }}
+                  onClick={SubmitUser}
+                  style={{ background: '#4db6ac' }}
+                >
+                  เข้าสู่ระบบ
+                </Button>
+              </form>
+            </TabPanel>
+            
+          </TabContext>
+          
         </Box>
-      </Box>
+      </Grid>
     </Container>
   );
 }

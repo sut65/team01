@@ -16,6 +16,7 @@ func CreatePatientrights(c *gin.Context) {
 	var righttype entity.RightType
 	var hospital entity.Hospital
 	var employee entity.Employee
+	var patientregister entity.PatientRegister
 
 	// bind เข้าตัวแปร patientright
 	if err := c.ShouldBindJSON(&patientright); err != nil {
@@ -41,13 +42,20 @@ func CreatePatientrights(c *gin.Context) {
 		return
 	}
 
+	// : ค้นหา PatientRegister ด้วย id
+	if tx := entity.DB().Where("id = ?", patientright.PatientRegisterID).First(&patientregister); tx.RowsAffected == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "patient register not found"})
+		return
+	}
+
 	// : สร้าง patient
 	pt := entity.PatientRight{
-		RightType:    righttype, // โยงความสัมพันธ์กับ Entity PatientType
-		Hospital:     hospital,  // โยงความสัมพันธ์กับ Entity PatientRight
-		Employee:     employee,
-		DateRocrcord: patientright.DateRocrcord, // ตั่งค่าของ HN ให้เท่ากับค่าที่รับมา
-		Note:         patientright.Note,         // ตั่งค่าของ Note ให้เท่ากับค่าที่รับมา
+		RightType:       righttype,               // โยงความสัมพันธ์กับ Entity PatientType
+		Hospital:        hospital,                // โยงความสัมพันธ์กับ Entity PatientRight
+		Employee:        employee,                // โยงความสัมพันธ์กับ Entity PatientRegister
+		PatientRegister: patientregister,         // โยงความสัมพันธ์กับ Entity Employee
+		DateRecord:      patientright.DateRecord, // ตั่งค่าของ HN ให้เท่ากับค่าที่รับมา
+		Note:            patientright.Note,       // ตั่งค่าของ Note ให้เท่ากับค่าที่รับมา
 	}
 
 	// : ขั้นตอนการ validate ข้อมูล
@@ -80,14 +88,32 @@ func GetPatientRights(c *gin.Context) {
 func ListPatientRights(c *gin.Context) {
 	var patientrights []entity.PatientRight
 	if err := entity.DB().Raw("SELECT * FROM patient_rights").
-	Preload("PatientRegister").
-	Preload("Employee"). 
-	Preload("Hospital").
-	Preload("RightType").
-	Find(&patientrights).Error; err != nil {
-	c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-	return  
-	
+		Preload("PatientRegister").
+		Preload("Employee").
+		Preload("Hospital").
+		Preload("RightType").
+		Find(&patientrights).Error; err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+
+	}
+
+	c.JSON(http.StatusOK, gin.H{"data": patientrights})
+}
+
+// GET /patientrights/patientregister/:id
+func GetPatientRightsByRegister(c *gin.Context) {
+	id := c.Param("id")
+	var patientrights entity.PatientRight
+	if err := entity.DB().Raw("SELECT * FROM patient_rights WHERE patient_register_id = ?", id).
+		Preload("PatientRegister").
+		Preload("Employee").
+		Preload("Hospital").
+		Preload("RightType").
+		Find(&patientrights).Error; err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+
 	}
 
 	c.JSON(http.StatusOK, gin.H{"data": patientrights})
@@ -137,11 +163,11 @@ func UpdatePatientRights(c *gin.Context) {
 
 	// :   update patient
 	uppt := entity.PatientRight{
-		RightType:    righttype, // โยงความสัมพันธ์กับ Entity PatientType
-		Hospital:     hospital,  // โยงความสัมพันธ์กับ Entity PatientRight
-		Employee:     employee,
-		DateRocrcord: updatepatientright.DateRocrcord, // ตั่งค่าของ HN ให้เท่ากับค่าที่รับมา
-		Note:         updatepatientright.Note,         // ตั่งค่าของ Note ให้เท่ากับค่าที่รับมา
+		RightType:  righttype, // โยงความสัมพันธ์กับ Entity PatientType
+		Hospital:   hospital,  // โยงความสัมพันธ์กับ Entity PatientRight
+		Employee:   employee,
+		DateRecord: updatepatientright.DateRecord, // ตั่งค่าของ HN ให้เท่ากับค่าที่รับมา
+		Note:       updatepatientright.Note,       // ตั่งค่าของ Note ให้เท่ากับค่าที่รับมา
 	}
 
 	//ขั้นตอนการ validate ที่นำมาจาก  unit test

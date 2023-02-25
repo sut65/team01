@@ -203,6 +203,7 @@ const getEmployeeByID = async (id: string) => {
       .then((res) => {
           if (res.data) {
             setEmployee(res.data);
+            setSelectedDate(res.data.BirthDay);
               // return res.data;
               
           } else {

@@ -32,7 +32,7 @@ import TreatmentRecord from "./components/treatmentrecord/TreatmentRecord";
 import TreatmentRecordCreate from "./components/treatmentrecord/TreatmentRecordCreate";
 
 export default function App() {
-  const [token, setToken] = React.useState<string | null>(null);
+  const [token, setToken] = React.useState<string | null>("");
   
   useEffect(() => {
     const getToken: string | null = localStorage.getItem("token"); // ตัวแปร token จะดึงค่า token ที่อยู่ใน local storage
@@ -50,7 +50,7 @@ export default function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
-            <Route path="*" element={<Navigate to="/" />} />
+            {/* <Route path="*" element={<Navigate to="/" />} /> */}
           </Routes>
         </div>
       </Router>
@@ -111,7 +111,7 @@ export default function App() {
           <Route path="/payments" element={<Payments />} />
           <Route path="/paymentcreate" element={<PaymentCreate />} />
           <Route path="/paymentcreate/:id" element={<PaymentCreate />} />
-          <Route path="*" element={<Navigate to="/" />} />
+          {/* <Route path="*" element={<Navigate to="/" />} /> */}
         </Routes>
       </>
     </Router>
