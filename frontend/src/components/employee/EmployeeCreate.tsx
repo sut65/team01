@@ -512,7 +512,7 @@ const getEmployeeByID = async (id: string) => {
               <TextField
                 id="Password" //ระบุว่าบันทึกที่ไหน
                 variant="outlined"
-                type="string"
+                type="password"
                 size="medium"
                 placeholder="กรุณากรอกรหัสผ่าน"
                 value={employee?.Password || ""}

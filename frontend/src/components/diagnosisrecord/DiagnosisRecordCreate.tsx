@@ -193,7 +193,7 @@ function DiagnosisRecordCreate() {
         setSuccess(true);
         setMessages("บันทึกข้อมูลสำเร็จ");
         setTimeout(() => {
-          window.location.href = "/diagnosis_records";
+          window.location.href = "/diagnosisrecords";
         }, 2000)
       } else {
         setError(true);
