@@ -293,7 +293,7 @@ function TreatmentRecordCreate() {
         setSuccess(true);
         setMessages("บันทึกข้อมูลสำเร็จ");
         setTimeout(() => {
-          window.location.href="/treatment_records";
+          window.location.href="/treatmentrecords";
         }, 2000)
       } else {
         setError(true);

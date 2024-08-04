@@ -244,7 +244,8 @@ export default function PaymentCreate() {
     setPayment (payment => {
       let MedPrice = medicineorder.reduce((a, b) => a + Number(b!.OrderAmount! * b!.Medicine!.Price!) , 0) ?? 0;
       let PatientRightPrice = patientright?.RightType?.Discount ?? 0;
-      return { ...payment, Total: (MedPrice - PatientRightPrice) < 0 ? 0 : (MedPrice - PatientRightPrice) }
+      // return { ...payment, Total: (MedPrice - PatientRightPrice) < 0 ? 0 : (MedPrice - PatientRightPrice) }
+      return {...payment, Total: MedPrice}
     });
       
   }, [patientright, medicineorder]);
